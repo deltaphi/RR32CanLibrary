@@ -1,6 +1,10 @@
 ## Project
 .vscode/settings.json
 
+## Visual Studio (2019)
+out
+.vs
+
 ## Eclipse
 .project
 .cproject
