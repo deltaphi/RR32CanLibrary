@@ -1,0 +1,17 @@
+{
+    "name": "RR32CanLibrary",
+    "version": 0.1,
+    "keywords": "esp32, CAN, Railroad",
+    "description": "A library to parse and create Maerklin CAN packages",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/deltaphi/RR32CanLibrary"
+    },
+    "export": {
+        "include": "lib"
+    },
+    "build": {
+        "includeDir": "lib",
+        "binDir": "lib"
+    }
+}
