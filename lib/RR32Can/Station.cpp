@@ -6,7 +6,6 @@
 
 #include "RR32Can/Station.h"
 
-#include "RR32Can/Handler.h"
 #include "RR32Can/messages/Data.h"
 #include "RR32Can/messages/Identifier.h"
 #include "RR32Can/messages/TurnoutPacket.h"
@@ -18,9 +17,10 @@
 
 namespace RR32Can {
 
-void Station::begin(uint16_t stationUUID, StationCbk& callback) {
+void Station::begin(uint16_t stationUUID, StationCbk& callback, StationTxCbk& txCallback) {
   AbortCurrentConfigRequest();
   this->callback = &callback;
+  this->txCallback = &txCallback;
   senderHash = computeSenderHash(stationUUID);
 }
 
@@ -117,8 +117,8 @@ void Station::RequestEngineList(uint8_t offset,
   if (data2.dlc <= CanDataMaxLength) {
     expectedConfigData = ConfigDataStreamType::LOKNAMEN;
     configDataParser.startStream(&configDataConsumer);
-    SendPacket(id, data1);
-    SendPacket(id, data2);
+    txCallback->SendPacket(id, data1);
+    txCallback->SendPacket(id, data2);
   } else {
     // Packet was oversized. Abort the operation.
     return;
@@ -156,7 +156,7 @@ void Station::RequestEngine(Locomotive& engine,
   data.dlc = 8;
   strncpy(data.dataAsString(), LocoConsumer::kFilenameEngine,
           Data::kDataBufferLength);
-  SendPacket(id, data);
+  txCallback->SendPacket(id, data);
 
   /* Second packet */
   data.reset();
@@ -165,7 +165,7 @@ void Station::RequestEngine(Locomotive& engine,
   uint8_t engineNameLength = strlen(engineName);
   strncpy(data.dataAsString(), engineName, CanDataMaxLength);
 
-  SendPacket(id, data);
+  txCallback->SendPacket(id, data);
 
   /* Third packet */
   data.reset();
@@ -175,7 +175,7 @@ void Station::RequestEngine(Locomotive& engine,
             CanDataMaxLength);
   }
 
-  SendPacket(id, data);
+  txCallback->SendPacket(id, data);
 }
 
 void Station::uidToData(uint8_t* ptr, Locomotive::Uid_t uid) {
@@ -191,7 +191,7 @@ void Station::RequestEngineDirection(Locomotive& engine) {
   data.dlc = 4;
   uidToData(data.data, engine.getUid());
 
-  SendPacket(identifier, data);
+  txCallback->SendPacket(identifier, data);
 }
 
 void Station::SendEngineDirection(Locomotive& engine,
@@ -205,7 +205,7 @@ void Station::SendEngineDirection(Locomotive& engine,
       (direction == EngineDirection::REVERSE) ||
       (direction == EngineDirection::CHANGE_DIRECTION)) {
     data.data[4] = static_cast<uint8_t>(direction);
-    SendPacket(identifier, data);
+    txCallback->SendPacket(identifier, data);
   }  // else: not implemented.
 }
 
@@ -215,7 +215,7 @@ void Station::RequestEngineVelocity(Locomotive& engine) {
   data.dlc = 4;
   uidToData(data.data, engine.getUid());
 
-  SendPacket(identifier, data);
+  txCallback->SendPacket(identifier, data);
 }
 
 void Station::SendEngineVelocity(Locomotive& engine,
@@ -231,7 +231,7 @@ void Station::SendEngineVelocity(Locomotive& engine,
   data.data[4] = velocity >> 8;
   data.data[5] = velocity;
 
-  SendPacket(identifier, data);
+  txCallback->SendPacket(identifier, data);
 }
 
 void Station::RequestEngineFunction(Locomotive& engine, uint8_t function) {
@@ -241,7 +241,7 @@ void Station::RequestEngineFunction(Locomotive& engine, uint8_t function) {
   uidToData(data.data, engine.getUid());
   data.data[4] = function;
 
-  SendPacket(identifier, data);
+  txCallback->SendPacket(identifier, data);
 }
 
 void Station::RequestEngineAllFunctions(Locomotive& engine) {
@@ -251,7 +251,7 @@ void Station::RequestEngineAllFunctions(Locomotive& engine) {
   uidToData(data.data, engine.getUid());
   for (uint8_t i = 0; i < 16; ++i) {
     data.data[4] = i;
-    SendPacket(identifier, data);
+    txCallback->SendPacket(identifier, data);
   }
 }
 
@@ -269,7 +269,7 @@ void Station::SendEngineFunction(Locomotive& engine, uint8_t function,
     data.data[5] = 0;
   }
 
-  SendPacket(identifier, data);
+  txCallback->SendPacket(identifier, data);
 }
 
 void Station::SendEmergencyStop(Locomotive& engine) {
@@ -278,7 +278,7 @@ void Station::SendEmergencyStop(Locomotive& engine) {
   data.dlc = 5;
   uidToData(data.data, engine.getUid());
   data.data[4] = kSubcommandLocoEmergencyStop;
-  SendPacket(identifier, data);
+  txCallback->SendPacket(identifier, data);
 }
 
 void Station::SendSystemStop() {
@@ -286,7 +286,7 @@ void Station::SendSystemStop() {
   RR32Can::Data data;
   data.dlc = 5;
   data.data[4] = kSubcommandSystemStop;
-  SendPacket(identifier, data);
+  txCallback->SendPacket(identifier, data);
 }
 
 void Station::SendSystemGo() {
@@ -294,7 +294,7 @@ void Station::SendSystemGo() {
   RR32Can::Data data;
   data.dlc = 5;
   data.data[4] = kSubcommandSystemGo;
-  SendPacket(identifier, data);
+  txCallback->SendPacket(identifier, data);
 }
 
 void Station::SendAccessoryPacket(RR32Can::MachineTurnoutAddress turnoutAddress,
@@ -318,7 +318,7 @@ void Station::SendAccessoryPacket(RR32Can::MachineTurnoutAddress turnoutAddress,
          payload.power ? "(ON) " : "(OFF)");
 #endif
 
-  SendPacket(identifier, data);
+  txCallback->SendPacket(identifier, data);
 }
 
 void Station::HandlePacket(const RR32Can::Identifier& id,

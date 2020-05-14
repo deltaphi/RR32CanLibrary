@@ -7,6 +7,7 @@
 #include <cstdint>
 
 #include "RR32Can/StationCbk.h"
+#include "RR32Can/StationTxCbk.h"
 #include "RR32Can/Types.h"
 #include "RR32Can/messages/Data.h"
 #include "RR32Can/messages/Identifier.h"
@@ -21,7 +22,7 @@ namespace RR32Can {
 class Station {
  public:
   /* Initialization & Infrastructure */
-  void begin(uint16_t stationUUID, StationCbk& callback);
+  void begin(uint16_t stationUUID, StationCbk& callback, StationTxCbk& txCallback);
   void loop();
 
   /* Generic message handling */
@@ -96,6 +97,7 @@ class Station {
 
   /* Set during begin() */
   StationCbk* callback = nullptr;
+  StationTxCbk* txCallback = nullptr;
 
   /* Generic message handling */
   ConfigDataStreamType expectedConfigData;
