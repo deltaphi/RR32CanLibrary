@@ -37,6 +37,8 @@ if (CMAKE_VERSION VERSION_LESS 2.8.11)
   include_directories("${gtest_SOURCE_DIR}/include")
 endif()
 
+enable_testing()
+
 # Now simply link against gtest or gtest_main as needed. Eg
 include_directories("lib")
 add_executable(RR32CanTest

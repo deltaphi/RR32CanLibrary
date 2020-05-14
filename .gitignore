@@ -4,6 +4,7 @@
 ## Visual Studio (2019)
 out
 .vs
+CMakeSettings.json
 
 ## Eclipse
 .project
