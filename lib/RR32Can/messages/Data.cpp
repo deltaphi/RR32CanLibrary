@@ -1,5 +1,7 @@
 #include "RR32Can/messages/Data.h"
 
+#include <cstdio>
+
 namespace RR32Can {
 
 void Data::printAsHex() const {

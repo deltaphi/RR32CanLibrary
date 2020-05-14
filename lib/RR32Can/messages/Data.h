@@ -1,7 +1,12 @@
 #ifndef SRC_RR32CAN_MESSAGES_DATA_H_
 #define SRC_RR32CAN_MESSAGES_DATA_H_
 
+#ifdef ARDUINO
 #include <Arduino.h>
+#else
+#include <cstdint>
+#include <cstring>
+#endif
 
 #include "RR32Can/Constants.h"
 

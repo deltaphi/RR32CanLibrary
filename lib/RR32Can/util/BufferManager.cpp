@@ -23,7 +23,7 @@ BufferManager::size_type BufferManager::findFirstOf(const value_type* chars,
     return npos;
   }
 
-  size_type numChars = strlen(chars);
+  size_type numChars = static_cast<size_type>(strlen(chars));
 
   for (size_type i = offset; i < currentBufferLength; ++i) {
     for (size_type j = 0; j < numChars; ++j) {
