@@ -1,7 +1,11 @@
 #ifndef SRC_RR32CAN_MESSAGES_TURNOUTPACKET_H_
 #define SRC_RR32CAN_MESSAGES_TURNOUTPACKET_H_
 
+#ifdef ARDUINO
 #include <Arduino.h>
+#else
+#include <cstdint>
+#endif
 
 #include "RR32Can/messages/Data.h"
 
