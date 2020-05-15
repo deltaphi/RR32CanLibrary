@@ -5,6 +5,7 @@
 #include <Arduino.h>
 #else
 #include <cstdint>
+#include <cstring>
 #endif
 
 #include "RR32Can/Constants.h"
