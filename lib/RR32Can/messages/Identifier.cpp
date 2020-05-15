@@ -1,4 +1,9 @@
+#ifdef ARDUINO
 #include <Arduino.h>
+#else
+#include <cstdint>
+#include <cstdio>
+#endif
 
 #include "RR32Can/messages/Identifier.h"
 
@@ -41,17 +46,7 @@ unsigned long Identifier::makeIdentifier() const {
 }
 
 void Identifier::printAll() const {
-  Serial.print(F("Prio: 0x"));
-  Serial.print(this->prio, HEX);
-
-  Serial.print(F(" Command: 0x"));
-  Serial.print(this->command, HEX);
-
-  Serial.print(F(" Response: 0x"));
-  Serial.print(this->response, HEX);
-
-  Serial.print(F(" Hash: 0x"));
-  Serial.print(this->hash, HEX);
+  printf("Prio: %#04X, Command: %#04X, Response: %#04X, Hash: %#06X", prio, command, response, hash);
 }
 
 } /* namespace RR32Can */

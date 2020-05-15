@@ -25,6 +25,14 @@ struct Data {
   /// Actual data. An extra byte is prepared to allow for the use of snprintf.
   uint8_t data[kDataBufferLength] = {0, 0, 0, 0, 0, 0, 0, 0};
 
+  bool operator==(const Data& other) const {
+    if (dlc != other.dlc) {
+      return false;
+    } else {
+      return 0 == memcmp(data, other.data, dlc);
+    }
+  }
+
   /**
    * \brief Print the DLC and Data field as Hex values.
    */

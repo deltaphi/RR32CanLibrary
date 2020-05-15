@@ -1,4 +1,7 @@
+#ifdef ARDUINO
 #include <Arduino.h>
+#endif
+
 #include <RR32Can/LocoListConsumer.h>
 #include "config.h"
 
@@ -19,11 +22,10 @@ void LocoListConsumer::consumeConfigData(BufferManager& section,
     // Engine data
     LocomotiveShortInfo* freeEngine = findFirstFreeEntry();
     if (freeEngine == nullptr) {
-      Serial.println("No free Engine buffer found.");
+      printf("No free Engine buffer found.\n");
       return;
     } else {
-      Serial.print("Storing Engine ");
-      Serial.println(value.data());
+      printf("Storing Engine %s\n", value.data());
     }
     freeEngine->setName(value.data());  // TODO: Number is unused
 
@@ -34,9 +36,7 @@ void LocoListConsumer::consumeConfigData(BufferManager& section,
     }  // else: unknown key
 
   } else {
-    Serial.print("Received config data for uninteresting section '");
-    Serial.print(section.data());
-    Serial.println("'.");
+    printf("Received config data for uninteresting section '%s'.\n", section.data());
   }
 }
 
@@ -54,9 +54,7 @@ void LocoListConsumer::reset() {
 }
 
 void LocoListConsumer::printAll() const {
-  Serial.print("EngineBrowser: ");
-  Serial.print(numEnginesKnownByMaster);
-  Serial.println(" Total Engines.");
+  printf("EngineBrowser: %d total engines.\n", numEnginesKnownByMaster);
   for (const LocomotiveShortInfo& info : engineInfo) {
     info.print();
   }

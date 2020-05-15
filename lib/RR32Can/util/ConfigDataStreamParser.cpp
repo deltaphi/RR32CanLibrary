@@ -1,6 +1,11 @@
 #include "RR32Can/util/ConfigDataStreamParser.h"
 
+
+#ifdef ARDUINO
 #include <Arduino.h>
+#else
+#include <cstdio>
+#endif
 
 #include <config.h>
 
@@ -9,10 +14,10 @@ namespace RR32Can {
 void ConfigDataStreamParser::addMessage(const Data& data) {
   switch (streamState) {
     case StreamState::IDLE:
-      Serial.println("Received uninteresting config data (IDLE).");
+      printf("Received uninteresting config data (IDLE).\n");
       break;
     case StreamState::STREAM_DONE:
-      Serial.println("Received uninteresting config data (STREAM_DONE).");
+      printf("Received uninteresting config data (STREAM_DONE).\n");
       break;
     case StreamState::WAITING_FIRST_PACKET:
       // First packet has a length less than 8

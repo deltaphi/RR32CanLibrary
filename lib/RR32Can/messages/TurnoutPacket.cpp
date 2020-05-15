@@ -1,5 +1,7 @@
 #include "RR32Can/messages/TurnoutPacket.h"
 
+#include <cstdio>
+
 namespace RR32Can {
 
 TurnoutPacket TurnoutPacket::FromCanPacket(const Data& data) {
@@ -29,37 +31,30 @@ uint32_t TurnoutPacket::PositionAsHumanValue() const {
 }
 
 void TurnoutPacket::printAll() const {
-  Serial.print(F("Turnout: 0x"));
-  Serial.print(this->locid, HEX);
-
-  Serial.print(F(" Human Value: "));
-  Serial.print(this->PositionAsHumanValue(), DEC);
-
-  Serial.print(F(" Position: "));
-  Serial.print(this->position, DEC);
+  printf("Turnout: %#10x, Human Value: %d, Position: %d ", locid, PositionAsHumanValue(), position);
+  
   switch (this->position) {
     case 0:
-      Serial.print(F(" (off, round, red)"));
+      printf("(off, round, red)");
       break;
     case 1:
-      Serial.print(F(" (on, straight, green)"));
+      printf("(on, straight, green)");
       break;
     case 2:
-      Serial.print(F(" (yellow, left)"));
+      printf("(yellow, left)");
       break;
     case 3:
-      Serial.print(F(" (white)"));
+      printf("(white)");
       break;
   }
 
-  Serial.print(F(" Power: "));
-  Serial.print(this->power, DEC);
+  printf(" Power: %d ", power);
   switch (this->power) {
     case 0:
-      Serial.print(F(" (off, button release)"));
+      printf("(off, button release)");
       break;
     case 1:
-      Serial.print(F(" (on, button press)"));
+      printf("(on, button press)");
       break;
   }
 }

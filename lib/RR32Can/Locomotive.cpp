@@ -1,17 +1,20 @@
+#ifdef ARDUINO
 #include <Arduino.h>
+#else
+#include <cstdio>
+#endif
+
 #include <RR32Can/Locomotive.h>
 
 namespace RR32Can {
 
 void LocomotiveShortInfo::print() const {
-  Serial.print("  EngineShortInfo: ");
+  printf("  EngineShortInfo: ");
 
   if (availability == AvailabilityStatus::EMPTY) {
-    Serial.println("Empty.");
+    printf("Empty.\n");
   } else {
-    Serial.print("'");
-    Serial.print(name);
-    Serial.println("'");
+    printf("'%s'", name);
   }
 }
 

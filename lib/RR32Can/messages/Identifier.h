@@ -27,6 +27,10 @@ class Identifier {
   Identifier() = default;
   Identifier(uint8_t command, uint16_t hash) : command(command), hash(hash) {}
 
+  bool operator==(const Identifier& other) const {
+    return prio == other.prio && command == other.command && response == other.response && hash == other.hash;
+  }
+
   /**
    * \brief Turn a 32-bit CAN identifier into a Marklin Identifier
    */
