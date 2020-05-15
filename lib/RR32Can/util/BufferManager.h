@@ -77,7 +77,7 @@ class BufferManager {
 
   constexpr value_type* data() const { return buffer; }
 
-  uint8_t asUint8() const { return strtol(buffer, nullptr, 10); }
+  uint8_t asUint8() const { return static_cast<uint8_t>(strtol(buffer, nullptr, 10)); }
 
   /*
    * \brief Read as many bytes as possible from the otherBuffer.

@@ -19,3 +19,13 @@ To use the CMake project, create an out-of-tree build directoy (in-tree build wi
 Unit testing should be possible using any C++14 capable compiler on any Desktop Operating System.
 It has been tested successefully using MSVC 2017 Community Edition.
 
+## Software Design
+
+* Station class represents a single node on the CAN bus.
+* Station can be fed CAN frames and will decode them.
+* Station offers methods to be called to cause sending of messages on the CAN bus.
+* Station can be configured with callbacks:
+  * Transmission to CAN
+  * Decoded individual CAN messages
+  * Decoder for configuration data streams
+* Station also offers a loco database. LocoDB can be used independently of Station class to allow sharing of one LocoDB between multiple Stations on the same processor.
