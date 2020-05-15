@@ -335,7 +335,7 @@ void Station::HandlePacket(const RR32Can::Identifier& id,
 
     case RR32Can::kPing:
 #if (LOG_PING == STD_ON)
-      printf("Ping. Payload: 0x"));
+      printf("Ping. Payload: 0x");
       data.printAsHex();
       printf("\n");
 #endif
