@@ -388,6 +388,8 @@ void Station::HandleAccessoryPacket(const RR32Can::Data& data) {
   RR32Can::TurnoutPacket turnoutPacket =
       RR32Can::TurnoutPacket::FromCanPacket(data);
   turnoutPacket.printAll();
+
+  callback->OnAccessoryPacket(turnoutPacket);
 }
 
 Locomotive::Uid_t Station::uidFromData(const uint8_t* ptr) {

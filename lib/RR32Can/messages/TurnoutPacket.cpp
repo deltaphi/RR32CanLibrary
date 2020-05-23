@@ -6,7 +6,7 @@ namespace RR32Can {
 
 TurnoutPacket TurnoutPacket::FromCanPacket(const Data& data) {
   TurnoutPacket turnoutPacket;
-  
+
   using LogcId_t = uint32_t;
   turnoutPacket.locid = static_cast<LogcId_t>(data.data[3]) | (static_cast<LogcId_t>(data.data[2]) << 8) |
                         (static_cast<LogcId_t>(data.data[1]) << 16) | (static_cast<LogcId_t>(data.data[0]) << 24);
@@ -33,7 +33,7 @@ uint32_t TurnoutPacket::PositionAsHumanValue() const {
 
 void TurnoutPacket::printAll() const {
   printf("Turnout: %#10x, Human Value: %d, Position: %d ", locid, PositionAsHumanValue(), position);
-  
+
   switch (this->position) {
     case 0:
       printf("(off, round, red)");
@@ -58,6 +58,10 @@ void TurnoutPacket::printAll() const {
       printf("(on, button press)");
       break;
   }
+}
+
+bool TurnoutPacket::operator==(const TurnoutPacket& other) const {
+  return (this->locid == other.locid) && (this->position == other.position) && (this->power == other.power);
 }
 
 } /* namespace RR32Can */

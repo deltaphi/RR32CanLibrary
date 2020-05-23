@@ -46,6 +46,8 @@ class TurnoutPacket {
    * \brief Print a human-readable version of this Turnout Packet.
    */
   void printAll() const;
+
+  bool operator==(const TurnoutPacket& other) const;
 };
 
 } /* namespace RR32Can */

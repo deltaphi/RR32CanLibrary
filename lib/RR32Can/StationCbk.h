@@ -2,6 +2,7 @@
 #define __RR32CAN__STATIONCBK_H__
 
 #include <RR32Can/Locomotive.h>
+#include <RR32Can/messages/TurnoutPacket.h>
 
 namespace RR32Can {
 
@@ -34,6 +35,11 @@ class StationCbk {
    * \brief Set whether the system is on (true) or off (false)
    */
   virtual void setSystemState(bool onOff) = 0;
+
+  /**
+   * \brief Called when an accessory packet was received.
+   */
+  virtual void OnAccessoryPacket(TurnoutPacket& packet) = 0;
 };
 
 }  // namespace RR32Can
