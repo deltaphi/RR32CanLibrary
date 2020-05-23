@@ -1,8 +1,6 @@
 #ifndef __RR32CAN__ENGINE_H__
 #define __RR32CAN__ENGINE_H__
 
-#include <array>
-
 #ifdef ARDUINO
 #include <Arduino.h>
 #else
@@ -87,7 +85,10 @@ class Locomotive : public LocomotiveShortInfo {
   using Velocity_t = RR32Can::Velocity_t;
   using Address_t = RR32Can::EngineAddress_t;
   using FunctionBits_t = RR32Can::FunctionBits_t;
-  using ProtocolName_t = std::array<char, 8>;
+
+  static constexpr const uint8_t kProtocolNameMaxLength = 8;
+
+  using ProtocolName_t = char[kProtocolNameMaxLength];
 
   void reset() {
     // Remove all data of this class
@@ -97,7 +98,7 @@ class Locomotive : public LocomotiveShortInfo {
     direction = RR32Can::EngineDirection::UNKNOWN;
     address = 0;
     functionBits = 0;
-    memset(protocol.data(), 0, protocol.size());
+    memset(protocol, 0, kProtocolNameMaxLength);
   }
 
   bool isFullDetailsKnown() const {
@@ -152,10 +153,9 @@ class Locomotive : public LocomotiveShortInfo {
 
   void print() const override;
 
-  void setProtocolString(const char* protocolString) {
-    strncpy(protocol.data(), protocolString, protocol.size());
+  void setProtocolString(const char* protocolString) { strncpy(protocol, protocolString, kProtocolNameMaxLength);
   }
-  const char* getProtocolString() const { return protocol.data(); }
+  const char* getProtocolString() const { return protocol; }
 
  protected:
   Uid_t uid;

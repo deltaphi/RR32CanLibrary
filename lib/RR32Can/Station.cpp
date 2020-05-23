@@ -4,6 +4,8 @@
 #include <cstdint>
 #endif
 
+#include "RR32Can/StlAdapter.h"
+
 #include "RR32Can/Station.h"
 
 #include "RR32Can/messages/Data.h"

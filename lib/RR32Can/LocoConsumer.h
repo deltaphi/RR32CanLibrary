@@ -2,7 +2,6 @@
 #define SRC_RR32CAN_LOCOCONSUMER_H_
 
 #include <RR32Can/Locomotive.h>
-#include <array>
 
 #include "RR32Can/util/ConfigDataConsumer.h"
 

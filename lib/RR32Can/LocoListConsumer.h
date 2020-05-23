@@ -2,7 +2,6 @@
 #define SRC_RR32CAN_LOCOLISTCONSUMER_H_
 
 #include <RR32Can/Locomotive.h>
-#include <array>
 
 #include "RR32Can/util/ConfigDataConsumer.h"
 
@@ -15,7 +14,7 @@ namespace RR32Can {
  */
 class LocoListConsumer : public ConfigDataConsumer {
  public:
-  using EngineInfoSet = std::array<LocomotiveShortInfo, kEngineBrowserEntries>;
+  using EngineInfoSet = LocomotiveShortInfo[kEngineBrowserEntries];
 
   LocoListConsumer() = default;
   LocoListConsumer(const LocoListConsumer&) = delete;

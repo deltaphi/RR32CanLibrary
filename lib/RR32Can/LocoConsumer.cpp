@@ -4,6 +4,9 @@
 #include <cstring>
 #endif
 
+#include "RR32Can/StlAdapter.h"
+
+
 #include <RR32Can/LocoConsumer.h>
 #include "config.h"
 

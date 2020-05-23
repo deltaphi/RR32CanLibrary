@@ -2,6 +2,8 @@
 #include <Arduino.h>
 #endif
 
+#include "RR32Can/StlAdapter.h"
+
 #include <RR32Can/LocoListConsumer.h>
 #include "config.h"
 
