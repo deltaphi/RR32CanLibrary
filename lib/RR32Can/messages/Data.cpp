@@ -1,6 +1,6 @@
 #include "RR32Can/messages/Data.h"
 
-#include <cstdio>
+#include "RR32Can/StlAdapter.h"
 
 namespace RR32Can {
 

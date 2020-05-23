@@ -5,6 +5,8 @@
 #include <cstdio>
 #endif
 
+#include "RR32Can/StlAdapter.h"
+
 #include "RR32Can/messages/Identifier.h"
 
 #include "RR32Can/util/utils.h"

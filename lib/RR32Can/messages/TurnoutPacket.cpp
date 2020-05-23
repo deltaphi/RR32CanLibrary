@@ -1,14 +1,15 @@
 #include "RR32Can/messages/TurnoutPacket.h"
 
-#include <cstdio>
+#include "RR32Can/StlAdapter.h"
 
 namespace RR32Can {
 
 TurnoutPacket TurnoutPacket::FromCanPacket(const Data& data) {
   TurnoutPacket turnoutPacket;
-
-  turnoutPacket.locid = data.data[3] | (data.data[2] << 8) |
-                        (data.data[1] << 16) | (data.data[0] << 24);
+  
+  using LogcId_t = uint32_t;
+  turnoutPacket.locid = static_cast<LogcId_t>(data.data[3]) | (static_cast<LogcId_t>(data.data[2]) << 8) |
+                        (static_cast<LogcId_t>(data.data[1]) << 16) | (static_cast<LogcId_t>(data.data[0]) << 24);
   turnoutPacket.position = data.data[4];
   turnoutPacket.power = data.data[5];
 
