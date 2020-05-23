@@ -1,7 +1,11 @@
 #ifndef __RR32CAN__TYPES_H__
 #define __RR32CAN__TYPES_H__
 
+#ifdef ARDUINO
+#include <Arduino.h>
+#else
 #include <cstdint>
+#endif
 
 namespace RR32Can {
 

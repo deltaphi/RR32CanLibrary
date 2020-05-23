@@ -1,9 +1,14 @@
 #ifndef SRC_RR32CAN_UTIL_BUFFERMANAGER_H_
 #define SRC_RR32CAN_UTIL_BUFFERMANAGER_H_
 
+#ifdef ARDUINO
+#include <Arduino.h>
+#else
 #include <cstdint>
 #include <cstdlib>
 #include <cstring>
+#endif
+
 
 namespace RR32Can {
 

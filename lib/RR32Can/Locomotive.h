@@ -2,7 +2,12 @@
 #define __RR32CAN__ENGINE_H__
 
 #include <array>
+
+#ifdef ARDUINO
+#include <Arduino.h>
+#else
 #include <cstring>
+#endif
 
 #include "RR32Can/Constants.h"
 #include "RR32Can/Types.h"

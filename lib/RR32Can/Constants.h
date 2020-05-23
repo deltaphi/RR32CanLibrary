@@ -1,7 +1,12 @@
 #ifndef __RR32Can__CONSTANTS_H__
 #define __RR32Can__CONSTANTS_H__
 
+#ifdef ARDUINO
+#include <Arduino.h>
+#else
 #include <cstdint>
+#endif
+
 #include "Types.h"
 
 namespace RR32Can {

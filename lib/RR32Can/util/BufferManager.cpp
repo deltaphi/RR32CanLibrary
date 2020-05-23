@@ -1,4 +1,8 @@
+#ifdef ARDUINO
+#include <Arduino.h>
+#else
 #include <cstring>
+#endif
 
 #include "RR32Can/util/BufferManager.h"
 

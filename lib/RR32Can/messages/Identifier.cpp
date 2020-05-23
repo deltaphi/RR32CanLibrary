@@ -13,7 +13,7 @@ namespace RR32Can {
 
 Identifier Identifier::GetIdentifier(uint8_t buffer[4]) {
   uint32_t intermediateBits =
-      (buffer[0] << 24) | (buffer[1] << 16) | (buffer[2] << 8) | buffer[1];
+      (static_cast<uint32_t>(buffer[0]) << 24) | (static_cast<uint32_t>(buffer[1]) << 16) | (static_cast<uint32_t>(buffer[2]) << 8) | buffer[1];
   return GetIdentifier(intermediateBits);
 }
 
@@ -37,9 +37,9 @@ Identifier Identifier::GetIdentifier(unsigned long packetId) {
 unsigned long Identifier::makeIdentifier() const {
   unsigned long packetId;
 
-  packetId = prio << (16 + 1 + 8);
-  packetId |= command << (16 + 1);
-  packetId |= response << (16);
+  packetId = static_cast<unsigned long>(prio) << (16 + 1 + 8);
+  packetId |= static_cast<unsigned long>(command) << (16 + 1);
+  packetId |= static_cast<unsigned long>(response) << (16);
   packetId |= hash;
 
   return packetId;

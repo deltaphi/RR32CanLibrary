@@ -1,10 +1,15 @@
 #ifndef __RR32CAN__STATION_H__
 #define __RR32CAN__STATION_H__
 
+#ifdef ARDUINO
+#include <Arduino.h>
+#else
+#include <cstdint>
+#endif
+
 #include <RR32Can/LocoConsumer.h>
 #include <RR32Can/LocoListConsumer.h>
 #include <RR32Can/Locomotive.h>
-#include <cstdint>
 
 #include "RR32Can/StationCbk.h"
 #include "RR32Can/StationTxCbk.h"

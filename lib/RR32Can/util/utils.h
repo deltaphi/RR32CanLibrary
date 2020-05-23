@@ -1,7 +1,11 @@
 #ifndef SRC_RR32CAN_UTIL_UTILS_H_
 #define SRC_RR32CAN_UTIL_UTILS_H_
 
+#ifdef ARDUINO
+#include <Arduino.h>
+#else
 #include <cstdint>
+#endif
 
 namespace RR32Can {
 

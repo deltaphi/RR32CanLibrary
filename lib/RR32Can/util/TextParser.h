@@ -1,7 +1,11 @@
 #ifndef SRC_RR32CAN_UTIL_TEXTPARSER_H_
 #define SRC_RR32CAN_UTIL_TEXTPARSER_H_
 
+#ifdef ARDUINO
+#include <Arduino.h>
+#else
 #include <cstdint>
+#endif
 
 #include "RR32Can/util/BufferManager.h"
 
