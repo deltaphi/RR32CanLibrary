@@ -1,6 +1,6 @@
 {
     "name": "RR32CanLibrary",
-    "version": 0.1,
+    "version": 0.2.0,
     "keywords": "esp32, CAN, Railroad",
     "description": "A library to parse and create Maerklin CAN packages",
     "repository": {
