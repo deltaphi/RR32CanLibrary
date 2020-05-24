@@ -24,8 +24,8 @@ void ConfigDataStreamParser::addMessage(const Data& data) {
 
       if (data.dlc == 6 || data.dlc == 7) {
         // Initial uncompressed
-        remainingBytes = (data.data[0] << 24) | (data.data[1] << 16) |
-                         (data.data[2] << 8) | (data.data[3]);
+        remainingBytes = (static_cast<uint32_t>(data.data[0]) << 24) | (static_cast<uint32_t>(data.data[1]) << 16) |
+                         (static_cast<uint32_t>(data.data[2]) << 8) | (data.data[3]);
         uint16_t crc = (data.data[4] << 8) | (data.data[5]);
         this->crc.loadReference(crc);
 

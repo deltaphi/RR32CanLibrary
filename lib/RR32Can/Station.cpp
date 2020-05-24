@@ -393,7 +393,7 @@ void Station::HandleAccessoryPacket(const RR32Can::Data& data) {
 }
 
 Locomotive::Uid_t Station::uidFromData(const uint8_t* ptr) {
-  return (ptr[0] << 24) | (ptr[1] << 16) | (ptr[2] << 8) | (ptr[3]);
+  return (static_cast<Locomotive::Uid_t>(ptr[0]) << 24) | (static_cast<Locomotive::Uid_t>(ptr[1]) << 16) | (static_cast<Locomotive::Uid_t>(ptr[2]) << 8) | (ptr[3]);
 }
 
 Locomotive* Station::getLocoForData(const RR32Can::Data& data) {
