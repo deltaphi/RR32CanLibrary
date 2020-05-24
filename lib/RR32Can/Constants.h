@@ -111,6 +111,9 @@ constexpr uint16_t kMMFunctionAddrStop = 0x13FF;
 constexpr uint16_t kMMEngineAddrStart = 0x2000;
 constexpr uint16_t kMMEngineAddrStop = 0x23FF;
 
+constexpr uint16_t kMMAccessoryAddrStart = 0x3000;
+constexpr uint16_t kMMAccessoryAddrStop = 0x33FF;
+
 constexpr uint16_t kMFXAddrStart = 0x4000;
 constexpr uint16_t kMFXAddrStop = 0x7FFF;
 
