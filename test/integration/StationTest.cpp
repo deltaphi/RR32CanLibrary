@@ -3,7 +3,6 @@
 
 #include "RR32Can/Station.h"
 #include "RR32Can/callback/AccessoryCbk.h"
-#include "RR32Can/callback/ConfigDataCbk.h"
 #include "RR32Can/callback/EngineCbk.h"
 #include "RR32Can/callback/SystemCbk.h"
 #include "RR32Can/callback/TxCbk.h"
