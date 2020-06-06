@@ -2,35 +2,56 @@
 #include "gtest/gtest.h"
 
 #include "RR32Can/Station.h"
-#include "RR32Can/StationCbk.h"
-#include "RR32Can/StationTxCbk.h"
+#include "RR32Can/callback/AccessoryCbk.h"
+#include "RR32Can/callback/ConfigDataCbk.h"
+#include "RR32Can/callback/EngineCbk.h"
+#include "RR32Can/callback/SystemCbk.h"
+#include "RR32Can/callback/TxCbk.h"
 
 #include "RR32Can/Locomotive.h"
 
 namespace integration {
 
-class StationCbkMock : public RR32Can::StationCbk {
+class SystemCbkMock : public RR32Can::callback::SystemCbk {
+ public:
+  MOCK_METHOD(void, setSystemState, (bool), (override));
+};
+
+class EngineCbkMock : public RR32Can::callback::EngineCbk {
  public:
   MOCK_METHOD(RR32Can::Locomotive *, getLoco, (RR32Can::Locomotive::Uid_t), (override));
   MOCK_METHOD(void, setLocoVelocity, (RR32Can::Locomotive::Uid_t, RR32Can::Velocity_t), (override));
   MOCK_METHOD(void, setLocoVelocity, (RR32Can::Velocity_t), (override));
-  MOCK_METHOD(void, setSystemState, (bool), (override));
+};
+
+class AccessoryCbkMock : public RR32Can::callback::AccessoryCbk {
+ public:
   MOCK_METHOD(void, OnAccessoryPacket, (RR32Can::TurnoutPacket & packet), (override));
 };
 
-class StationTxCbkMock : public RR32Can::StationTxCbk {
+class StationTxCbkMock : public RR32Can::callback::TxCbk {
  public:
   MOCK_METHOD(void, SendPacket, (const RR32Can::Identifier &, const RR32Can::Data &));
 };
 
 class StationTestFixture : public ::testing::Test {
-  void SetUp() { station.begin(0, callback, txCallback); }
+  void SetUp() {
+    RR32Can::Station::CallbackStruct callbacks;
+    callbacks.tx = &txCbk;
+
+    callbacks.accessory = &accessoryCbk;
+    callbacks.system = &systemCbk;
+    callbacks.engine = &engineCbk;
+    station.begin(0, callbacks);
+  }
 
   void TearDown() {}
 
  public:
-  ::testing::StrictMock<StationCbkMock> callback;
-  ::testing::NaggyMock<StationTxCbkMock> txCallback;
+  ::testing::StrictMock<SystemCbkMock> systemCbk;
+  ::testing::StrictMock<EngineCbkMock> engineCbk;
+  ::testing::StrictMock<AccessoryCbkMock> accessoryCbk;
+  ::testing::NaggyMock<StationTxCbkMock> txCbk;
   RR32Can::Station station;
 };
 
@@ -42,7 +63,7 @@ TEST_F(StationTestFixture, RecvStop) {
   data.dlc = 5;
   data.data[4] = RR32Can::kSubcommandSystemStop;
 
-  EXPECT_CALL(callback, setSystemState(false));
+  EXPECT_CALL(systemCbk, setSystemState(false));
 
   station.HandlePacket(id, data);
 }
@@ -55,7 +76,7 @@ TEST_F(StationTestFixture, RecvGo) {
   data.dlc = 5;
   data.data[4] = RR32Can::kSubcommandSystemGo;
 
-  EXPECT_CALL(callback, setSystemState(true));
+  EXPECT_CALL(systemCbk, setSystemState(true));
 
   station.HandlePacket(id, data);
 }
@@ -68,7 +89,7 @@ TEST_F(StationTestFixture, SendGo) {
   data.dlc = 5;
   data.data[4] = RR32Can::kSubcommandSystemGo;
 
-  EXPECT_CALL(txCallback, SendPacket(id, data));
+  EXPECT_CALL(txCbk, SendPacket(id, data));
 
   station.SendSystemGo();
 }
@@ -81,7 +102,7 @@ TEST_F(StationTestFixture, SendStop) {
   data.dlc = 5;
   data.data[4] = RR32Can::kSubcommandSystemStop;
 
-  EXPECT_CALL(txCallback, SendPacket(id, data));
+  EXPECT_CALL(txCbk, SendPacket(id, data));
 
   station.SendSystemStop();
 }
@@ -99,7 +120,7 @@ TEST_F(StationTestFixture, SendAccessory) {
   data.data[4] = 0x01;
   data.data[5] = 0x01;
 
-  EXPECT_CALL(txCallback, SendPacket(id, data));
+  EXPECT_CALL(txCbk, SendPacket(id, data));
 
   station.SendAccessoryPacket(RR32Can::HumanTurnoutAddress(42), RR32Can::TurnoutDirection::GREEN, true);
 }
@@ -123,7 +144,7 @@ TEST_F(StationTestFixture, ReceiveAccessory) {
       static_cast<std::underlying_type_t<RR32Can::TurnoutDirection>>(RR32Can::TurnoutDirection::GREEN);
   expectedPacket.power = true;
 
-  EXPECT_CALL(callback, OnAccessoryPacket(expectedPacket));
+  EXPECT_CALL(accessoryCbk, OnAccessoryPacket(expectedPacket));
 
   station.HandlePacket(id, data);
 }

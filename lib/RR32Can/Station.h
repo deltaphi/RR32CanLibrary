@@ -11,9 +11,11 @@
 #include <RR32Can/LocoListConsumer.h>
 #include <RR32Can/Locomotive.h>
 
-#include "RR32Can/StationCbk.h"
-#include "RR32Can/StationTxCbk.h"
 #include "RR32Can/Types.h"
+#include "RR32Can/callback/AccessoryCbk.h"
+#include "RR32Can/callback/EngineCbk.h"
+#include "RR32Can/callback/SystemCbk.h"
+#include "RR32Can/callback/TxCbk.h"
 #include "RR32Can/messages/Data.h"
 #include "RR32Can/messages/Identifier.h"
 #include "RR32Can/util/ConfigDataConsumer.h"
@@ -26,8 +28,15 @@ namespace RR32Can {
  */
 class Station {
  public:
+  typedef struct {
+    callback::TxCbk* tx = nullptr;
+    callback::SystemCbk* system = nullptr;
+    callback::EngineCbk* engine = nullptr;
+    callback::AccessoryCbk* accessory = nullptr;
+  } CallbackStruct;
+
   /* Initialization & Infrastructure */
-  void begin(uint16_t stationUUID, StationCbk& callback, StationTxCbk& txCallback);
+  void begin(uint16_t stationUUID, CallbackStruct& callbacks);
   void loop();
 
   /* Generic message handling */
@@ -96,8 +105,7 @@ class Station {
   uint16_t senderHash;
 
   /* Set during begin() */
-  StationCbk* callback = nullptr;
-  StationTxCbk* txCallback = nullptr;
+  CallbackStruct callbacks;
 
   /* Generic message handling */
   ConfigDataStreamType expectedConfigData;
