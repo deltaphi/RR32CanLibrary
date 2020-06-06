@@ -15,12 +15,7 @@ namespace RR32Can {
  */
 class ConfigDataStreamParser {
  public:
-  enum class StreamState {
-    IDLE = 0,
-    WAITING_FIRST_PACKET,
-    WAITING_DATA_PACKET,
-    STREAM_DONE
-  };
+  enum class StreamState { IDLE = 0, WAITING_FIRST_PACKET, WAITING_DATA_PACKET, STREAM_DONE };
 
   void startStream(ConfigDataConsumer* consumer) {
     this->consumer = consumer;
@@ -32,8 +27,7 @@ class ConfigDataStreamParser {
   void addMessage(const RR32Can::Data& data);
 
   void reset() {
-    if (streamState == StreamState::WAITING_FIRST_PACKET ||
-        streamState == StreamState::WAITING_DATA_PACKET) {
+    if (streamState == StreamState::WAITING_FIRST_PACKET || streamState == StreamState::WAITING_DATA_PACKET) {
       if (consumer != nullptr) {
         consumer->setStreamAborted();
       }
@@ -48,10 +42,7 @@ class ConfigDataStreamParser {
 
   StreamState getStreamState() const { return streamState; }
 
-  bool isProcessing() const {
-    return streamState != StreamState::IDLE &&
-           streamState != StreamState::STREAM_DONE;
-  }
+  bool isProcessing() const { return streamState != StreamState::IDLE && streamState != StreamState::STREAM_DONE; }
 
  private:
   StreamState streamState = StreamState::IDLE;

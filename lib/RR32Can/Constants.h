@@ -82,8 +82,7 @@ constexpr const uint8_t kNumEngineNamesDownload = 2;
  */
 constexpr const uint8_t kEngineBrowserEntries = kNumEngineNamesDownload;
 
-static_assert(kEngineBrowserEntries >= kNumEngineNamesDownload,
-              "Cannot store all downloaded Engine enries");
+static_assert(kEngineBrowserEntries >= kNumEngineNamesDownload, "Cannot store all downloaded Engine enries");
 
 // Turnout Constants
 constexpr const MachineTurnoutAddress kTurnoutAddressMin = 0;

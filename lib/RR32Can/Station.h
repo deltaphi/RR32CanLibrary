@@ -49,8 +49,7 @@ class Station {
   /**
    * \brief Construct a Accessory command packet and send via CAN
    */
-  void SendAccessoryPacket(RR32Can::MachineTurnoutAddress turnoutAddress,
-                           TurnoutDirection direction, uint8_t power);
+  void SendAccessoryPacket(RR32Can::MachineTurnoutAddress turnoutAddress, TurnoutDirection direction, uint8_t power);
 
   /* Engine Database */
   void FinishCurrentConfigRequest();
@@ -64,10 +63,8 @@ class Station {
    *
    * \param engine An engine with its name set.
    */
-  void RequestEngine(Locomotive& engine,
-                     RR32Can::LocoConsumer& configDataConsumer);
-  void RequestEngineList(uint8_t offset,
-                         RR32Can::LocoListConsumer& configDataConsumer);
+  void RequestEngine(Locomotive& engine, RR32Can::LocoConsumer& configDataConsumer);
+  void RequestEngineList(uint8_t offset, RR32Can::LocoListConsumer& configDataConsumer);
 
   void RequestEngineDirection(Locomotive& engine);
   void SendEngineDirection(Locomotive& engine, EngineDirection direction);
@@ -87,9 +84,7 @@ class Station {
 
   void notifyConfigStreamReceived() { FinishCurrentConfigRequest(); }
 
-  ConfigDataStreamParser::StreamState getConfigStreamState() const {
-    return configDataParser.getStreamState();
-  }
+  ConfigDataStreamParser::StreamState getConfigStreamState() const { return configDataParser.getStreamState(); }
 
  private:
   Locomotive* getLocoForData(const RR32Can::Data& data);

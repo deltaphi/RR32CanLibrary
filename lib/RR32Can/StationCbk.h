@@ -22,8 +22,7 @@ class StationCbk {
    *
    * Should have no effect, if the engine is not known.
    */
-  virtual void setLocoVelocity(Locomotive::Uid_t engineUid,
-                               RR32Can::Velocity_t velocity) = 0;
+  virtual void setLocoVelocity(Locomotive::Uid_t engineUid, RR32Can::Velocity_t velocity) = 0;
 
   /**
    * \brief Unconditionally set the velocity of the currently controlled engine

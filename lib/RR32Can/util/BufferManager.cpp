@@ -8,8 +8,7 @@
 
 namespace RR32Can {
 
-BufferManager::size_type BufferManager::findFirstOf(value_type character,
-                                                    size_type offset) const {
+BufferManager::size_type BufferManager::findFirstOf(value_type character, size_type offset) const {
   if (offset >= currentBufferLength) {
     return npos;
   }
@@ -21,8 +20,7 @@ BufferManager::size_type BufferManager::findFirstOf(value_type character,
   return npos;
 }
 
-BufferManager::size_type BufferManager::findFirstOf(const value_type* chars,
-                                                    size_type offset) const {
+BufferManager::size_type BufferManager::findFirstOf(const value_type* chars, size_type offset) const {
   if (offset >= currentBufferLength) {
     return npos;
   }
@@ -58,11 +56,9 @@ void BufferManager::pop_front(size_type num_elements) {
   }
 }
 
-BufferManager::size_type BufferManager::push_back(
-    const BufferManager& otherBuffer) {
-  size_type bytesToCopy = this->capacity_remaining() < otherBuffer.length()
-                              ? this->capacity_remaining()
-                              : otherBuffer.length();
+BufferManager::size_type BufferManager::push_back(const BufferManager& otherBuffer) {
+  size_type bytesToCopy =
+      this->capacity_remaining() < otherBuffer.length() ? this->capacity_remaining() : otherBuffer.length();
   memcpy(buffer + currentBufferLength, otherBuffer.data(), bytesToCopy);
   currentBufferLength += bytesToCopy;
   return bytesToCopy;
@@ -84,8 +80,7 @@ BufferManager BufferManager::subBufferManager(size_type start_offset) const {
   return subBufferManager(start_offset, length());
 }
 
-BufferManager BufferManager::subBufferManager(size_type start_offset,
-                                              size_type end_offset) const {
+BufferManager BufferManager::subBufferManager(size_type start_offset, size_type end_offset) const {
   if (start_offset > maxBufferLength) {
     start_offset = maxBufferLength;
   }
@@ -98,8 +93,7 @@ BufferManager BufferManager::subBufferManager(size_type start_offset,
     end_offset = start_offset;
   }
 
-  BufferManager mgr(buffer + start_offset, maxBufferLength - start_offset,
-                    end_offset - start_offset);
+  BufferManager mgr(buffer + start_offset, maxBufferLength - start_offset, end_offset - start_offset);
 
   return mgr;
 }

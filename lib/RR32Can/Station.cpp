@@ -100,8 +100,7 @@ void Station::HandleSystemCommand(const RR32Can::Data& data) {
   }
 }
 
-void Station::RequestEngineList(uint8_t offset,
-                                RR32Can::LocoListConsumer& configDataConsumer) {
+void Station::RequestEngineList(uint8_t offset, RR32Can::LocoListConsumer& configDataConsumer) {
   AbortCurrentConfigRequest();
 
   Identifier id{kRequestConfigData, senderHash};
@@ -109,13 +108,11 @@ void Station::RequestEngineList(uint8_t offset,
   /* First packet */
   Data data1;
   data1.dlc = 8;
-  strncpy(data1.dataAsString(), LocoListConsumer::kFilenameEngineNames,
-          Data::kDataBufferLength);
+  strncpy(data1.dataAsString(), LocoListConsumer::kFilenameEngineNames, Data::kDataBufferLength);
 
   /* Second packet */
   Data data2;
-  data2.dlc = snprintf(data2.dataAsString(), Data::kDataBufferLength, "%d %d",
-                       offset, kNumEngineNamesDownload);
+  data2.dlc = snprintf(data2.dataAsString(), Data::kDataBufferLength, "%d %d", offset, kNumEngineNamesDownload);
   if (data2.dlc <= CanDataMaxLength) {
     expectedConfigData = ConfigDataStreamType::LOKNAMEN;
     configDataParser.startStream(&configDataConsumer);
@@ -127,12 +124,10 @@ void Station::RequestEngineList(uint8_t offset,
   }
 }
 
-void Station::RequestEngine(Locomotive& engine,
-                            RR32Can::LocoConsumer& configDataConsumer) {
+void Station::RequestEngine(Locomotive& engine, RR32Can::LocoConsumer& configDataConsumer) {
   if (!engine.isNameKnown()) {
 #if LOG_CAN_OUT_MSG == STD_ON
-    printf(
-        "Station::RequestEngine: No Engine Name given, dropping request.\n");
+    printf("Station::RequestEngine: No Engine Name given, dropping request.\n");
 #endif
     return;
   }
@@ -140,8 +135,7 @@ void Station::RequestEngine(Locomotive& engine,
   if (expectedConfigData != ConfigDataStreamType::NONE) {
     /* Given an empty engine slot or a request is already in progress. Abort. */
 #if LOG_CAN_OUT_MSG == STD_ON
-    printf(
-        "Station::RequestEngine: Request in progress, dropping request.\n");
+    printf("Station::RequestEngine: Request in progress, dropping request.\n");
 #endif
     return;
   }
@@ -156,8 +150,7 @@ void Station::RequestEngine(Locomotive& engine,
 
   /* First packet */
   data.dlc = 8;
-  strncpy(data.dataAsString(), LocoConsumer::kFilenameEngine,
-          Data::kDataBufferLength);
+  strncpy(data.dataAsString(), LocoConsumer::kFilenameEngine, Data::kDataBufferLength);
   txCallback->SendPacket(id, data);
 
   /* Second packet */
@@ -173,8 +166,7 @@ void Station::RequestEngine(Locomotive& engine,
   data.reset();
   data.dlc = 8;
   if (engineNameLength > CanDataMaxLength) {
-    strncpy(data.dataAsString(), engineName + CanDataMaxLength,
-            CanDataMaxLength);
+    strncpy(data.dataAsString(), engineName + CanDataMaxLength, CanDataMaxLength);
   }
 
   txCallback->SendPacket(id, data);
@@ -196,15 +188,13 @@ void Station::RequestEngineDirection(Locomotive& engine) {
   txCallback->SendPacket(identifier, data);
 }
 
-void Station::SendEngineDirection(Locomotive& engine,
-                                  EngineDirection direction) {
+void Station::SendEngineDirection(Locomotive& engine, EngineDirection direction) {
   RR32Can::Identifier identifier{kLocoDirection, this->senderHash};
   RR32Can::Data data;
   data.dlc = 5;
   uidToData(data.data, engine.getUid());
 
-  if ((direction == EngineDirection::FORWARD) ||
-      (direction == EngineDirection::REVERSE) ||
+  if ((direction == EngineDirection::FORWARD) || (direction == EngineDirection::REVERSE) ||
       (direction == EngineDirection::CHANGE_DIRECTION)) {
     data.data[4] = static_cast<uint8_t>(direction);
     txCallback->SendPacket(identifier, data);
@@ -220,8 +210,7 @@ void Station::RequestEngineVelocity(Locomotive& engine) {
   txCallback->SendPacket(identifier, data);
 }
 
-void Station::SendEngineVelocity(Locomotive& engine,
-                                 Locomotive::Velocity_t velocity) {
+void Station::SendEngineVelocity(Locomotive& engine, Locomotive::Velocity_t velocity) {
   RR32Can::Identifier identifier{kLocoSpeed, this->senderHash};
   RR32Can::Data data;
   data.dlc = 6;
@@ -257,8 +246,7 @@ void Station::RequestEngineAllFunctions(Locomotive& engine) {
   }
 }
 
-void Station::SendEngineFunction(Locomotive& engine, uint8_t function,
-                                 bool value) {
+void Station::SendEngineFunction(Locomotive& engine, uint8_t function, bool value) {
   RR32Can::Identifier identifier{kLocoFunction, this->senderHash};
   RR32Can::Data data;
   data.dlc = 6;
@@ -299,15 +287,14 @@ void Station::SendSystemGo() {
   txCallback->SendPacket(identifier, data);
 }
 
-void Station::SendAccessoryPacket(RR32Can::MachineTurnoutAddress turnoutAddress,
-                                  TurnoutDirection direction, uint8_t power) {
+void Station::SendAccessoryPacket(RR32Can::MachineTurnoutAddress turnoutAddress, TurnoutDirection direction,
+                                  uint8_t power) {
   RR32Can::Identifier identifier{kAccessorySwitch, this->senderHash};
 
   RR32Can::TurnoutPacket payload;
   payload.locid = turnoutAddress.value();  // Set the turnout address
-  payload.locid |= 0x3000;  // whatever this does. The MS2 does it, though.
-  payload.position = RR32Can::TurnoutDirectionToIntegral<uint8_t>(
-      direction);  // Set the turnout direction
+  payload.locid |= 0x3000;                 // whatever this does. The MS2 does it, though.
+  payload.position = RR32Can::TurnoutDirectionToIntegral<uint8_t>(direction);  // Set the turnout direction
   payload.power = power;
 
   // Serialize the CAN packet and send it
@@ -315,16 +302,14 @@ void Station::SendAccessoryPacket(RR32Can::MachineTurnoutAddress turnoutAddress,
   payload.serialize(data);
 
 #if (LOG_CAN_OUT_MSG == STD_ON)
-  printf("Setting turnout %d to position %s %s\n", payload.locid & (~0x3000),
-         payload.position == 0 ? "RED " : "GREEN",
+  printf("Setting turnout %d to position %s %s\n", payload.locid & (~0x3000), payload.position == 0 ? "RED " : "GREEN",
          payload.power ? "(ON) " : "(OFF)");
 #endif
 
   txCallback->SendPacket(identifier, data);
 }
 
-void Station::HandlePacket(const RR32Can::Identifier& id,
-                           const RR32Can::Data& data) {
+void Station::HandlePacket(const RR32Can::Identifier& id, const RR32Can::Data& data) {
 #if LOG_CAN_RAW_MSG_IN == STD_ON
   id.printAll();
   printf("\n");
@@ -385,15 +370,15 @@ void Station::HandlePacket(const RR32Can::Identifier& id,
 }
 
 void Station::HandleAccessoryPacket(const RR32Can::Data& data) {
-  RR32Can::TurnoutPacket turnoutPacket =
-      RR32Can::TurnoutPacket::FromCanPacket(data);
+  RR32Can::TurnoutPacket turnoutPacket = RR32Can::TurnoutPacket::FromCanPacket(data);
   turnoutPacket.printAll();
 
   callback->OnAccessoryPacket(turnoutPacket);
 }
 
 Locomotive::Uid_t Station::uidFromData(const uint8_t* ptr) {
-  return (static_cast<Locomotive::Uid_t>(ptr[0]) << 24) | (static_cast<Locomotive::Uid_t>(ptr[1]) << 16) | (static_cast<Locomotive::Uid_t>(ptr[2]) << 8) | (ptr[3]);
+  return (static_cast<Locomotive::Uid_t>(ptr[0]) << 24) | (static_cast<Locomotive::Uid_t>(ptr[1]) << 16) |
+         (static_cast<Locomotive::Uid_t>(ptr[2]) << 8) | (ptr[3]);
 }
 
 Locomotive* Station::getLocoForData(const RR32Can::Data& data) {
@@ -410,8 +395,7 @@ void Station::HandleLocoDirection(const RR32Can::Data& data) {
     }
 
     EngineDirection direction = static_cast<EngineDirection>(data.data[4]);
-    if (direction == EngineDirection::FORWARD ||
-        direction == EngineDirection::REVERSE) {
+    if (direction == EngineDirection::FORWARD || direction == EngineDirection::REVERSE) {
       engine->setDirection(direction);
     } else if (direction == EngineDirection::CHANGE_DIRECTION) {
       engine->changeDirection();

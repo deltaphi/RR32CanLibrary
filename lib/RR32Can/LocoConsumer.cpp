@@ -6,7 +6,6 @@
 
 #include "RR32Can/StlAdapter.h"
 
-
 #include <RR32Can/LocoConsumer.h>
 #include "RR32Can_config.h"
 
@@ -24,8 +23,7 @@ const char* LocoConsumer::kEngineKeyAddress = "adresse";
 
 const char* LocoConsumer::kNoEngineSelected = "- No Engine -";
 
-void LocoConsumer::consumeConfigData(BufferManager& section, BufferManager& key,
-                                     BufferManager& value) {
+void LocoConsumer::consumeConfigData(BufferManager& section, BufferManager& key, BufferManager& value) {
 #if (LOG_CONFIG_DATA_STREAM_LEVEL >= LOG_CONFIG_DATA_STREAM_LEVEL_EVENTS)
   printf("EngineControl::consumeConfigData(\"%s\", \"%s\", \"%s\")\n", section.data(), key.data(), value.data());
 #endif

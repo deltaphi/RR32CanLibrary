@@ -63,13 +63,7 @@ class MachineTurnoutAddress : public TurnoutAddressBase {
 };
 
 /// Engine Direction
-enum class EngineDirection {
-  UNCHANGED = 0,
-  FORWARD = 1,
-  REVERSE = 2,
-  CHANGE_DIRECTION = 3,
-  UNKNOWN = 4
-};
+enum class EngineDirection { UNCHANGED = 0, FORWARD = 1, REVERSE = 2, CHANGE_DIRECTION = 3, UNKNOWN = 4 };
 
 EngineDirection switchDirection(EngineDirection);
 
@@ -82,9 +76,9 @@ enum class ConfigDataStreamType {
   MAGNETARTIKEL, /* Database of all configured accessories */
   FAHRSTRASSE,   /* Database of all configured multi-accessory paths */
   GLEISBILD,     /* Track layout */
-  LOKINFO, /* Information about a single engine sufficient for a slave device */
-  LOKNAMEN, /* Information about names of engines known to the master controller
-             */
+  LOKINFO,       /* Information about a single engine sufficient for a slave device */
+  LOKNAMEN,      /* Information about names of engines known to the master controller
+                  */
   MAGINFO,
   LOKDB,
   LDBVER

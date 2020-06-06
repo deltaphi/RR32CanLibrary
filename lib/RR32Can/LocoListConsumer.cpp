@@ -13,9 +13,7 @@ const char* LocoListConsumer::kFilenameEngineNames = "loknamen";
 const char* LocoListConsumer::kSectionNumEngines = "numloks";
 const char* LocoListConsumer::kGenericValue = "wert";
 
-void LocoListConsumer::consumeConfigData(BufferManager& section,
-                                         BufferManager& key,
-                                         BufferManager& value) {
+void LocoListConsumer::consumeConfigData(BufferManager& section, BufferManager& key, BufferManager& value) {
 #if (LOG_CONFIG_DATA_STREAM_LEVEL >= LOG_CONFIG_DATA_STREAM_LEVEL_EVENTS)
   printf("EngineBrowser::consumeConfigData(\"%s\", \"%s\", \"%s\")\n", section.data(), key.data(), value.data());
 #endif

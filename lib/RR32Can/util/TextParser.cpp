@@ -139,8 +139,7 @@ TextParser::size_type TextParser::processBuffer() {
   return consumedBytes;
 }
 
-TextParser::FindTokenResult TextParser::findToken(
-    uint8_t offset, const char* chars, BufferManager* destinationBuffer) {
+TextParser::FindTokenResult TextParser::findToken(uint8_t offset, const char* chars, BufferManager* destinationBuffer) {
   FindTokenResult result;
   result.consumed = buffer.findFirstOf(chars, offset);
 

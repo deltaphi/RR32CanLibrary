@@ -14,8 +14,8 @@
 namespace RR32Can {
 
 Identifier Identifier::GetIdentifier(uint8_t buffer[4]) {
-  uint32_t intermediateBits =
-      (static_cast<uint32_t>(buffer[0]) << 24) | (static_cast<uint32_t>(buffer[1]) << 16) | (static_cast<uint32_t>(buffer[2]) << 8) | buffer[1];
+  uint32_t intermediateBits = (static_cast<uint32_t>(buffer[0]) << 24) | (static_cast<uint32_t>(buffer[1]) << 16) |
+                              (static_cast<uint32_t>(buffer[2]) << 8) | buffer[1];
   return GetIdentifier(intermediateBits);
 }
 

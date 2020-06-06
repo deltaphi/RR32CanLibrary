@@ -27,8 +27,7 @@ class LocoListConsumer : public ConfigDataConsumer {
 
   uint8_t getStreamOffset() const { return streamOffset; }
 
-  void consumeConfigData(BufferManager& section, BufferManager& key,
-                         BufferManager& value) override;
+  void consumeConfigData(BufferManager& section, BufferManager& key, BufferManager& value) override;
   void setStreamComplete() override { streamComplete = true; }
   void setStreamAborted() override { reset(); }
 

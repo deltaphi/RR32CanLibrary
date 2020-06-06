@@ -1,6 +1,5 @@
 #include "RR32Can/util/ConfigDataStreamParser.h"
 
-
 #ifdef ARDUINO
 #include <Arduino.h>
 #else
@@ -97,7 +96,8 @@ void ConfigDataStreamParser::addMessage(const Data& data) {
 #if (LOG_CONFIG_DATA_STREAM_LEVEL >= LOG_CONFIG_DATA_STREAM_LEVEL_EVENTS)
             printf(
                 "CRC Error - Stream aborted. CRC requested: %#04x, CRC actual: "
-                "%#04x.\n", crc.getReference(), crc.getCrc());
+                "%#04x.\n",
+                crc.getReference(), crc.getCrc());
 #endif
             if (consumer != nullptr) {
               consumer->setStreamAborted();
@@ -105,8 +105,7 @@ void ConfigDataStreamParser::addMessage(const Data& data) {
           }
         } else {
 #if (LOG_CONFIG_DATA_STREAM_LEVEL >= LOG_CONFIG_DATA_STREAM_LEVEL_PACKETS)
-          printf("Stream continues. Bytes remaining: %i, Current CRC: %#04x\n",
-                 remainingBytes, crc.getCrc());
+          printf("Stream continues. Bytes remaining: %i, Current CRC: %#04x\n", remainingBytes, crc.getCrc());
 #endif
         }
       }

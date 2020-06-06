@@ -19,9 +19,7 @@ class LocomotiveShortInfo {
  public:
   enum class AvailabilityStatus { EMPTY = 0, NAME_KNOWN, FULL_DETAILS };
 
-  LocomotiveShortInfo() : availability(AvailabilityStatus::EMPTY) {
-    eraseName();
-  }
+  LocomotiveShortInfo() : availability(AvailabilityStatus::EMPTY) { eraseName(); }
 
   virtual ~LocomotiveShortInfo() = default;
 
@@ -42,8 +40,7 @@ class LocomotiveShortInfo {
    * \return True if the engine was changed, false otherwise.
    */
   bool setNameConditional(const char* name) {
-    if (availability == AvailabilityStatus::EMPTY ||
-        strncmp(name, this->name, kEngineNameLength) != 0) {
+    if (availability == AvailabilityStatus::EMPTY || strncmp(name, this->name, kEngineNameLength) != 0) {
       setName(name);
       return true;
     } else {
@@ -56,9 +53,7 @@ class LocomotiveShortInfo {
   AvailabilityStatus getAvailability() const { return availability; }
   bool isNameKnown() const { return availability != AvailabilityStatus::EMPTY; }
 
-  bool isNameOnlyKnown() const {
-    return availability == AvailabilityStatus::NAME_KNOWN;
-  }
+  bool isNameOnlyKnown() const { return availability == AvailabilityStatus::NAME_KNOWN; }
 
   bool isFree() const { return availability == AvailabilityStatus::EMPTY; }
 
@@ -101,9 +96,7 @@ class Locomotive : public LocomotiveShortInfo {
     memset(protocol, 0, kProtocolNameMaxLength);
   }
 
-  bool isFullDetailsKnown() const {
-    return availability == AvailabilityStatus::FULL_DETAILS;
-  }
+  bool isFullDetailsKnown() const { return availability == AvailabilityStatus::FULL_DETAILS; }
 
   void setUid(Uid_t uid) { this->uid = uid; }
   Uid_t getUid() const { return uid; }
@@ -114,9 +107,7 @@ class Locomotive : public LocomotiveShortInfo {
   void setVelocity(Velocity_t velocity) { this->velocity = velocity; }
   Velocity_t getVelocity() const { return velocity; }
 
-  void setDirection(RR32Can::EngineDirection direction) {
-    this->direction = direction;
-  }
+  void setDirection(RR32Can::EngineDirection direction) { this->direction = direction; }
   RR32Can::EngineDirection getDirection() const { return direction; }
   void changeDirection() {
     if (direction == EngineDirection::FORWARD) {
@@ -153,8 +144,7 @@ class Locomotive : public LocomotiveShortInfo {
 
   void print() const override;
 
-  void setProtocolString(const char* protocolString) { strncpy(protocol, protocolString, kProtocolNameMaxLength);
-  }
+  void setProtocolString(const char* protocolString) { strncpy(protocol, protocolString, kProtocolNameMaxLength); }
   const char* getProtocolString() const { return protocol; }
 
  protected:

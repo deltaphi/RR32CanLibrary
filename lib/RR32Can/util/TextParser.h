@@ -23,8 +23,7 @@ class TextParserFixture_FindToken_01_Test;
 class TextParserConsumer {
  public:
   virtual ~TextParserConsumer() = default;
-  virtual void consumeConfigData(BufferManager& section, BufferManager& key,
-                                 BufferManager& value) = 0;
+  virtual void consumeConfigData(BufferManager& section, BufferManager& key, BufferManager& value) = 0;
 };
 
 /**
@@ -99,8 +98,7 @@ class TextParser {
 
   /// Look for a state-changing character in the buffer and copy all matching
   /// characters to the destination.
-  FindTokenResult findToken(uint8_t offset, const char* stateChangingCharacters,
-                            BufferManager* destinationBuffer);
+  FindTokenResult findToken(uint8_t offset, const char* stateChangingCharacters, BufferManager* destinationBuffer);
 
   State parserState;
   TextParserConsumer* consumer = nullptr;

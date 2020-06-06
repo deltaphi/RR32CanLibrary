@@ -48,9 +48,7 @@ class Identifier {
   /**
    * \brief Determine the correct hash value given the address of this component
    */
-  void computeAndSetHash(uint32_t deviceUuid) {
-    hash = computeSenderHash(deviceUuid);
-  }
+  void computeAndSetHash(uint32_t deviceUuid) { hash = computeSenderHash(deviceUuid); }
 
   /**
    * \brief convert this Marklin Identifier into a 29bit CAN extended

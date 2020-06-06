@@ -19,8 +19,7 @@ class LocoConsumer : public RR32Can::ConfigDataConsumer {
   virtual ~LocoConsumer() = default;
 
   bool isValid() const {
-    return currentEngine != nullptr && currentEngine->isFullDetailsKnown() &&
-           !currentEngine->isFree();
+    return currentEngine != nullptr && currentEngine->isFullDetailsKnown() && !currentEngine->isFree();
   }
 
   Locomotive* getEngine() { return currentEngine; }
@@ -28,8 +27,7 @@ class LocoConsumer : public RR32Can::ConfigDataConsumer {
   void setEngine(Locomotive* engine) { this->currentEngine = engine; }
 
   /* Code for parsing Engine Parsing from Config Data Stream Code */
-  virtual void consumeConfigData(BufferManager& section, BufferManager& key,
-                                 BufferManager& value);
+  virtual void consumeConfigData(BufferManager& section, BufferManager& key, BufferManager& value);
 
   /**
    * \brief Notify that the stream is complete.

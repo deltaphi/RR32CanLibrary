@@ -9,7 +9,6 @@
 #include <cstring>
 #endif
 
-
 namespace RR32Can {
 
 class BufferManager {
@@ -21,14 +20,10 @@ class BufferManager {
 
   constexpr BufferManager() : BufferManager(nullptr, 0, 0) {}
 
-  constexpr BufferManager(value_type* buffer, size_type bufferLength)
-      : BufferManager(buffer, bufferLength, 0) {}
+  constexpr BufferManager(value_type* buffer, size_type bufferLength) : BufferManager(buffer, bufferLength, 0) {}
 
-  constexpr BufferManager(value_type* buffer, size_type bufferLength,
-                          size_type currentBufferLength)
-      : buffer(buffer),
-        currentBufferLength(currentBufferLength),
-        maxBufferLength(bufferLength) {}
+  constexpr BufferManager(value_type* buffer, size_type bufferLength, size_type currentBufferLength)
+      : buffer(buffer), currentBufferLength(currentBufferLength), maxBufferLength(bufferLength) {}
 
   BufferManager(const BufferManager&) = delete;
   BufferManager& operator=(const BufferManager&) = delete;
@@ -37,17 +32,11 @@ class BufferManager {
 
   ~BufferManager() = default;
 
-  size_type limitIndex(size_type index) const {
-    return index >= currentBufferLength ? currentBufferLength - 1 : index;
-  }
+  size_type limitIndex(size_type index) const { return index >= currentBufferLength ? currentBufferLength - 1 : index; }
 
-  value_type operator[](size_type index) const {
-    return buffer[limitIndex(index)];
-  }
+  value_type operator[](size_type index) const { return buffer[limitIndex(index)]; }
 
-  bool strncmp(const char* other) {
-    return 0 == (::strncmp(buffer, other, currentBufferLength));
-  }
+  bool strncmp(const char* other) { return 0 == (::strncmp(buffer, other, currentBufferLength)); }
 
   /*
    * \brief Get a reference to the character at the index.
@@ -70,9 +59,7 @@ class BufferManager {
 
   constexpr size_type capacity() const { return maxBufferLength; }
 
-  constexpr size_type capacity_remaining() const {
-    return maxBufferLength - currentBufferLength;
-  }
+  constexpr size_type capacity_remaining() const { return maxBufferLength - currentBufferLength; }
 
   constexpr bool full() const { return capacity_remaining() == 0; }
 
@@ -128,8 +115,7 @@ class BufferManager {
    * Results will definitely be surprising.
    */
   BufferManager subBufferManager(size_type start_offset) const;
-  BufferManager subBufferManager(size_type start_offset,
-                                 size_type end_offset) const;
+  BufferManager subBufferManager(size_type start_offset, size_type end_offset) const;
 
  private:
   value_type* buffer;
