@@ -64,6 +64,9 @@ add_executable(RR32CanTest
     lib/RR32Can/util/Crc.cpp
     "lib/RR32Can/util/utils.cpp"
     "lib/RR32Can/util/ConfigDataStreamParser.cpp"
-    "test/integration/StationTest.cpp")
+    "test/integration/StationTest.cpp"
+    "test/integration/EngineLibraryTest.cpp"
+    "test/data/ConfigData.cpp"
+    )
 target_link_libraries(RR32CanTest gtest_main gmock)
 add_test(NAME gtest_rr32can_test COMMAND RR32CanTest)

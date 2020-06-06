@@ -28,21 +28,23 @@ void Station::begin(uint16_t stationUUID, CallbackStruct& callbacks) {
 void Station::loop() {}
 
 void Station::FinishCurrentConfigRequest() {
-  expectedConfigData = ConfigDataStreamType::NONE;
-  configDataParser.reset();
+  if (callbacks.configData != nullptr) {
+    callbacks.configData->reset();
+    callbacks.configData = nullptr;
+  }
 }
 
 void Station::AbortCurrentConfigRequest() { FinishCurrentConfigRequest(); }
 
 void Station::HandleConfigDataStream(const RR32Can::Data& data) {
-  if (configDataParser.isProcessing()) {
+  if (callbacks.configData != nullptr && callbacks.configData->isProcessing()) {
 #if (LOG_CONFIG_DATA_STREAM_LEVEL >= LOG_CONFIG_DATA_STREAM_LEVEL_ALL)
     data.printAsHex();
     printf(" '");
     data.printAsText();
     printf("' ");
 #endif
-    configDataParser.addMessage(data);
+    callbacks.configData->addMessage(data);
 
   } else {
     // Unknown message or no message expected. Ignore.
@@ -107,8 +109,9 @@ void Station::HandleSystemCommand(const RR32Can::Data& data) {
   }
 }
 
-void Station::RequestEngineList(uint8_t offset, RR32Can::LocoListConsumer& configDataConsumer) {
+void Station::RequestEngineList(uint8_t offset, callback::ConfigDataCbk* configDataConsumer) {
   AbortCurrentConfigRequest();
+  callbacks.configData = configDataConsumer;
 
   Identifier id{kRequestConfigData, senderHash};
 
@@ -121,8 +124,10 @@ void Station::RequestEngineList(uint8_t offset, RR32Can::LocoListConsumer& confi
   Data data2;
   data2.dlc = snprintf(data2.dataAsString(), Data::kDataBufferLength, "%d %d", offset, kNumEngineNamesDownload);
   if (data2.dlc <= CanDataMaxLength) {
-    expectedConfigData = ConfigDataStreamType::LOKNAMEN;
-    configDataParser.startStream(&configDataConsumer);
+    // expectedConfigData = ConfigDataStreamType::LOKNAMEN;
+    if (callbacks.configData != nullptr) {
+      callbacks.configData->startStream();
+    }
     callbacks.tx->SendPacket(id, data1);
     callbacks.tx->SendPacket(id, data2);
   } else {
@@ -131,7 +136,7 @@ void Station::RequestEngineList(uint8_t offset, RR32Can::LocoListConsumer& confi
   }
 }
 
-void Station::RequestEngine(Locomotive& engine, RR32Can::LocoConsumer& configDataConsumer) {
+void Station::RequestEngine(Locomotive& engine, callback::ConfigDataCbk* configDataConsumer) {
   if (!engine.isNameKnown()) {
 #if LOG_CAN_OUT_MSG == STD_ON
     printf("Station::RequestEngine: No Engine Name given, dropping request.\n");
@@ -139,7 +144,7 @@ void Station::RequestEngine(Locomotive& engine, RR32Can::LocoConsumer& configDat
     return;
   }
 
-  if (expectedConfigData != ConfigDataStreamType::NONE) {
+  if (callbacks.configData != nullptr && callbacks.configData->isProcessing()) {
     /* Given an empty engine slot or a request is already in progress. Abort. */
 #if LOG_CAN_OUT_MSG == STD_ON
     printf("Station::RequestEngine: Request in progress, dropping request.\n");
@@ -149,8 +154,10 @@ void Station::RequestEngine(Locomotive& engine, RR32Can::LocoConsumer& configDat
 
   AbortCurrentConfigRequest();
 
-  expectedConfigData = ConfigDataStreamType::LOKINFO;
-  configDataParser.startStream(&configDataConsumer);
+  callbacks.configData = configDataConsumer;
+  if (callbacks.configData != nullptr) {
+    callbacks.configData->startStream();
+  }
 
   Identifier id{kRequestConfigData, senderHash};
   Data data;

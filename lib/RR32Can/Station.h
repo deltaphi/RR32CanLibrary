@@ -13,6 +13,7 @@
 
 #include "RR32Can/Types.h"
 #include "RR32Can/callback/AccessoryCbk.h"
+#include "RR32Can/callback/ConfigDataCbk.h"
 #include "RR32Can/callback/EngineCbk.h"
 #include "RR32Can/callback/SystemCbk.h"
 #include "RR32Can/callback/TxCbk.h"
@@ -33,6 +34,7 @@ class Station {
     callback::SystemCbk* system = nullptr;
     callback::EngineCbk* engine = nullptr;
     callback::AccessoryCbk* accessory = nullptr;
+    callback::ConfigDataCbk* configData = nullptr;
   } CallbackStruct;
 
   /* Initialization & Infrastructure */
@@ -72,8 +74,8 @@ class Station {
    *
    * \param engine An engine with its name set.
    */
-  void RequestEngine(Locomotive& engine, RR32Can::LocoConsumer& configDataConsumer);
-  void RequestEngineList(uint8_t offset, RR32Can::LocoListConsumer& configDataConsumer);
+  void RequestEngine(Locomotive& engine, callback::ConfigDataCbk* configDataConsumer);
+  void RequestEngineList(uint8_t offset, callback::ConfigDataCbk* configDataConsumer);
 
   void RequestEngineDirection(Locomotive& engine);
   void SendEngineDirection(Locomotive& engine, EngineDirection direction);
@@ -93,8 +95,6 @@ class Station {
 
   void notifyConfigStreamReceived() { FinishCurrentConfigRequest(); }
 
-  ConfigDataStreamParser::StreamState getConfigStreamState() const { return configDataParser.getStreamState(); }
-
  private:
   Locomotive* getLocoForData(const RR32Can::Data& data);
 
@@ -105,11 +105,7 @@ class Station {
   uint16_t senderHash;
 
   /* Set during begin() */
-  CallbackStruct callbacks;
-
-  /* Generic message handling */
-  ConfigDataStreamType expectedConfigData;
-  ConfigDataStreamParser configDataParser;
+  CallbackStruct callbacks; 
 };
 
 }  // namespace RR32Can

@@ -32,3 +32,10 @@ It has been tested successefully using MSVC 2017 Community Edition.
   * Decoded individual CAN messages
   * Decoder for configuration data streams
 * Station also offers a loco database. LocoDB can be used independently of Station class to allow sharing of one LocoDB between multiple Stations on the same processor.
+
+### Use Cases
+
+* Turnout Control -> AccessoryCbk
+* System Status -> SystemControlCbk
+* Engine Control -> EngineControlCbk
+* Engine Database Management -> Configuration Stream Download (configurable consumer)
