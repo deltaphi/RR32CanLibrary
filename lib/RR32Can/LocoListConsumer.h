@@ -44,7 +44,6 @@ class LocoListConsumer : public ConfigDataConsumer {
 
   // void fetchEngine(Engine& engine);
 
-  static const char* kFilenameEngineNames;
   static const char* kSectionNumEngines;
   static const char* kGenericValue;
 

@@ -13,8 +13,6 @@
 
 namespace RR32Can {
 
-const char* LocoConsumer::kFilenameEngine = "lokinfo";
-const char* LocoConsumer::kFilenameEngineResult = "lokomotive";
 const char* LocoConsumer::kEngineKeyUid = "uid";
 const char* LocoConsumer::kEngineKeyVelocity = "velocity";
 const char* LocoConsumer::kEngineKeyDirection = "richtung";
@@ -32,7 +30,7 @@ void LocoConsumer::consumeConfigData(BufferManager& section, BufferManager& key,
     return;
   }
 
-  if (strncmp(kFilenameEngineResult, section.data(), section.length()) == 0) {
+  if (strncmp(RR32Can::Filenames::kEngineResult, section.data(), section.length()) == 0) {
     /* It is a lokomotive */
     if (strncmp(kEngineKeyUid, key.data(), key.length()) == 0) {
       // UID

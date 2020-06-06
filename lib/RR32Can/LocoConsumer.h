@@ -43,7 +43,6 @@ class LocoConsumer : public RR32Can::ConfigDataConsumer {
 
  private:
   Locomotive* currentEngine;
-  static const char* kFilenameEngineResult;
   static const char* kNoEngineSelected;
   static const char* kEngineKeyUid;
   static const char* kEngineKeyVelocity;

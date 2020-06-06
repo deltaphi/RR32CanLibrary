@@ -125,6 +125,15 @@ constexpr uint16_t kDCCAddrStop = 0xFFFF;
 /// Upper limit for engine speed data
 constexpr Velocity_t kMaxEngineVelocity = 1000;
 
+// Filenames of configuration data files
+namespace Filenames {
+
+extern const char* kEngine;
+extern const char* kEngineResult;
+extern const char* kEngineNames;
+
+}  // namespace Filenames
+
 } /* namespace RR32Can */
 
 #endif

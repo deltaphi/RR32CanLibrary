@@ -3,6 +3,10 @@
 
 #include "RR32Can/Station.h"
 
+#include "RR32Can/LocoConsumer.h"
+#include "RR32Can/LocoListConsumer.h"
+#include "RR32Can/util/ConfigDataStreamParser.h"
+
 #include "data/ConfigData.h"
 #include "mocks/Mocks.h"
 

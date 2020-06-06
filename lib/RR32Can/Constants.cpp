@@ -10,4 +10,12 @@ const char* kProtocolNameSX2 = "SX2";
 const char* kProtocolNameDCC = "DCC";
 const char* kProtocolNameUnknown = "UNK";
 
+namespace Filenames {
+
+const char* kEngine = "lokinfo";
+const char* kEngineResult = "lokomotive";
+const char* kEngineNames = "loknamen";
+
+}  // namespace Filenames
+
 }  // namespace RR32Can

@@ -7,8 +7,6 @@
 #include <cstdint>
 #endif
 
-#include <RR32Can/LocoConsumer.h>
-#include <RR32Can/LocoListConsumer.h>
 #include <RR32Can/Locomotive.h>
 
 #include "RR32Can/Types.h"
@@ -19,8 +17,6 @@
 #include "RR32Can/callback/TxCbk.h"
 #include "RR32Can/messages/Data.h"
 #include "RR32Can/messages/Identifier.h"
-#include "RR32Can/util/ConfigDataConsumer.h"
-#include "RR32Can/util/ConfigDataStreamParser.h"
 
 namespace RR32Can {
 
@@ -105,7 +101,7 @@ class Station {
   uint16_t senderHash;
 
   /* Set during begin() */
-  CallbackStruct callbacks; 
+  CallbackStruct callbacks;
 };
 
 }  // namespace RR32Can

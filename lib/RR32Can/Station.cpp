@@ -8,13 +8,12 @@
 
 #include "RR32Can/Station.h"
 
+#include "RR32Can/Constants.h"
 #include "RR32Can/messages/Data.h"
 #include "RR32Can/messages/Identifier.h"
 #include "RR32Can/messages/TurnoutPacket.h"
 #include "RR32Can/util/utils.h"
 
-#include <RR32Can/LocoConsumer.h>
-#include <RR32Can/LocoListConsumer.h>
 #include "RR32Can_config.h"
 
 namespace RR32Can {
@@ -118,7 +117,7 @@ void Station::RequestEngineList(uint8_t offset, callback::ConfigDataCbk* configD
   /* First packet */
   Data data1;
   data1.dlc = 8;
-  strncpy(data1.dataAsString(), LocoListConsumer::kFilenameEngineNames, Data::kDataBufferLength);
+  strncpy(data1.dataAsString(), RR32Can::Filenames::kEngineNames, Data::kDataBufferLength);
 
   /* Second packet */
   Data data2;
@@ -164,7 +163,7 @@ void Station::RequestEngine(Locomotive& engine, callback::ConfigDataCbk* configD
 
   /* First packet */
   data.dlc = 8;
-  strncpy(data.dataAsString(), LocoConsumer::kFilenameEngine, Data::kDataBufferLength);
+  strncpy(data.dataAsString(), RR32Can::Filenames::kEngine, Data::kDataBufferLength);
   callbacks.tx->SendPacket(id, data);
 
   /* Second packet */

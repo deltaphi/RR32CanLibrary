@@ -9,7 +9,6 @@
 
 namespace RR32Can {
 
-const char* LocoListConsumer::kFilenameEngineNames = "loknamen";
 const char* LocoListConsumer::kSectionNumEngines = "numloks";
 const char* LocoListConsumer::kGenericValue = "wert";
 
@@ -18,7 +17,7 @@ void LocoListConsumer::consumeConfigData(BufferManager& section, BufferManager& 
   printf("EngineBrowser::consumeConfigData(\"%s\", \"%s\", \"%s\")\n", section.data(), key.data(), value.data());
 #endif
 
-  if (section.strncmp(kFilenameEngineNames)) {
+  if (section.strncmp(RR32Can::Filenames::kEngineNames)) {
     // Engine data
     LocomotiveShortInfo* freeEngine = findFirstFreeEntry();
     if (freeEngine == nullptr) {
