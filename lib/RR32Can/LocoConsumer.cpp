@@ -8,7 +8,7 @@
 
 
 #include <RR32Can/LocoConsumer.h>
-#include "config.h"
+#include "RR32Can_config.h"
 
 #include "RR32Can/RR32Can.h"
 

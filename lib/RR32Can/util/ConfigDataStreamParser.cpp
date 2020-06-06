@@ -7,7 +7,7 @@
 #include <cstdio>
 #endif
 
-#include <config.h>
+#include <RR32Can_config.h>
 
 namespace RR32Can {
 
