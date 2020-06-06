@@ -10,11 +10,14 @@ namespace RR32Can {
 
 constexpr uint8_t testData1NumChunks = 9;
 char testData1[testData1NumChunks][8 + 1] = {
+    // clang-format off
     "[lokname",  "n]\n  .we", "rt=BR 96", " 1234\n  ", ".wert=ET",
     " 515\n[nu", "mloks]\n ", " .wert=1", "2\n"};
+// clang-format on
 
 constexpr uint8_t testData2NumChunks = 141;
 char testData2[][8] = {
+    // clang-format off
     {0x5B, 0x6C, 0x6F, 0x6B, 0x6F, 0x6D, 0x6F, 0x74},   // [lokomot
     {0x69, 0x76, 0x65, 0x5D, 0x0A, 0x20, 0x20, 0x20},   // ive]\n___
     {0x6C, 0x6F, 0x6B, 0x0A, 0x20, 0x20, 0x20, 0x20},   // lok\n____
@@ -156,15 +159,13 @@ char testData2[][8] = {
     {0x3D, 0x30, 0x0A, 0x20, 0x20, 0x20, 0x20, 0x20},   //
     {0x20, 0x2E, 0x2E, 0x77, 0x65, 0x72, 0x74, 0x3D},   //
     {0x30, 0x0A, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20}};  //
+// clang-format on
 
 class CallbackMock : public RR32Can::TextParserConsumer {
  public:
-  MOCK_METHOD3(mocked_method,
-               void(const char* section, const char* key, const char* value));
+  MOCK_METHOD3(mocked_method, void(const char* section, const char* key, const char* value));
 
-  void consumeConfigData(RR32Can::BufferManager& section,
-                         RR32Can::BufferManager& key,
-                         RR32Can::BufferManager& value) {
+  void consumeConfigData(RR32Can::BufferManager& section, RR32Can::BufferManager& key, RR32Can::BufferManager& value) {
     mocked_method(section.data(), key.data(), value.data());
   }
 };
@@ -179,33 +180,26 @@ class TextParserFixture : public ::testing::Test {
   void SetUp() {
     mock = std::make_unique<::testing::StrictMock<CallbackMock>>();
     parser.setConsumer(mock.get());
-    EXPECT_EQ(RR32Can::TextParser::State::LOOKING_FOR_KEY_OR_SECTION_START,
-              parser.getState());
+    EXPECT_EQ(RR32Can::TextParser::State::LOOKING_FOR_KEY_OR_SECTION_START, parser.getState());
   }
 };
 
 TEST_F(TextParserFixture, reportError) {
-  EXPECT_CALL(
-      *mock, mocked_method(::testing::StrEq("ERROR"), ::testing::StrEq("ERROR"),
-                           ::testing::StrEq("ERROR")));
+  EXPECT_CALL(*mock, mocked_method(::testing::StrEq("ERROR"), ::testing::StrEq("ERROR"), ::testing::StrEq("ERROR")));
   reportParseError();
   // Parser is reset to initial state
   EXPECT_EQ(RR32Can::TextParser::State::ERROR, parser.getState());
 }
 
 TEST_F(TextParserFixture, oversized_data) {
-  char buffer[] =
-      "This data is muuuuuuch too long to fit into the input buffer.";
+  char buffer[] = "This data is muuuuuuch too long to fit into the input buffer.";
 
-  RR32Can::BufferManager::size_type length =
-      static_cast<RR32Can::BufferManager::size_type>(strlen(buffer));
+  RR32Can::BufferManager::size_type length = static_cast<RR32Can::BufferManager::size_type>(strlen(buffer));
   RR32Can::BufferManager mgr(buffer, length, length);
 
   EXPECT_LT(RR32Can::TextParser::kBufferLength, mgr.length());
 
-  EXPECT_CALL(
-      *mock, mocked_method(::testing::StrEq("ERROR"), ::testing::StrEq("ERROR"),
-                           ::testing::StrEq("ERROR")));
+  EXPECT_CALL(*mock, mocked_method(::testing::StrEq("ERROR"), ::testing::StrEq("ERROR"), ::testing::StrEq("ERROR")));
 
   parser.addText(mgr);
 
@@ -216,8 +210,7 @@ TEST_F(TextParserFixture, oversized_data) {
 TEST_F(TextParserFixture, oversized_data_exact) {
   char buffer[] = "This data is muuuuuuch too lon";
 
-  RR32Can::BufferManager::size_type length =
-      static_cast<RR32Can::BufferManager::size_type>(strlen(buffer));
+  RR32Can::BufferManager::size_type length = static_cast<RR32Can::BufferManager::size_type>(strlen(buffer));
   RR32Can::BufferManager mgr(buffer, length, length);
 
   EXPECT_EQ(RR32Can::TextParser::kBufferLength, mgr.length());
@@ -227,22 +220,18 @@ TEST_F(TextParserFixture, oversized_data_exact) {
   parser.addText(mgr);
 
   // Parser remains in initial state
-  EXPECT_EQ(RR32Can::TextParser::State::LOOKING_FOR_KEY_OR_SECTION_START,
-            parser.getState());
+  EXPECT_EQ(RR32Can::TextParser::State::LOOKING_FOR_KEY_OR_SECTION_START, parser.getState());
 }
 
 TEST_F(TextParserFixture, oversized_data_plusone) {
   char buffer[] = "This data is muuuuuuch too long";
 
-  RR32Can::BufferManager::size_type length =
-      static_cast<RR32Can::BufferManager::size_type>(strlen(buffer));
+  RR32Can::BufferManager::size_type length = static_cast<RR32Can::BufferManager::size_type>(strlen(buffer));
   RR32Can::BufferManager mgr(buffer, length, length);
 
   EXPECT_EQ(RR32Can::TextParser::kBufferLength + 1, mgr.length());
 
-  EXPECT_CALL(
-      *mock, mocked_method(::testing::StrEq("ERROR"), ::testing::StrEq("ERROR"),
-                           ::testing::StrEq("ERROR")));
+  EXPECT_CALL(*mock, mocked_method(::testing::StrEq("ERROR"), ::testing::StrEq("ERROR"), ::testing::StrEq("ERROR")));
 
   parser.addText(mgr);
 
@@ -254,13 +243,11 @@ TEST_F(TextParserFixture, FindToken_01) {
   parser.reset();
 
   char* buffer = testData1[0];
-  RR32Can::BufferManager::size_type length =
-      static_cast<RR32Can::BufferManager::size_type>(strlen(buffer));
+  RR32Can::BufferManager::size_type length = static_cast<RR32Can::BufferManager::size_type>(strlen(buffer));
   RR32Can::BufferManager mgr(buffer, length, length);
 
   parser.buffer.push_back(mgr);
-  RR32Can::TextParser::FindTokenResult result =
-      parser.findToken(0, RR32Can::TextParser::kKeyOrSectionStart, nullptr);
+  RR32Can::TextParser::FindTokenResult result = parser.findToken(0, RR32Can::TextParser::kKeyOrSectionStart, nullptr);
 
   EXPECT_TRUE(result.success);
   EXPECT_EQ(1, result.consumed);
@@ -271,8 +258,7 @@ TEST_F(TextParserFixture, FindToken_01) {
   parser.reset();
 
   parser.buffer.push_back(mgr);
-  result =
-      parser.findToken(1, RR32Can::TextParser::kSectionStop, &parser.section);
+  result = parser.findToken(1, RR32Can::TextParser::kSectionStop, &parser.section);
 
   EXPECT_FALSE(result.success);
   EXPECT_EQ(8, result.consumed);
@@ -287,8 +273,7 @@ TEST_F(TextParserFixture, FindToken_01) {
   mgr = RR32Can::BufferManager(buffer, length, length);
 
   parser.buffer.push_back(mgr);
-  result =
-      parser.findToken(0, RR32Can::TextParser::kSectionStop, &parser.section);
+  result = parser.findToken(0, RR32Can::TextParser::kSectionStop, &parser.section);
 
   EXPECT_TRUE(result.success);
   EXPECT_EQ(2, result.consumed);
@@ -299,22 +284,16 @@ TEST_F(TextParserFixture, FindToken_01) {
 }
 
 TEST_F(TextParserFixture, testData1) {
-  EXPECT_CALL(*mock, mocked_method(::testing::StrEq("loknamen"),
-                                   ::testing::StrEq("wert"),
-                                   ::testing::StrEq("BR 96 1234")));
-
-  EXPECT_CALL(*mock, mocked_method(::testing::StrEq("loknamen"),
-                                   ::testing::StrEq("wert"),
-                                   ::testing::StrEq("ET 515")));
-
   EXPECT_CALL(*mock,
-              mocked_method(::testing::StrEq("numloks"),
-                            ::testing::StrEq("wert"), ::testing::StrEq("12")));
+              mocked_method(::testing::StrEq("loknamen"), ::testing::StrEq("wert"), ::testing::StrEq("BR 96 1234")));
+
+  EXPECT_CALL(*mock, mocked_method(::testing::StrEq("loknamen"), ::testing::StrEq("wert"), ::testing::StrEq("ET 515")));
+
+  EXPECT_CALL(*mock, mocked_method(::testing::StrEq("numloks"), ::testing::StrEq("wert"), ::testing::StrEq("12")));
 
   for (uint8_t i = 0; i < testData1NumChunks; ++i) {
     char* buffer = testData1[i];
-    RR32Can::BufferManager::size_type length =
-        static_cast<RR32Can::BufferManager::size_type>(strlen(buffer));
+    RR32Can::BufferManager::size_type length = static_cast<RR32Can::BufferManager::size_type>(strlen(buffer));
     RR32Can::BufferManager mgr(buffer, length, length);
     if (i < testData1NumChunks - 1) {
       EXPECT_EQ(8, mgr.length());
@@ -326,97 +305,59 @@ TEST_F(TextParserFixture, testData1) {
   }
 
   // Parser is reset to initial state
-  EXPECT_EQ(RR32Can::TextParser::State::LOOKING_FOR_KEY_OR_SECTION_START,
-            parser.getState());
+  EXPECT_EQ(RR32Can::TextParser::State::LOOKING_FOR_KEY_OR_SECTION_START, parser.getState());
 }
 
 TEST_F(TextParserFixture, testData2) {
-  EXPECT_CALL(*mock, mocked_method(::testing::StrEq("lokomotive"),
-                                   ::testing::StrEq("uid"),
-                                   ::testing::StrEq("0xc00a")));
-
-  EXPECT_CALL(*mock, mocked_method(::testing::StrEq("lokomotive"),
-                                   ::testing::StrEq("name"),
-                                   ::testing::StrEq("98 1001")));
+  EXPECT_CALL(*mock,
+              mocked_method(::testing::StrEq("lokomotive"), ::testing::StrEq("uid"), ::testing::StrEq("0xc00a")));
 
   EXPECT_CALL(*mock,
-              mocked_method(::testing::StrEq("lokomotive"),
-                            ::testing::StrEq("typ"), ::testing::StrEq("dcc")));
+              mocked_method(::testing::StrEq("lokomotive"), ::testing::StrEq("name"), ::testing::StrEq("98 1001")));
 
-  EXPECT_CALL(*mock, mocked_method(::testing::StrEq("lokomotive"),
-                                   ::testing::StrEq("adresse"),
-                                   ::testing::StrEq("0xa")));
-
-  EXPECT_CALL(*mock, mocked_method(::testing::StrEq("lokomotive"),
-                                   ::testing::StrEq("mfxuid"),
-                                   ::testing::StrEq("0x1")));
+  EXPECT_CALL(*mock, mocked_method(::testing::StrEq("lokomotive"), ::testing::StrEq("typ"), ::testing::StrEq("dcc")));
 
   EXPECT_CALL(*mock,
-              mocked_method(::testing::StrEq("lokomotive"),
-                            ::testing::StrEq("symbol"), ::testing::StrEq("22")))
+              mocked_method(::testing::StrEq("lokomotive"), ::testing::StrEq("adresse"), ::testing::StrEq("0xa")));
+
+  EXPECT_CALL(*mock,
+              mocked_method(::testing::StrEq("lokomotive"), ::testing::StrEq("mfxuid"), ::testing::StrEq("0x1")));
+
+  EXPECT_CALL(*mock, mocked_method(::testing::StrEq("lokomotive"), ::testing::StrEq("symbol"), ::testing::StrEq("22")))
       .Times(2);
 
-  EXPECT_CALL(*mock,
-              mocked_method(::testing::StrEq("lokomotive"),
-                            ::testing::StrEq("av"), ::testing::StrEq("60")));
+  EXPECT_CALL(*mock, mocked_method(::testing::StrEq("lokomotive"), ::testing::StrEq("av"), ::testing::StrEq("60")));
+
+  EXPECT_CALL(*mock, mocked_method(::testing::StrEq("lokomotive"), ::testing::StrEq("bv"), ::testing::StrEq("40")));
 
   EXPECT_CALL(*mock,
-              mocked_method(::testing::StrEq("lokomotive"),
-                            ::testing::StrEq("bv"), ::testing::StrEq("40")));
-
-  EXPECT_CALL(*mock, mocked_method(::testing::StrEq("lokomotive"),
-                                   ::testing::StrEq("volume"),
-                                   ::testing::StrEq("100")));
-
-  EXPECT_CALL(*mock, mocked_method(::testing::StrEq("lokomotive"),
-                                   ::testing::StrEq("velocity"),
-                                   ::testing::StrEq("0")));
-
-  EXPECT_CALL(*mock, mocked_method(::testing::StrEq("lokomotive"),
-                                   ::testing::StrEq("richtung"),
-                                   ::testing::StrEq("0")));
+              mocked_method(::testing::StrEq("lokomotive"), ::testing::StrEq("volume"), ::testing::StrEq("100")));
 
   EXPECT_CALL(*mock,
-              mocked_method(::testing::StrEq("lokomotive"),
-                            ::testing::StrEq("vmax"), ::testing::StrEq("255")));
+              mocked_method(::testing::StrEq("lokomotive"), ::testing::StrEq("velocity"), ::testing::StrEq("0")));
 
   EXPECT_CALL(*mock,
-              mocked_method(::testing::StrEq("lokomotive"),
-                            ::testing::StrEq("vmin"), ::testing::StrEq("13")));
+              mocked_method(::testing::StrEq("lokomotive"), ::testing::StrEq("richtung"), ::testing::StrEq("0")));
 
-  EXPECT_CALL(*mock,
-              mocked_method(::testing::StrEq("lokomotive"),
-                            ::testing::StrEq("fkt"), ::testing::StrEq("")))
+  EXPECT_CALL(*mock, mocked_method(::testing::StrEq("lokomotive"), ::testing::StrEq("vmax"), ::testing::StrEq("255")));
+
+  EXPECT_CALL(*mock, mocked_method(::testing::StrEq("lokomotive"), ::testing::StrEq("vmin"), ::testing::StrEq("13")));
+
+  EXPECT_CALL(*mock, mocked_method(::testing::StrEq("lokomotive"), ::testing::StrEq("fkt"), ::testing::StrEq("")))
       .Times(16);
 
-  EXPECT_CALL(*mock,
-              mocked_method(::testing::StrEq("lokomotive"),
-                            ::testing::StrEq(".wert"), ::testing::StrEq("0")))
+  EXPECT_CALL(*mock, mocked_method(::testing::StrEq("lokomotive"), ::testing::StrEq(".wert"), ::testing::StrEq("0")))
       .Times(16);
 
-  EXPECT_CALL(*mock,
-              mocked_method(::testing::StrEq("lokomotive"),
-                            ::testing::StrEq(".typ"), ::testing::StrEq("4")));
-  EXPECT_CALL(*mock,
-              mocked_method(::testing::StrEq("lokomotive"),
-                            ::testing::StrEq(".typ"), ::testing::StrEq("51")));
-  EXPECT_CALL(*mock,
-              mocked_method(::testing::StrEq("lokomotive"),
-                            ::testing::StrEq(".typ"), ::testing::StrEq("52")));
-  EXPECT_CALL(*mock,
-              mocked_method(::testing::StrEq("lokomotive"),
-                            ::testing::StrEq(".typ"), ::testing::StrEq("53")));
-  EXPECT_CALL(*mock,
-              mocked_method(::testing::StrEq("lokomotive"),
-                            ::testing::StrEq(".typ"), ::testing::StrEq("8")));
-  EXPECT_CALL(*mock,
-              mocked_method(::testing::StrEq("lokomotive"),
-                            ::testing::StrEq(".typ"), ::testing::StrEq("0")))
+  EXPECT_CALL(*mock, mocked_method(::testing::StrEq("lokomotive"), ::testing::StrEq(".typ"), ::testing::StrEq("4")));
+  EXPECT_CALL(*mock, mocked_method(::testing::StrEq("lokomotive"), ::testing::StrEq(".typ"), ::testing::StrEq("51")));
+  EXPECT_CALL(*mock, mocked_method(::testing::StrEq("lokomotive"), ::testing::StrEq(".typ"), ::testing::StrEq("52")));
+  EXPECT_CALL(*mock, mocked_method(::testing::StrEq("lokomotive"), ::testing::StrEq(".typ"), ::testing::StrEq("53")));
+  EXPECT_CALL(*mock, mocked_method(::testing::StrEq("lokomotive"), ::testing::StrEq(".typ"), ::testing::StrEq("8")));
+  EXPECT_CALL(*mock, mocked_method(::testing::StrEq("lokomotive"), ::testing::StrEq(".typ"), ::testing::StrEq("0")))
       .Times(11);
 
-  EXPECT_CALL(*mock,
-              mocked_method(::testing::StrEq("lokomotive"),
-                            ::testing::StrEq(".dauer"), ::testing::StrEq("0")))
+  EXPECT_CALL(*mock, mocked_method(::testing::StrEq("lokomotive"), ::testing::StrEq(".dauer"), ::testing::StrEq("0")))
       .Times(16);
 
   for (uint8_t i = 0; i < testData2NumChunks; ++i) {
@@ -431,8 +372,7 @@ TEST_F(TextParserFixture, testData2) {
   }
   std::cout << std::endl;
   // Parser is reset to initial state
-  EXPECT_EQ(RR32Can::TextParser::State::LOOKING_FOR_KEY_OR_SECTION_START,
-            parser.getState());
+  EXPECT_EQ(RR32Can::TextParser::State::LOOKING_FOR_KEY_OR_SECTION_START, parser.getState());
 }
 
 } /* namespace RR32Can */
