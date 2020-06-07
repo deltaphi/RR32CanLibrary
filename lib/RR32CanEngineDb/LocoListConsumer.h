@@ -3,7 +3,7 @@
 
 #include <RR32Can/Locomotive.h>
 
-#include "RR32Can/util/ConfigDataConsumer.h"
+#include "RR32CanEngineDb/util/ConfigDataConsumer.h"
 
 namespace RR32Can {
 

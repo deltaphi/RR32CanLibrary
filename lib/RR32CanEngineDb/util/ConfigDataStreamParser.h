@@ -4,10 +4,10 @@
 #include "RR32Can/messages/Data.h"
 
 #include "RR32Can/callback/ConfigDataCbk.h"
-#include "RR32Can/util/BufferManager.h"
-#include "RR32Can/util/ConfigDataConsumer.h"
-#include "RR32Can/util/Crc.h"
-#include "RR32Can/util/TextParser.h"
+#include "RR32CanEngineDb/util/BufferManager.h"
+#include "RR32CanEngineDb/util/ConfigDataConsumer.h"
+#include "RR32CanEngineDb/util/Crc.h"
+#include "RR32CanEngineDb/util/TextParser.h"
 
 namespace RR32Can {
 

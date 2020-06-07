@@ -4,7 +4,7 @@
 
 #include "RR32Can/StlAdapter.h"
 
-#include <RR32Can/LocoListConsumer.h>
+#include <RR32CanEngineDb/LocoListConsumer.h>
 #include "RR32Can_config.h"
 
 namespace RR32Can {

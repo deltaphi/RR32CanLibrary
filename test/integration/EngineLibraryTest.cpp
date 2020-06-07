@@ -3,9 +3,9 @@
 
 #include "RR32Can/Station.h"
 
-#include "RR32Can/LocoConsumer.h"
-#include "RR32Can/LocoListConsumer.h"
-#include "RR32Can/util/ConfigDataStreamParser.h"
+#include "RR32CanEngineDb/LocoConsumer.h"
+#include "RR32CanEngineDb/LocoListConsumer.h"
+#include "RR32CanEngineDb/util/ConfigDataStreamParser.h"
 
 #include "data/ConfigData.h"
 #include "mocks/Mocks.h"

@@ -50,20 +50,22 @@ add_executable(RR32CanTest
     "lib/RR32Can/Station.cpp"
     "lib/RR32Can/Constants.cpp"
     "lib/RR32Can/Locomotive.cpp"
-    "lib/RR32Can/LocoConsumer.cpp"
-    "lib/RR32Can/LocoListConsumer.cpp"
+    "lib/RR32CanEngineDb/LocoConsumer.cpp"
+    "lib/RR32CanEngineDb/LocoListConsumer.cpp"
     "lib/RR32Can/Types.cpp"
     "lib/RR32Can/messages/Data.cpp"
     "lib/RR32Can/messages/Identifier.cpp"
     "lib/RR32Can/messages/TurnoutPacket.cpp"
-    lib/RR32Can/util/BufferManager.h
-    lib/RR32Can/util/BufferManager.cpp
-    lib/RR32Can/util/TextParser.h
-    lib/RR32Can/util/TextParser.cpp
-    lib/RR32Can/util/Crc.h
-    lib/RR32Can/util/Crc.cpp
+
+    "lib/RR32CanEngineDb/util/BufferManager.h"
+    "lib/RR32CanEngineDb/util/BufferManager.cpp"
+    "lib/RR32CanEngineDb/util/TextParser.h"
+    "lib/RR32CanEngineDb/util/TextParser.cpp"
+    "lib/RR32CanEngineDb/util/Crc.h"
+    "lib/RR32CanEngineDb/util/Crc.cpp"
     "lib/RR32Can/util/utils.cpp"
-    "lib/RR32Can/util/ConfigDataStreamParser.cpp"
+    "lib/RR32CanEngineDb/util/ConfigDataStreamParser.cpp"
+
     "test/integration/StationTest.cpp"
     "test/integration/EngineLibraryTest.cpp"
     "test/data/ConfigData.cpp"

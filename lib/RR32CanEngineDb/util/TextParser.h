@@ -7,7 +7,7 @@
 #include <cstdint>
 #endif
 
-#include "RR32Can/util/BufferManager.h"
+#include "RR32CanEngineDb/util/BufferManager.h"
 
 // Forward-declarations so that we can friend testcases
 class TextParserFixture;

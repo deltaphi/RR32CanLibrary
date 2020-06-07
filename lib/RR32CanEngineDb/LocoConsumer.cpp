@@ -6,7 +6,7 @@
 
 #include "RR32Can/StlAdapter.h"
 
-#include <RR32Can/LocoConsumer.h>
+#include <RR32CanEngineDb/LocoConsumer.h>
 #include "RR32Can_config.h"
 
 #include "RR32Can/RR32Can.h"

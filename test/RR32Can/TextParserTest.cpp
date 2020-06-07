@@ -4,7 +4,7 @@
 #include <functional>
 #include <memory>
 
-#include "RR32Can/util/TextParser.h"
+#include "RR32CanEngineDb/util/TextParser.h"
 #include "data/ConfigData.h"
 
 namespace RR32Can {
