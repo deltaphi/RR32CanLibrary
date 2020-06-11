@@ -125,11 +125,12 @@ TEST_F(StationTestFixture, SendAccessory) {
   station.SendAccessoryPacket(RR32Can::HumanTurnoutAddress(42), RR32Can::TurnoutDirection::GREEN, true);
 }
 
-TEST_F(StationTestFixture, ReceiveAccessory) {
+TEST_F(StationTestFixture, ReceiveAccessory_Request) {
   RR32Can::Identifier id;
   RR32Can::Data data;
 
   id.command = RR32Can::kAccessorySwitch;
+  id.response = false;
   data.dlc = 6;
   data.data[0] = 0;
   data.data[1] = 0;
@@ -144,7 +145,32 @@ TEST_F(StationTestFixture, ReceiveAccessory) {
       static_cast<std::underlying_type_t<RR32Can::TurnoutDirection>>(RR32Can::TurnoutDirection::GREEN);
   expectedPacket.power = true;
 
-  EXPECT_CALL(accessoryCbk, OnAccessoryPacket(expectedPacket));
+  EXPECT_CALL(accessoryCbk, OnAccessoryPacket(expectedPacket, false));
+
+  station.HandlePacket(id, data);
+}
+
+TEST_F(StationTestFixture, ReceiveAccessory_Response) {
+  RR32Can::Identifier id;
+  RR32Can::Data data;
+
+  id.command = RR32Can::kAccessorySwitch;
+  id.response = true;
+  data.dlc = 6;
+  data.data[0] = 0;
+  data.data[1] = 0;
+  data.data[2] = 0x30;  // MM2
+  data.data[3] = 0x29;
+  data.data[4] = 0x01;
+  data.data[5] = 0x01;
+
+  RR32Can::TurnoutPacket expectedPacket;
+  expectedPacket.locid = 0x3000 /* MM2 */ | RR32Can::MachineTurnoutAddress(RR32Can::HumanTurnoutAddress(42)).value();
+  expectedPacket.position =
+      static_cast<std::underlying_type_t<RR32Can::TurnoutDirection>>(RR32Can::TurnoutDirection::GREEN);
+  expectedPacket.power = true;
+
+  EXPECT_CALL(accessoryCbk, OnAccessoryPacket(expectedPacket, true));
 
   station.HandlePacket(id, data);
 }

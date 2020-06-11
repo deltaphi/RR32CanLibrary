@@ -38,7 +38,7 @@ class ConfigDataCbkMock : public RR32Can::callback::ConfigDataCbk {
 
 class AccessoryCbkMock : public RR32Can::callback::AccessoryCbk {
  public:
-  MOCK_METHOD(void, OnAccessoryPacket, (RR32Can::TurnoutPacket & packet), (override));
+  MOCK_METHOD(void, OnAccessoryPacket, (RR32Can::TurnoutPacket & packet, bool response), (override));
 };
 
 class StationTxCbkMock : public RR32Can::callback::TxCbk {
