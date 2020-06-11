@@ -69,6 +69,7 @@ add_executable(RR32CanTest
     "test/integration/StationTest.cpp"
     "test/integration/EngineLibraryTest.cpp"
     "test/data/ConfigData.cpp"
-    )
+    "test/RR32Can/MessagesTest.cpp"
+)
 target_link_libraries(RR32CanTest gtest_main gmock)
 add_test(NAME gtest_rr32can_test COMMAND RR32CanTest)
