@@ -47,7 +47,7 @@ class Station {
   /**
    * \brief Handle an incoming accessory command
    */
-  void HandleAccessoryPacket(const RR32Can::Data& data);
+  void HandleAccessoryPacket(const RR32Can::Data& data, bool response);
 
   void HandleConfigDataStream(const RR32Can::Data& data);
 

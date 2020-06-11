@@ -13,8 +13,11 @@ class AccessoryCbk {
  public:
   /**
    * \brief Called when an accessory packet was received.
+   * 
+   * \param packet The packet that was received.
+   * \param request Whether the packet was a request (false) or a response (true).
    */
-  virtual void OnAccessoryPacket(TurnoutPacket& packet) = 0;
+  virtual void OnAccessoryPacket(TurnoutPacket& packet, bool response) = 0;
 };
 
 }  // namespace callback

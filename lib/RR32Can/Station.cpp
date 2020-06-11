@@ -343,7 +343,7 @@ void Station::HandlePacket(const RR32Can::Identifier& id, const RR32Can::Data& d
 
     case RR32Can::kAccessorySwitch:
       printf("Accessory Switch. Details: ");
-      this->HandleAccessoryPacket(data);
+      this->HandleAccessoryPacket(data, id.response);
       printf("\n");
       break;
 
@@ -382,12 +382,12 @@ void Station::HandlePacket(const RR32Can::Identifier& id, const RR32Can::Data& d
   }
 }
 
-void Station::HandleAccessoryPacket(const RR32Can::Data& data) {
+void Station::HandleAccessoryPacket(const RR32Can::Data& data, bool request) {
   RR32Can::TurnoutPacket turnoutPacket = RR32Can::TurnoutPacket::FromCanPacket(data);
   turnoutPacket.printAll();
 
   if (callbacks.accessory != nullptr) {
-    callbacks.accessory->OnAccessoryPacket(turnoutPacket);
+    callbacks.accessory->OnAccessoryPacket(turnoutPacket, request);
   }
 }
 
