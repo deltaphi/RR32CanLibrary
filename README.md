@@ -2,7 +2,10 @@
 
 A library to create and parse Maerklin CAN protocol messages.
 
-This software is written in C++ and intended to be used on embedded devices such as the ESP32.
+This software is written in C++ and intended to be used on embedded devices.
+It was originally written for the ESP32 but has also been successfully used in an STM32F1.
+There is nothing in the software that prevents you from also using it in desktop software.
+Finally, the software has also been squeezed into an Atmega328. However, there are next to no resources left in the Atmega328 - YMMV.
 
 ![Windows CI](https://github.com/deltaphi/RR32CanLibrary/workflows/Windows%20CI/badge.svg?branch=master&event=push)
 ![Linux CI](https://github.com/deltaphi/RR32CanLibrary/workflows/Linux%20CI/badge.svg?branch=master&event=push)
