@@ -19,6 +19,8 @@ class BufferManagerFixture : public ::testing::Test {
   std::unique_ptr<RR32Can::BufferManager> mgr;
 };
 
+const uint8_t BufferManagerFixture::bufferSize;
+
 class BufferManagerFixtureWithData : public BufferManagerFixture {
  protected:
   void SetUp() {

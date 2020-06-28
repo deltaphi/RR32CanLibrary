@@ -8,6 +8,8 @@
 
 namespace RR32Can {
 
+const BufferManager::size_type BufferManager::npos;
+
 BufferManager::size_type BufferManager::findFirstOf(value_type character, size_type offset) const {
   if (offset >= currentBufferLength) {
     return npos;

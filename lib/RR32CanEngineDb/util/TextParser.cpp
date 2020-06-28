@@ -2,6 +2,9 @@
 
 namespace RR32Can {
 
+const TextParser::size_type TextParser::kBufferLength;
+
+
 TextParser::TextParser()
     : buffer(rawbuffer, kBufferLength + 1),
       section(rawsection, kSectionLength + 1),
