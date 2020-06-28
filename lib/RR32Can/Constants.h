@@ -130,22 +130,7 @@ constexpr LocId_t kSX2AddrStop = 0xBFFF;
 constexpr LocId_t kDCCAddrStart = 0xC000;
 constexpr LocId_t kDCCAddrStop = 0xFFFF;
 
-constexpr const LocId_t getAccessoryMask(RailProtocol proto) {
-  switch (proto) {
-    case RailProtocol::MM1:
-    case RailProtocol::MM2:
-    case RailProtocol::MFX:
-      return kMMAccessoryAddrStart;
-      break;
-    case RailProtocol::SX1:
-    case RailProtocol::SX2:
-      return kSX1AccessoryAddrStart;
-      break;
-    case RailProtocol::DCC:
-      return kDCCAccessoryAddrStart;
-      break;
-  }
-}
+LocId_t getAccessoryLocIdMask(RailProtocol proto);
 
 /// Upper limit for engine speed data
 constexpr Velocity_t kMaxEngineVelocity = 1000;

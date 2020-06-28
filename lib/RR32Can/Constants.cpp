@@ -18,4 +18,21 @@ const char* kEngineNames = "loknamen";
 
 }  // namespace Filenames
 
+LocId_t getAccessoryLocIdMask(RailProtocol proto) {
+  switch (proto) {
+    case RailProtocol::MM1:
+    case RailProtocol::MM2:
+    case RailProtocol::MFX:
+      return kMMAccessoryAddrStart;
+      break;
+    case RailProtocol::SX1:
+    case RailProtocol::SX2:
+      return kSX1AccessoryAddrStart;
+      break;
+    case RailProtocol::DCC:
+      return kDCCAccessoryAddrStart;
+      break;
+  }
+}
+
 }  // namespace RR32Can
