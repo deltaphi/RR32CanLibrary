@@ -50,16 +50,16 @@ class TextParser {
   /**
    * \brief Length of the parse buffer in characters
    */
-  constexpr static size_type kBufferLength = 30;
+  constexpr static const size_type kBufferLength = 30;
 
-  constexpr static size_type kSectionLength = 10;
-  constexpr static size_type kKeyLength = 10;
-  constexpr static size_type kValueLength = 25;
+  constexpr static const size_type kSectionLength = 10;
+  constexpr static const size_type kKeyLength = 10;
+  constexpr static const size_type kValueLength = 25;
 
   constexpr static const char* kKeyOrSectionStart = ".[";
-  constexpr static char kSectionStart = '[';
+  constexpr static const char kSectionStart = '[';
   constexpr static const char* kSectionStop = "]";
-  constexpr static char kKeyStart = '.';
+  constexpr static const char kKeyStart = '.';
   constexpr static const char* kKeyStop = "=";
 
   constexpr static const char* kValueStop = "\n";
