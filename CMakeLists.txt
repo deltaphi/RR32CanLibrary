@@ -43,10 +43,6 @@ enable_testing()
 include_directories("lib")
 include_directories("test")
 add_executable(RR32CanTest
-    test/RR32Can/BufferManagerTest.cpp
-    test/RR32Can/TextParserTest.cpp
-    test/RR32Can/CrcTest.cpp
-    
     "lib/RR32Can/Station.cpp"
     "lib/RR32Can/Constants.cpp"
     "lib/RR32Can/Locomotive.cpp"
@@ -70,6 +66,10 @@ add_executable(RR32CanTest
     "test/integration/EngineLibraryTest.cpp"
     "test/data/ConfigData.cpp"
     "test/RR32Can/MessagesTest.cpp"
+    "test/RR32Can/BufferManagerTest.cpp"
+    "test/RR32Can/TextParserTest.cpp"
+    "test/RR32Can/CrcTest.cpp"
+    "test/RR32Can/ConstantsTest.cpp"
 )
 target_link_libraries(RR32CanTest gtest_main gmock)
 add_test(NAME gtest_rr32can_test COMMAND RR32CanTest)

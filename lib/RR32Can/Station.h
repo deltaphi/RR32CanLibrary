@@ -56,7 +56,8 @@ class Station {
   /**
    * \brief Construct a Accessory command packet and send via CAN
    */
-  void SendAccessoryPacket(RR32Can::MachineTurnoutAddress turnoutAddress, TurnoutDirection direction, uint8_t power);
+  void SendAccessoryPacket(RR32Can::MachineTurnoutAddress turnoutAddress, RailProtocol protocol,
+                           TurnoutDirection direction, uint8_t power);
 
   /* Engine Database */
   void FinishCurrentConfigRequest();

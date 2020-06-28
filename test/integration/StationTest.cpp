@@ -107,7 +107,7 @@ TEST_F(StationTestFixture, SendStop) {
   station.SendSystemStop();
 }
 
-TEST_F(StationTestFixture, SendAccessory) {
+TEST_F(StationTestFixture, SendAccessory_MFX) {
   RR32Can::Identifier id;
   RR32Can::Data data;
 
@@ -122,7 +122,27 @@ TEST_F(StationTestFixture, SendAccessory) {
 
   EXPECT_CALL(txCbk, SendPacket(id, data));
 
-  station.SendAccessoryPacket(RR32Can::HumanTurnoutAddress(42), RR32Can::TurnoutDirection::GREEN, true);
+  station.SendAccessoryPacket(RR32Can::HumanTurnoutAddress(42), RR32Can::RailProtocol::MM2,
+                              RR32Can::TurnoutDirection::GREEN, true);
+}
+
+TEST_F(StationTestFixture, SendAccessory_DCC) {
+  RR32Can::Identifier id;
+  RR32Can::Data data;
+
+  id.command = RR32Can::kAccessorySwitch;
+  data.dlc = 6;
+  data.data[0] = 0;
+  data.data[1] = 0;
+  data.data[2] = 0x38;
+  data.data[3] = 0x29;
+  data.data[4] = 0x01;
+  data.data[5] = 0x01;
+
+  EXPECT_CALL(txCbk, SendPacket(id, data));
+
+  station.SendAccessoryPacket(RR32Can::HumanTurnoutAddress(42), RR32Can::RailProtocol::DCC,
+                              RR32Can::TurnoutDirection::GREEN, true);
 }
 
 TEST_F(StationTestFixture, ReceiveAccessory_Request) {

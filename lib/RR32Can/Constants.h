@@ -90,6 +90,8 @@ constexpr const MachineTurnoutAddress kTurnoutAddressMax = 319;
 
 // Address ranges for engine protocols
 
+enum class RailProtocol { MM1, MM2, MFX, SX1, SX2, DCC };
+
 extern const char* kProtocolNameMM1;
 extern const char* kProtocolNameMM2;
 extern const char* kProtocolNameMFX;
@@ -98,29 +100,52 @@ extern const char* kProtocolNameSX2;
 extern const char* kProtocolNameDCC;
 extern const char* kProtocolNameUnknown;
 
-constexpr uint16_t kMMEngineFunctionAddrStart = 0x0000;
-constexpr uint16_t kMMEngineFunctionAddrStop = 0x03FF;
+constexpr LocId_t kMMEngineFunctionAddrStart = 0x0000;
+constexpr LocId_t kMMEngineFunctionAddrStop = 0x03FF;
 
-constexpr uint16_t kSX1AddrStart = 0x0800;
-constexpr uint16_t kSX1AddrStop = 0x0BFF;
+constexpr LocId_t kSX1AddrStart = 0x0800;
+constexpr LocId_t kSX1AddrStop = 0x0BFF;
 
-constexpr uint16_t kMMFunctionAddrStart = 0x1000;
-constexpr uint16_t kMMFunctionAddrStop = 0x13FF;
+constexpr LocId_t kMMFunctionAddrStart = 0x1000;
+constexpr LocId_t kMMFunctionAddrStop = 0x13FF;
 
-constexpr uint16_t kMMEngineAddrStart = 0x2000;
-constexpr uint16_t kMMEngineAddrStop = 0x23FF;
+constexpr LocId_t kMMEngineAddrStart = 0x2000;
+constexpr LocId_t kMMEngineAddrStop = 0x23FF;
 
-constexpr uint16_t kMMAccessoryAddrStart = 0x3000;
-constexpr uint16_t kMMAccessoryAddrStop = 0x33FF;
+constexpr LocId_t kSX1AccessoryAddrStart = 0x2800;
+constexpr LocId_t kSX1AccessoryAddrStop = 0x2BFF;
 
-constexpr uint16_t kMFXAddrStart = 0x4000;
-constexpr uint16_t kMFXAddrStop = 0x7FFF;
+constexpr LocId_t kMMAccessoryAddrStart = 0x3000;
+constexpr LocId_t kMMAccessoryAddrStop = 0x33FF;
 
-constexpr uint16_t kSX2AddrStart = 0x8000;
-constexpr uint16_t kSX2AddrStop = 0xBFFF;
+constexpr LocId_t kDCCAccessoryAddrStart = 0x3800;
+constexpr LocId_t kDCCccessoryAddrStop = 0x3FFF;
 
-constexpr uint16_t kDCCAddrStart = 0xC000;
-constexpr uint16_t kDCCAddrStop = 0xFFFF;
+constexpr LocId_t kMFXAddrStart = 0x4000;
+constexpr LocId_t kMFXAddrStop = 0x7FFF;
+
+constexpr LocId_t kSX2AddrStart = 0x8000;
+constexpr LocId_t kSX2AddrStop = 0xBFFF;
+
+constexpr LocId_t kDCCAddrStart = 0xC000;
+constexpr LocId_t kDCCAddrStop = 0xFFFF;
+
+constexpr const LocId_t getAccessoryMask(RailProtocol proto) {
+  switch (proto) {
+    case RailProtocol::MM1:
+    case RailProtocol::MM2:
+    case RailProtocol::MFX:
+      return kMMAccessoryAddrStart;
+      break;
+    case RailProtocol::SX1:
+    case RailProtocol::SX2:
+      return kSX1AccessoryAddrStart;
+      break;
+    case RailProtocol::DCC:
+      return kDCCAccessoryAddrStart;
+      break;
+  }
+}
 
 /// Upper limit for engine speed data
 constexpr Velocity_t kMaxEngineVelocity = 1000;

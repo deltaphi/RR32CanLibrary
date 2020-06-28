@@ -300,13 +300,13 @@ void Station::SendSystemGo() {
   callbacks.tx->SendPacket(identifier, data);
 }
 
-void Station::SendAccessoryPacket(RR32Can::MachineTurnoutAddress turnoutAddress, TurnoutDirection direction,
-                                  uint8_t power) {
+void Station::SendAccessoryPacket(RR32Can::MachineTurnoutAddress turnoutAddress, RailProtocol protocol,
+                                  TurnoutDirection direction, uint8_t power) {
   RR32Can::Identifier identifier{kAccessorySwitch, this->senderHash};
 
   RR32Can::TurnoutPacket payload;
   payload.locid = turnoutAddress.value();  // Set the turnout address
-  payload.locid |= 0x3000;                 // whatever this does. The MS2 does it, though.
+  payload.locid |= getAccessoryMask(protocol);
   payload.position = RR32Can::TurnoutDirectionToIntegral<uint8_t>(direction);  // Set the turnout direction
   payload.power = power;
 

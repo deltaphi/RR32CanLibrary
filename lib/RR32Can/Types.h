@@ -22,6 +22,8 @@ constexpr TurnoutDirection TurnoutDirectionFromIntegral(IntegralType dir) {
   return (dir == 0) ? TurnoutDirection::RED : TurnoutDirection::GREEN;
 }
 
+using LocId_t = uint16_t;
+
 /**
  * \brief Base class for all turnout addresses.
  *
@@ -31,7 +33,7 @@ constexpr TurnoutDirection TurnoutDirectionFromIntegral(IntegralType dir) {
  */
 class TurnoutAddressBase {
  public:
-  using value_type = uint16_t;
+  using value_type = LocId_t;
   constexpr value_type value() const { return addr; }
 
   TurnoutAddressBase() = default;
