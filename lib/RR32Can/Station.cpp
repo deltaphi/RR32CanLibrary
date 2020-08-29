@@ -343,7 +343,7 @@ void Station::HandlePacket(const RR32Can::Identifier& id, const RR32Can::Data& d
 
     case RR32Can::kAccessorySwitch:
       printf("Accessory Switch. Details: ");
-      this->HandleAccessoryPacket(data, id.response);
+      this->HandleAccessoryPacket(data, id.response_);
       printf("\n");
       break;
 

@@ -14,7 +14,7 @@ TextParser::TextParser()
 
 void TextParser::reset() {
   parserState = State::LOOKING_FOR_KEY_OR_SECTION_START;
-  consumer = nullptr;
+  consumer_ = nullptr;
   buffer.erase();
   section.erase();
   key.erase();
@@ -27,8 +27,8 @@ void TextParser::reportParseError() {
   section.set(msg);
   key.set(msg);
   value.set(msg);
-  if (consumer != nullptr) {
-    consumer->consumeConfigData(section, key, value);
+  if (consumer_ != nullptr) {
+    consumer_->consumeConfigData(section, key, value);
   }
 }
 
@@ -96,8 +96,8 @@ TextParser::size_type TextParser::processBuffer() {
           } else if (parseResult.matchingChar == kValueStop[0]) {
             // Report the current key without a value
             value.erase();
-            if (consumer != nullptr) {
-              consumer->consumeConfigData(section, key, value);
+            if (consumer_ != nullptr) {
+              consumer_->consumeConfigData(section, key, value);
             }
             key.erase();
             parserState = State::LOOKING_FOR_KEY_OR_SECTION_START;
@@ -122,8 +122,8 @@ TextParser::size_type TextParser::processBuffer() {
       case State::PARSING_VALUE: {
         parseResult = findToken(consumedBytes, kValueStop, &value);
         if (parseResult.success) {
-          if (consumer != nullptr) {
-            consumer->consumeConfigData(section, key, value);
+          if (consumer_ != nullptr) {
+            consumer_->consumeConfigData(section, key, value);
           }
           key.erase();
           value.erase();

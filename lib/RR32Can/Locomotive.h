@@ -19,19 +19,19 @@ class LocomotiveShortInfo {
  public:
   enum class AvailabilityStatus { EMPTY = 0, NAME_KNOWN, FULL_DETAILS };
 
-  LocomotiveShortInfo() : availability(AvailabilityStatus::EMPTY) { eraseName(); }
+  LocomotiveShortInfo() : availability_(AvailabilityStatus::EMPTY) { eraseName(); }
 
   virtual ~LocomotiveShortInfo() = default;
 
   virtual void reset() {
-    availability = AvailabilityStatus::EMPTY;
+    availability_ = AvailabilityStatus::EMPTY;
     eraseName();
   }
 
   void setName(const char* name) {
     reset();
-    availability = AvailabilityStatus::NAME_KNOWN;
-    strncpy(this->name, name, kEngineNameLength);
+    availability_ = AvailabilityStatus::NAME_KNOWN;
+    strncpy(this->name_, name, kEngineNameLength);
   }
 
   /**
@@ -40,7 +40,7 @@ class LocomotiveShortInfo {
    * \return True if the engine was changed, false otherwise.
    */
   bool setNameConditional(const char* name) {
-    if (availability == AvailabilityStatus::EMPTY || strncmp(name, this->name, kEngineNameLength) != 0) {
+    if (availability_ == AvailabilityStatus::EMPTY || strncmp(name, this->name_, kEngineNameLength) != 0) {
       setName(name);
       return true;
     } else {
@@ -48,22 +48,22 @@ class LocomotiveShortInfo {
     }
   }
 
-  const char* getName() const { return name; }
+  const char* getName() const { return name_; }
 
-  AvailabilityStatus getAvailability() const { return availability; }
-  bool isNameKnown() const { return availability != AvailabilityStatus::EMPTY; }
+  AvailabilityStatus getAvailability() const { return availability_; }
+  bool isNameKnown() const { return availability_ != AvailabilityStatus::EMPTY; }
 
-  bool isNameOnlyKnown() const { return availability == AvailabilityStatus::NAME_KNOWN; }
+  bool isNameOnlyKnown() const { return availability_ == AvailabilityStatus::NAME_KNOWN; }
 
-  bool isFree() const { return availability == AvailabilityStatus::EMPTY; }
+  bool isFree() const { return availability_ == AvailabilityStatus::EMPTY; }
 
   virtual void print() const;
 
  protected:
-  AvailabilityStatus availability;
-  char name[kEngineNameLength + 1];
+  AvailabilityStatus availability_;
+  char name_[kEngineNameLength + 1];
 
-  void eraseName() { memset(this->name, '\0', kEngineNameLength + 1); }
+  void eraseName() { memset(this->name_, '\0', kEngineNameLength + 1); }
 
   friend class LocoConsumer;
 };
@@ -96,7 +96,7 @@ class Locomotive : public LocomotiveShortInfo {
     memset(protocol_, 0, kProtocolNameMaxLength);
   }
 
-  bool isFullDetailsKnown() const { return availability == AvailabilityStatus::FULL_DETAILS; }
+  bool isFullDetailsKnown() const { return availability_ == AvailabilityStatus::FULL_DETAILS; }
 
   void setUid(Uid_t uid) { this->uid_ = uid; }
   Uid_t getUid() const { return uid_; }

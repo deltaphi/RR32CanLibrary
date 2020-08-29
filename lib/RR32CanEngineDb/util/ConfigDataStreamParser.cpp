@@ -23,16 +23,16 @@ void ConfigDataStreamParser::addMessage(const Data& data) {
 
       if (data.dlc == 6 || data.dlc == 7) {
         // Initial uncompressed
-        remainingBytes = (static_cast<uint32_t>(data.data[0]) << 24) | (static_cast<uint32_t>(data.data[1]) << 16) |
+        remainingBytes_ = (static_cast<uint32_t>(data.data[0]) << 24) | (static_cast<uint32_t>(data.data[1]) << 16) |
                          (static_cast<uint32_t>(data.data[2]) << 8) | (data.data[3]);
         uint16_t crc = (data.data[4] << 8) | (data.data[5]);
-        this->crc.loadReference(crc);
+        this->crc_.loadReference(crc);
 
 #if (LOG_CONFIG_DATA_STREAM_LEVEL >= LOG_CONFIG_DATA_STREAM_LEVEL_PACKETS)
         printf(
             " Stream length: %i Bytes. CRC requested: %#04x CRC actual: "
             "%#04x.\n",
-            remainingBytes, crc, this->crc.getCrc());
+            remainingBytes_, crc_, this->crc_.getCrc());
 
         if (data.dlc == 7) {
           // Initial compressed
@@ -40,7 +40,7 @@ void ConfigDataStreamParser::addMessage(const Data& data) {
         }
 #endif
 
-        if (remainingBytes > 0) {
+        if (remainingBytes_ > 0) {
           streamState = StreamState::WAITING_DATA_PACKET;
         } else {
           streamState = StreamState::STREAM_DONE;
@@ -68,9 +68,9 @@ void ConfigDataStreamParser::addMessage(const Data& data) {
         data.printAsText();
 #endif
 
-        remainingBytes -= data.dlc;
+        remainingBytes_ -= data.dlc;
         for (int i = 0; i < data.dlc; ++i) {
-          crc.updateCrc(data.data[i]);
+          crc_.updateCrc(data.data[i]);
         }
 
         // TODO: Remove this string copy. Requires BufferManager to be
@@ -79,16 +79,16 @@ void ConfigDataStreamParser::addMessage(const Data& data) {
         strncpy(buffer, data.dataAsString(), CanDataMaxLength);
 
         BufferManager input(buffer, data.dlc, CanDataMaxLength);
-        textParser.addText(input);
+        textParser_.addText(input);
 
-        if (remainingBytes == 0) {
-          if (crc.isCrcValid()) {
+        if (remainingBytes_ == 0) {
+          if (crc_.isCrcValid()) {
             streamState = StreamState::STREAM_DONE;
 #if (LOG_CONFIG_DATA_STREAM_LEVEL >= LOG_CONFIG_DATA_STREAM_LEVEL_EVENTS)
             printf("Stream complete!\n");
 #endif
-            if (consumer != nullptr) {
-              consumer->setStreamComplete();
+            if (consumer_ != nullptr) {
+              consumer_->setStreamComplete();
             }
 
           } else {
@@ -97,15 +97,15 @@ void ConfigDataStreamParser::addMessage(const Data& data) {
             printf(
                 "CRC Error - Stream aborted. CRC requested: %#04x, CRC actual: "
                 "%#04x.\n",
-                crc.getReference(), crc.getCrc());
+                crc_.getReference(), crc_.getCrc());
 #endif
-            if (consumer != nullptr) {
-              consumer->setStreamAborted();
+            if (consumer_ != nullptr) {
+              consumer_->setStreamAborted();
             }
           }
         } else {
 #if (LOG_CONFIG_DATA_STREAM_LEVEL >= LOG_CONFIG_DATA_STREAM_LEVEL_PACKETS)
-          printf("Stream continues. Bytes remaining: %i, Current CRC: %#04x\n", remainingBytes, crc.getCrc());
+          printf("Stream continues. Bytes remaining: %i, Current CRC: %#04x\n", remainingBytes_, crc_.getCrc());
 #endif
         }
       }

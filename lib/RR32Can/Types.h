@@ -34,13 +34,13 @@ using LocId_t = uint16_t;
 class TurnoutAddressBase {
  public:
   using value_type = LocId_t;
-  constexpr value_type value() const { return addr; }
+  constexpr value_type value() const { return addr_; }
 
-  TurnoutAddressBase() = default;
-  constexpr TurnoutAddressBase(value_type addr) : addr(addr) {}
+  TurnoutAddressBase(): addr_(0) {};
+  constexpr TurnoutAddressBase(value_type addr) : addr_(addr) {}
 
  private:
-  value_type addr;
+  value_type addr_;
 };
 
 class MachineTurnoutAddress;

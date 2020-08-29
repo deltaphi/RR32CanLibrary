@@ -66,7 +66,7 @@ class TextParser {
 
   TextParser();
 
-  void setConsumer(TextParserConsumer* consumer) { this->consumer = consumer; }
+  void setConsumer(TextParserConsumer* consumer) { this->consumer_ = consumer; }
 
   /// Erase all buffers and set the parser to the initial state
   void reset();
@@ -101,7 +101,7 @@ class TextParser {
   FindTokenResult findToken(uint8_t offset, const char* stateChangingCharacters, BufferManager* destinationBuffer);
 
   State parserState;
-  TextParserConsumer* consumer = nullptr;
+  TextParserConsumer* consumer_ = nullptr;
 
   BufferManager::value_type rawbuffer[kBufferLength + 1];
   BufferManager buffer;

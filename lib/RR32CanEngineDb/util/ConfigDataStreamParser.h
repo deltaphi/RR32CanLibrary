@@ -18,35 +18,35 @@ class ConfigDataStreamParser : public RR32Can::callback::ConfigDataCbk {
  public:
   void startStream() override {
     streamState = StreamState::WAITING_FIRST_PACKET;
-    crc.reset();
+    crc_.reset();
   }
 
   void startStream(ConfigDataConsumer* consumer) {
-    this->consumer = consumer;
-    textParser.setConsumer(consumer);
+    this->consumer_ = consumer;
+    textParser_.setConsumer(consumer);
   }
 
   void addMessage(const RR32Can::Data& data) override;
 
   void reset() override {
     if (streamState == StreamState::WAITING_FIRST_PACKET || streamState == StreamState::WAITING_DATA_PACKET) {
-      if (consumer != nullptr) {
-        consumer->setStreamAborted();
+      if (consumer_ != nullptr) {
+        consumer_->setStreamAborted();
       }
     }
 
     streamState = StreamState::IDLE;
-    remainingBytes = 0;
-    textParser.reset();
-    crc.reset();
-    consumer = nullptr;
+    remainingBytes_ = 0;
+    textParser_.reset();
+    crc_.reset();
+    consumer_ = nullptr;
   }
 
  private:
-  uint32_t remainingBytes = 0;
-  TextParser textParser;
-  Crc crc;
-  ConfigDataConsumer* consumer = nullptr;
+  uint32_t remainingBytes_ = 0;
+  TextParser textParser_;
+  Crc crc_;
+  ConfigDataConsumer* consumer_ = nullptr;
 };
 
 }  // namespace RR32Can
