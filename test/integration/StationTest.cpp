@@ -150,7 +150,7 @@ TEST_F(StationTestFixture, ReceiveAccessory_Request) {
   RR32Can::Data data;
 
   id.command_ = RR32Can::kAccessorySwitch;
-  id.response = false;
+  id.response_ = false;
   data.dlc = 6;
   data.data[0] = 0;
   data.data[1] = 0;
@@ -175,7 +175,7 @@ TEST_F(StationTestFixture, ReceiveAccessory_Response) {
   RR32Can::Data data;
 
   id.command_ = RR32Can::kAccessorySwitch;
-  id.response = true;
+  id.response_ = true;
   data.dlc = 6;
   data.data[0] = 0;
   data.data[1] = 0;

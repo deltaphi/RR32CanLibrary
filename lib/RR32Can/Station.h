@@ -99,7 +99,7 @@ class Station {
   static void uidToData(uint8_t* ptr, Locomotive::Uid_t uid);
 
   /* Initialization & Infrastructure */
-  uint16_t senderHash_;
+  uint16_t senderHash_ = 0;
 
   /* Set during begin() */
   CallbackStruct callbacks_;
