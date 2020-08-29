@@ -20,7 +20,7 @@ class Identifier {
   uint8_t prio = 0;  // 4 bit
 
   /// The Marklin command
-  uint8_t command = 0;
+  uint8_t command_ = 0;
 
   /// Whether this is a response packet
   bool response = false;  // 1 bit
@@ -29,10 +29,10 @@ class Identifier {
   uint16_t hash = 0;
 
   Identifier() = default;
-  Identifier(uint8_t command, uint16_t hash) : command(command), hash(hash) {}
+  Identifier(uint8_t command, uint16_t hash) : command_(command), hash(hash) {}
 
   bool operator==(const Identifier& other) const {
-    return prio == other.prio && command == other.command && response == other.response && hash == other.hash;
+    return prio == other.prio && command_ == other.command_ && response == other.response && hash == other.hash;
   }
 
   /**

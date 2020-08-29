@@ -28,7 +28,7 @@ Identifier Identifier::GetIdentifier(unsigned long packetId) {
   id.response = (packetId & 0x01) != 0;
   packetId >>= 1;  // Shift away response bit
 
-  id.command = static_cast<uint8_t>(packetId & 0xFF);
+  id.command_ = static_cast<uint8_t>(packetId & 0xFF);
   packetId >>= 8;  // Shift away command bit
 
   id.prio = static_cast<uint8_t>(packetId & 0x0F);
@@ -40,7 +40,7 @@ unsigned long Identifier::makeIdentifier() const {
   unsigned long packetId;
 
   packetId = static_cast<unsigned long>(prio) << (16 + 1 + 8);
-  packetId |= static_cast<unsigned long>(command) << (16 + 1);
+  packetId |= static_cast<unsigned long>(command_) << (16 + 1);
   packetId |= static_cast<unsigned long>(response) << (16);
   packetId |= hash;
 
@@ -48,7 +48,7 @@ unsigned long Identifier::makeIdentifier() const {
 }
 
 void Identifier::printAll() const {
-  printf("Prio: %#04X, Command: %#04X, Response: %#04X, Hash: %#06X", prio, command, response, hash);
+  printf("Prio: %#04X, Command: %#04X, Response: %#04X, Hash: %#06X", prio, command_, response, hash);
 }
 
 } /* namespace RR32Can */
