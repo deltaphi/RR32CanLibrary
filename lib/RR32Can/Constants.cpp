@@ -33,7 +33,7 @@ LocId_t getAccessoryLocIdMask(RailProtocol proto) {
       return kDCCAccessoryAddrStart;
       break;
     default:
-      return 0xFF00; // Guard Value that shows up as an error.
+      return 0xFF00;  // Guard Value that shows up as an error.
   }
 }
 

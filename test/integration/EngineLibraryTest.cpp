@@ -26,7 +26,7 @@ class LocolistTestFixture : public ::testing::Test {
   void RequestEngineListHelper() {
     // Expect the request to be transmitted
     RR32Can::Identifier expectedIdentifier;
-    expectedIdentifier.command = RR32Can::kRequestConfigData;
+    expectedIdentifier.command_ = RR32Can::kRequestConfigData;
 
     RR32Can::Data expectedData1;
     expectedData1.dlc = 8;
@@ -48,7 +48,7 @@ class LocolistTestFixture : public ::testing::Test {
   void RequestEngineHelper() {
     // Expect the request to be transmitted
     RR32Can::Identifier expectedIdentifier;
-    expectedIdentifier.command = RR32Can::kRequestConfigData;
+    expectedIdentifier.command_ = RR32Can::kRequestConfigData;
 
     RR32Can::Data expectedData[3];
     expectedData[0].dlc = 8;
@@ -84,7 +84,7 @@ TEST_F(LocolistTestFixture, Download_Enginelist) {
   RequestEngineListHelper();
 
   RR32Can::Identifier id;
-  id.command = RR32Can::kConfigDataStream;
+  id.command_ = RR32Can::kConfigDataStream;
 
   {
     // Send initial packet
@@ -120,7 +120,7 @@ TEST_F(LocolistTestFixture, Download_Engine) {
   RequestEngineHelper();
 
   RR32Can::Identifier id;
-  id.command = RR32Can::kConfigDataStream;
+  id.command_ = RR32Can::kConfigDataStream;
 
   RR32Can::Locomotive actualEngine;
   locoConsumer.setEngine(&actualEngine);

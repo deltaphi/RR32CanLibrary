@@ -30,7 +30,7 @@ class StationTestFixture : public ::testing::Test {
   void RequestEngineHelper() {
     // Expect the request to be transmitted
     RR32Can::Identifier expectedIdentifier;
-    expectedIdentifier.command = RR32Can::kRequestConfigData;
+    expectedIdentifier.command_ = RR32Can::kRequestConfigData;
 
     RR32Can::Data expectedData1;
     expectedData1.dlc = 8;
@@ -59,7 +59,7 @@ TEST_F(StationTestFixture, RecvStop) {
   RR32Can::Identifier id;
   RR32Can::Data data;
 
-  id.command = RR32Can::kSystemCommand;
+  id.command_ = RR32Can::kSystemCommand;
   data.dlc = 5;
   data.data[4] = RR32Can::kSubcommandSystemStop;
 
@@ -72,7 +72,7 @@ TEST_F(StationTestFixture, RecvGo) {
   RR32Can::Identifier id;
   RR32Can::Data data;
 
-  id.command = RR32Can::kSystemCommand;
+  id.command_ = RR32Can::kSystemCommand;
   data.dlc = 5;
   data.data[4] = RR32Can::kSubcommandSystemGo;
 
@@ -85,7 +85,7 @@ TEST_F(StationTestFixture, SendGo) {
   RR32Can::Identifier id;
   RR32Can::Data data;
 
-  id.command = RR32Can::kSystemCommand;
+  id.command_ = RR32Can::kSystemCommand;
   data.dlc = 5;
   data.data[4] = RR32Can::kSubcommandSystemGo;
 
@@ -98,7 +98,7 @@ TEST_F(StationTestFixture, SendStop) {
   RR32Can::Identifier id;
   RR32Can::Data data;
 
-  id.command = RR32Can::kSystemCommand;
+  id.command_ = RR32Can::kSystemCommand;
   data.dlc = 5;
   data.data[4] = RR32Can::kSubcommandSystemStop;
 
@@ -111,7 +111,7 @@ TEST_F(StationTestFixture, SendAccessory_MFX) {
   RR32Can::Identifier id;
   RR32Can::Data data;
 
-  id.command = RR32Can::kAccessorySwitch;
+  id.command_ = RR32Can::kAccessorySwitch;
   data.dlc = 6;
   data.data[0] = 0;
   data.data[1] = 0;
@@ -130,7 +130,7 @@ TEST_F(StationTestFixture, SendAccessory_DCC) {
   RR32Can::Identifier id;
   RR32Can::Data data;
 
-  id.command = RR32Can::kAccessorySwitch;
+  id.command_ = RR32Can::kAccessorySwitch;
   data.dlc = 6;
   data.data[0] = 0;
   data.data[1] = 0;
@@ -149,7 +149,7 @@ TEST_F(StationTestFixture, ReceiveAccessory_Request) {
   RR32Can::Identifier id;
   RR32Can::Data data;
 
-  id.command = RR32Can::kAccessorySwitch;
+  id.command_ = RR32Can::kAccessorySwitch;
   id.response = false;
   data.dlc = 6;
   data.data[0] = 0;
@@ -174,7 +174,7 @@ TEST_F(StationTestFixture, ReceiveAccessory_Response) {
   RR32Can::Identifier id;
   RR32Can::Data data;
 
-  id.command = RR32Can::kAccessorySwitch;
+  id.command_ = RR32Can::kAccessorySwitch;
   id.response = true;
   data.dlc = 6;
   data.data[0] = 0;
@@ -197,7 +197,7 @@ TEST_F(StationTestFixture, ReceiveAccessory_Response) {
 
 TEST_F(StationTestFixture, ReceiveConfigData_NoParser_data1) {
   RR32Can::Identifier id;
-  id.command = RR32Can::kConfigDataStream;
+  id.command_ = RR32Can::kConfigDataStream;
 
   for (int i = 0; i < data::testData1NumChunks; ++i) {
     RR32Can::Data data;
@@ -209,7 +209,7 @@ TEST_F(StationTestFixture, ReceiveConfigData_NoParser_data1) {
 
 TEST_F(StationTestFixture, ReceiveConfigData_NoParser_data2) {
   RR32Can::Identifier id;
-  id.command = RR32Can::kConfigDataStream;
+  id.command_ = RR32Can::kConfigDataStream;
 
   for (int i = 0; i < data::testData2NumChunks; ++i) {
     RR32Can::Data data;
@@ -227,7 +227,7 @@ TEST_F(StationTestFixture, ReceiveConfigData_WithParser_data1) {
   EXPECT_CALL(configDataCbk, addMessage(::testing::_)).Times(data::testData1NumChunks);
 
   RR32Can::Identifier id;
-  id.command = RR32Can::kConfigDataStream;
+  id.command_ = RR32Can::kConfigDataStream;
 
   for (int i = 0; i < data::testData1NumChunks; ++i) {
     RR32Can::Data data;
@@ -245,7 +245,7 @@ TEST_F(StationTestFixture, ReceiveConfigData_WithParser_data2) {
   EXPECT_CALL(configDataCbk, addMessage(::testing::_)).Times(data::testData2NumChunks);
 
   RR32Can::Identifier id;
-  id.command = RR32Can::kConfigDataStream;
+  id.command_ = RR32Can::kConfigDataStream;
 
   for (int i = 0; i < data::testData2NumChunks; ++i) {
     RR32Can::Data data;

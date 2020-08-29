@@ -32,7 +32,9 @@ class BufferManager {
 
   ~BufferManager() = default;
 
-  size_type limitIndex(size_type index) const { return index >= currentBufferLength_ ? currentBufferLength_ - 1 : index; }
+  size_type limitIndex(size_type index) const {
+    return index >= currentBufferLength_ ? currentBufferLength_ - 1 : index;
+  }
 
   value_type operator[](size_type index) const { return buffer_[limitIndex(index)]; }
 
