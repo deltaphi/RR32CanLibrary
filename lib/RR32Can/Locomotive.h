@@ -88,54 +88,54 @@ class Locomotive : public LocomotiveShortInfo {
   void reset() {
     // Remove all data of this class
     LocomotiveShortInfo::reset();
-    uid = 0;
-    velocity = 0;
-    direction = RR32Can::EngineDirection::UNKNOWN;
-    address = 0;
-    functionBits = 0;
-    memset(protocol, 0, kProtocolNameMaxLength);
+    uid_ = 0;
+    velocity_ = 0;
+    direction_ = RR32Can::EngineDirection::UNKNOWN;
+    address_ = 0;
+    functionBits_ = 0;
+    memset(protocol_, 0, kProtocolNameMaxLength);
   }
 
   bool isFullDetailsKnown() const { return availability == AvailabilityStatus::FULL_DETAILS; }
 
-  void setUid(Uid_t uid) { this->uid = uid; }
-  Uid_t getUid() const { return uid; }
+  void setUid(Uid_t uid) { this->uid_ = uid; }
+  Uid_t getUid() const { return uid_; }
 
   /// Get the UID with only the two low bytes set.
-  Uid_t getUidMasked() const { return uid & 0xFFFF; }
+  Uid_t getUidMasked() const { return uid_ & 0xFFFF; }
 
-  void setVelocity(Velocity_t velocity) { this->velocity = velocity; }
-  Velocity_t getVelocity() const { return velocity; }
+  void setVelocity(Velocity_t velocity) { this->velocity_ = velocity; }
+  Velocity_t getVelocity() const { return velocity_; }
 
-  void setDirection(RR32Can::EngineDirection direction) { this->direction = direction; }
-  RR32Can::EngineDirection getDirection() const { return direction; }
+  void setDirection(RR32Can::EngineDirection direction) { this->direction_ = direction; }
+  RR32Can::EngineDirection getDirection() const { return direction_; }
   void changeDirection() {
-    if (direction == EngineDirection::FORWARD) {
-      direction = EngineDirection::REVERSE;
-    } else if (direction == EngineDirection::REVERSE) {
-      direction = EngineDirection::FORWARD;
+    if (direction_ == EngineDirection::FORWARD) {
+      direction_ = EngineDirection::REVERSE;
+    } else if (direction_ == EngineDirection::REVERSE) {
+      direction_ = EngineDirection::FORWARD;
     }
   }
 
-  void setAddress(Address_t address) { this->address = address; }
-  Address_t getAddress() const { return address; }
+  void setAddress(Address_t address) { this->address_ = address; }
+  Address_t getAddress() const { return address_; }
 
-  FunctionBits_t getFunctionBits() const { return functionBits; }
+  FunctionBits_t getFunctionBits() const { return functionBits_; }
 
   void setFunction(uint8_t function, bool onOff) {
     FunctionBits_t mask = 1;
     mask <<= function;
     if (onOff != 0) {
-      functionBits |= mask;
+      functionBits_ |= mask;
     } else {
-      functionBits &= ~mask;
+      functionBits_ &= ~mask;
     }
   }
 
   bool getFunction(uint8_t function) const {
     FunctionBits_t mask = 1;
     mask <<= function;
-    if ((functionBits & mask) != 0) {
+    if ((functionBits_ & mask) != 0) {
       return true;
     } else {
       return false;
@@ -144,16 +144,16 @@ class Locomotive : public LocomotiveShortInfo {
 
   void print() const override;
 
-  void setProtocolString(const char* protocolString) { strncpy(protocol, protocolString, kProtocolNameMaxLength); }
-  const char* getProtocolString() const { return protocol; }
+  void setProtocolString(const char* protocolString) { strncpy(protocol_, protocolString, kProtocolNameMaxLength); }
+  const char* getProtocolString() const { return protocol_; }
 
  protected:
-  Uid_t uid;
-  Velocity_t velocity;
-  RR32Can::EngineDirection direction;
-  Address_t address;
-  FunctionBits_t functionBits;
-  ProtocolName_t protocol;
+  Uid_t uid_;
+  Velocity_t velocity_;
+  RR32Can::EngineDirection direction_;
+  Address_t address_;
+  FunctionBits_t functionBits_;
+  ProtocolName_t protocol_;
 };
 
 }  // namespace RR32Can
