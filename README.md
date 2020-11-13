@@ -42,3 +42,20 @@ It has been tested successefully using MSVC 2017 Community Edition.
 * System Status -> SystemControlCbk
 * Engine Control -> EngineControlCbk
 * Engine Database Management -> Configuration Stream Download (configurable consumer)
+
+### Multi Threading
+
+Initialization must occur in a single-threaded mode.
+
+Currently, RR32CANLibrary is not equipped for multi threading. Note that many things are stateless, especially Turnout control.
+Statefulness is present in:
+* Locomotives (Records state information off of the bus),
+* Configuration Data Consumption (aggregate configuration data off of the bus),
+* the Loco Database (which loco objects are currently in memory).
+
+To achieve thread safety, what likely needs to be done:
+* Bolt down Locomotives with locking.
+* Make sure that the Loco Database is consistent and that Loco objects in use cannot be deleted. As Loco Download is a two-stage process (brows the list, then download actual locos) this is likely to be easy to solve: Remove Loco object storage from the library, leave this to the outside world and just keep a pointer to "the active loco". (TBD: Investigate how to track state of multiple locos).
+* For confoguration data, you can likely get around locking, as there is only one bus that feeds the configuration download.
+
+To ensure operation on all systems (ATmega328, STM32F1, ESP32) it should be configurable on a per-project basis whether locking is used and what primitives are used for locking.
