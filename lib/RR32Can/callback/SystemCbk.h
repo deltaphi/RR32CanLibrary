@@ -13,7 +13,7 @@ class SystemCbk {
    * \brief Set whether the system is on (true) or off (false).
    *
    * \param onOff Whether the system is on (true) or off (false).
-   * \param request Whether the packet was a response (true) or a request (false).
+   * \param response Whether the packet was a response (true) or a request (false).
    */
   virtual void setSystemState(bool onOff, bool response) = 0;
 };
