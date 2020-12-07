@@ -10,9 +10,12 @@ namespace callback {
 class SystemCbk {
  public:
   /**
-   * \brief Set whether the system is on (true) or off (false)
+   * \brief Set whether the system is on (true) or off (false).
+   *
+   * \param onOff Whether the system is on (true) or off (false).
+   * \param request Whether the packet was a response (true) or a request (false).
    */
-  virtual void setSystemState(bool onOff) = 0;
+  virtual void setSystemState(bool onOff, bool response) = 0;
 };
 
 }  // namespace callback

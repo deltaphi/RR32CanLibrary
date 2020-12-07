@@ -52,7 +52,7 @@ void Station::HandleConfigDataStream(const RR32Can::Data& data) {
   }
 }
 
-void Station::HandleSystemCommand(const RR32Can::Data& data) {
+void Station::HandleSystemCommand(const RR32Can::Identifier& id, const RR32Can::Data& data) {
   printf("System Command. ");
   if (data.dlc >= 5) {
     printf(" Subcommand: ");
@@ -60,7 +60,7 @@ void Station::HandleSystemCommand(const RR32Can::Data& data) {
       case RR32Can::kSubcommandSystemGo:
         printf("GO!\n");
         if (callbacks_.system != nullptr) {
-          callbacks_.system->setSystemState(true);
+          callbacks_.system->setSystemState(true, id.response_);
         }
         break;
       case RR32Can::kSubcommandSystemHalt: {
@@ -73,7 +73,7 @@ void Station::HandleSystemCommand(const RR32Can::Data& data) {
       case RR32Can::kSubcommandSystemStop:
         printf("STOP!\n");
         if (callbacks_.system != nullptr) {
-          callbacks_.system->setSystemState(false);
+          callbacks_.system->setSystemState(false, id.response_);
         }
         break;
       case kSubcommandLocoEmergencyStop: {
@@ -330,7 +330,7 @@ void Station::HandlePacket(const RR32Can::Identifier& id, const RR32Can::Data& d
 
   switch (id.command_) {
     case RR32Can::kSystemCommand:
-      this->HandleSystemCommand(data);
+      this->HandleSystemCommand(id, data);
       break;
 
     case RR32Can::kPing:

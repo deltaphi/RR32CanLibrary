@@ -51,7 +51,7 @@ class Station {
 
   void HandleConfigDataStream(const RR32Can::Data& data);
 
-  void HandleSystemCommand(const RR32Can::Data& data);
+  void HandleSystemCommand(const RR32Can::Identifier& id, const RR32Can::Data& data);
 
   /**
    * \brief Construct a Accessory command packet and send via CAN

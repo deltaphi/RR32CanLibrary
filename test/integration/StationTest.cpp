@@ -55,28 +55,58 @@ class StationTestFixture : public ::testing::Test {
   RR32Can::Station station;
 };
 
-TEST_F(StationTestFixture, RecvStop) {
+TEST_F(StationTestFixture, RecvStopReq) {
   RR32Can::Identifier id;
   RR32Can::Data data;
 
   id.command_ = RR32Can::kSystemCommand;
+  id.response_ = false;
   data.dlc = 5;
   data.data[4] = RR32Can::kSubcommandSystemStop;
 
-  EXPECT_CALL(systemCbk, setSystemState(false));
+  EXPECT_CALL(systemCbk, setSystemState(false, false));
 
   station.HandlePacket(id, data);
 }
 
-TEST_F(StationTestFixture, RecvGo) {
+TEST_F(StationTestFixture, RecvGoReq) {
   RR32Can::Identifier id;
   RR32Can::Data data;
 
   id.command_ = RR32Can::kSystemCommand;
+  id.response_ = false;
   data.dlc = 5;
   data.data[4] = RR32Can::kSubcommandSystemGo;
 
-  EXPECT_CALL(systemCbk, setSystemState(true));
+  EXPECT_CALL(systemCbk, setSystemState(true, false));
+
+  station.HandlePacket(id, data);
+}
+
+TEST_F(StationTestFixture, RecvStopResp) {
+  RR32Can::Identifier id;
+  RR32Can::Data data;
+
+  id.command_ = RR32Can::kSystemCommand;
+  id.response_ = true;
+  data.dlc = 5;
+  data.data[4] = RR32Can::kSubcommandSystemStop;
+
+  EXPECT_CALL(systemCbk, setSystemState(false, true));
+
+  station.HandlePacket(id, data);
+}
+
+TEST_F(StationTestFixture, RecvGoResp) {
+  RR32Can::Identifier id;
+  RR32Can::Data data;
+
+  id.command_ = RR32Can::kSystemCommand;
+  id.response_ = true;
+  data.dlc = 5;
+  data.data[4] = RR32Can::kSubcommandSystemGo;
+
+  EXPECT_CALL(systemCbk, setSystemState(true, true));
 
   station.HandlePacket(id, data);
 }
