@@ -18,7 +18,7 @@ const char* kEngineNames = "loknamen";
 
 }  // namespace Filenames
 
-LocId_t getAccessoryLocIdMask(RailProtocol proto) {
+MachineTurnoutAddress getAccessoryLocIdMask(RailProtocol proto) {
   switch (proto) {
     case RailProtocol::MM1:
     case RailProtocol::MM2:

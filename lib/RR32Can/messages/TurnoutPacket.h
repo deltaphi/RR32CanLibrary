@@ -48,6 +48,23 @@ class TurnoutPacket {
   void printAll() const;
 
   bool operator==(const TurnoutPacket& other) const;
+
+  /**
+   * \brief Return the Rail Protocol for the turnout.
+   *
+   * \return MM1, DCC, SX1 or UNKOWN.
+   */
+  RailProtocol getRailProtocol() const {
+    if (kSX1AccessoryAddrStart <= locid && locid <= kSX1AccessoryAddrStop) {
+      return RailProtocol::SX1;
+    } else if (kMMAccessoryAddrStart <= locid && locid <= kMMAccessoryAddrStop) {
+      return RailProtocol::MM1;
+    } else if (kDCCAccessoryAddrStart <= locid && locid <= kDCCccessoryAddrStop) {
+      return RailProtocol::DCC;
+    } else {
+      return RailProtocol::UNKNOWN;
+    }
+  }
 };
 
 } /* namespace RR32Can */

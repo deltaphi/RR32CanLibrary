@@ -101,3 +101,15 @@ TEST(Messages, TurnoutPacket) {
     EXPECT_EQ(packet, recvPacket);
   }
 }
+
+TEST(Messages, TurnoutPacket_AddrProto) {
+  RR32Can::TurnoutPacket packet;
+  packet.locid = RR32Can::HumanTurnoutAddress(0x3012);  // MM2 addr
+  EXPECT_EQ(packet.getRailProtocol(), RR32Can::RailProtocol::MM1);
+
+  packet.locid = RR32Can::HumanTurnoutAddress(0x3812);  // DCC Addr
+  EXPECT_EQ(packet.getRailProtocol(), RR32Can::RailProtocol::DCC);
+
+  packet.locid = RR32Can::HumanTurnoutAddress(0x2812);  // SX Addr
+  EXPECT_EQ(packet.getRailProtocol(), RR32Can::RailProtocol::SX1);
+}

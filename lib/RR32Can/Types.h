@@ -52,7 +52,7 @@ class TurnoutAddressBase {
   TurnoutAddressBase() : addr_(0){};
   constexpr TurnoutAddressBase(value_type addr) : addr_(addr) {}
 
- private:
+ protected:
   value_type addr_;
 };
 
@@ -81,6 +81,8 @@ class MachineTurnoutAddress : public TurnoutAddressBase {
 
   constexpr bool operator==(const MachineTurnoutAddress& other) const { return value() == other.value(); };
   constexpr bool operator!=(const MachineTurnoutAddress& other) const { return !operator==(other); };
+  void operator|=(const MachineTurnoutAddress& other) { addr_ = addr_ | other.value(); };
+  constexpr bool operator<=(const MachineTurnoutAddress& other) const { return value() <= other.value(); }
 };
 
 /// Engine Direction

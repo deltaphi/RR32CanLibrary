@@ -306,7 +306,7 @@ void Station::SendAccessoryPacket(RR32Can::MachineTurnoutAddress turnoutAddress,
 
   RR32Can::TurnoutPacket payload;
   payload.locid = turnoutAddress;  // Set the turnout address
-  payload.locid = getAccessoryLocIdMask(protocol) | payload.locid.value();
+  payload.locid |= getAccessoryLocIdMask(protocol);
   payload.position = direction;  // Set the turnout direction
   payload.power = power;
 
