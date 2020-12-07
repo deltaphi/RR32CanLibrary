@@ -52,6 +52,9 @@ class HumanTurnoutAddress : public TurnoutAddressBase {
  public:
   using TurnoutAddressBase::TurnoutAddressBase;
   HumanTurnoutAddress(const MachineTurnoutAddress& other);
+
+  constexpr bool operator==(const HumanTurnoutAddress& other) const { return value() == other.value(); };
+  constexpr bool operator!=(const HumanTurnoutAddress& other) const { return !operator==(other); };
 };
 
 /**
@@ -62,6 +65,9 @@ class MachineTurnoutAddress : public TurnoutAddressBase {
   MachineTurnoutAddress() = default;
   using TurnoutAddressBase::TurnoutAddressBase;
   MachineTurnoutAddress(const HumanTurnoutAddress& other);
+
+  constexpr bool operator==(const MachineTurnoutAddress& other) const { return value() == other.value(); };
+  constexpr bool operator!=(const MachineTurnoutAddress& other) const { return !operator==(other); };
 };
 
 /// Engine Direction

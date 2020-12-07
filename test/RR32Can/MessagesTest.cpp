@@ -22,3 +22,45 @@ TEST(Messages, Identifier_Accessory_Response) {
   EXPECT_TRUE(id.response_);
   EXPECT_EQ(id.hash_, 10012);
 }
+
+TEST(Messages, HumanTurnoutAddrEqual) {
+  RR32Can::HumanTurnoutAddress addr1{5};
+  RR32Can::HumanTurnoutAddress addr2{5};
+  RR32Can::HumanTurnoutAddress addr3{6};
+
+  EXPECT_EQ(addr1, addr2);
+  EXPECT_NE(addr1, addr3);
+  EXPECT_NE(addr2, addr3);
+}
+
+TEST(Messages, MachineTurnoutAddrEqual) {
+  RR32Can::MachineTurnoutAddress addr4{4};
+  RR32Can::MachineTurnoutAddress addr5{5};
+  RR32Can::MachineTurnoutAddress addr6{6};
+  RR32Can::MachineTurnoutAddress addr7{6};
+
+  EXPECT_EQ(addr6, addr7);
+  EXPECT_NE(addr4, addr5);
+  EXPECT_NE(addr4, addr6);
+  EXPECT_NE(addr4, addr7);
+  EXPECT_NE(addr5, addr6);
+  EXPECT_NE(addr5, addr7);
+}
+
+TEST(Messages, MixedTurnoutAddrEqual) {
+  RR32Can::HumanTurnoutAddress addr1{4};
+  RR32Can::HumanTurnoutAddress addr2{5};
+  RR32Can::HumanTurnoutAddress addr3{6};
+
+  RR32Can::MachineTurnoutAddress addr4{4};
+  RR32Can::MachineTurnoutAddress addr5{5};
+  RR32Can::MachineTurnoutAddress addr6{6};
+
+  EXPECT_NE(addr1, addr4);
+  EXPECT_NE(addr2, addr5);
+  EXPECT_NE(addr3, addr6);
+
+  EXPECT_EQ(addr2, addr4);
+  EXPECT_EQ(addr3, addr5);
+}
+
