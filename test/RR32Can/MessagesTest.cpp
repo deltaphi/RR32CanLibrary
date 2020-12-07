@@ -1,7 +1,9 @@
 #include "gtest/gtest.h"
+#include "gmock/gmock.h"
 
 #include "RR32Can/Constants.h"
 #include "RR32Can/messages/Identifier.h"
+#include "RR32Can/messages/TurnoutPacket.h"
 
 TEST(Messages, Identifier_Accessory_Request) {
   uint32_t packetId = 0x00163F15;
@@ -64,3 +66,38 @@ TEST(Messages, MixedTurnoutAddrEqual) {
   EXPECT_EQ(addr3, addr5);
 }
 
+TEST(Messages, TurnoutPacket) {
+  {
+    RR32Can::TurnoutPacket packet;
+    packet.locid = RR32Can::MachineTurnoutAddress(RR32Can::HumanTurnoutAddress(11)).value();
+    packet.position = RR32Can::TurnoutDirectionToIntegral<uint8_t>(RR32Can::TurnoutDirection::GREEN);
+    packet.power = 1;
+
+    RR32Can::Data busData;
+    packet.serialize(busData);
+
+    ASSERT_EQ(busData.dlc, 6);
+    EXPECT_THAT(busData.data, ::testing::ElementsAre(0, 0, 0, 10, 1, 1, 0, 0, 0));
+
+    RR32Can::TurnoutPacket recvPacket = RR32Can::TurnoutPacket::FromCanPacket(busData);
+
+    EXPECT_EQ(packet, recvPacket);
+  }
+
+  {
+    RR32Can::TurnoutPacket packet;
+    packet.locid = RR32Can::MachineTurnoutAddress(RR32Can::HumanTurnoutAddress(1)).value();
+    packet.position = RR32Can::TurnoutDirectionToIntegral<uint8_t>(RR32Can::TurnoutDirection::RED);
+    packet.power = 0;
+
+    RR32Can::Data busData;
+    packet.serialize(busData);
+
+    ASSERT_EQ(busData.dlc, 6);
+    EXPECT_THAT(busData.data, ::testing::ElementsAre(0, 0, 0, 0, 0, 0, 0, 0, 0));
+
+    RR32Can::TurnoutPacket recvPacket = RR32Can::TurnoutPacket::FromCanPacket(busData);
+
+    EXPECT_EQ(packet, recvPacket);
+  }
+}
