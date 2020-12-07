@@ -17,10 +17,10 @@ namespace RR32Can {
 class TurnoutPacket {
  public:
   /// Turnout-address (0-based)
-  uint32_t locid = 0;
+  MachineTurnoutAddress locid = 0;
 
   /// Whether to set the turnout to straight or branching
-  uint8_t position = 0;
+  TurnoutDirection position = TurnoutDirection::RED;
 
   /// Whether to switch the actuator on or off
   uint8_t power = 0;
@@ -40,7 +40,7 @@ class TurnoutPacket {
   /**
    * \brief Obtain the human-readable turnout address (1-based)
    */
-  uint32_t PositionAsHumanValue() const;
+  HumanTurnoutAddress AddressAsHumanValue() const;
 
   /**
    * \brief Print a human-readable version of this Turnout Packet.

@@ -7,10 +7,10 @@ namespace RR32Can {
 TurnoutPacket TurnoutPacket::FromCanPacket(const Data& data) {
   TurnoutPacket turnoutPacket;
 
-  using LogcId_t = uint32_t;
+  using LogcId_t = TurnoutAddressBase::value_type;
   turnoutPacket.locid = static_cast<LogcId_t>(data.data[3]) | (static_cast<LogcId_t>(data.data[2]) << 8) |
                         (static_cast<LogcId_t>(data.data[1]) << 16) | (static_cast<LogcId_t>(data.data[0]) << 24);
-  turnoutPacket.position = data.data[4];
+  turnoutPacket.position = TurnoutDirectionFromIntegral(data.data[4]);
   turnoutPacket.power = data.data[5];
 
   return turnoutPacket;
@@ -18,33 +18,30 @@ TurnoutPacket TurnoutPacket::FromCanPacket(const Data& data) {
 
 void TurnoutPacket::serialize(Data& data) const {
   data.dlc = 6;
-  data.data[0] = (locid >> 24) & 0xFF;
-  data.data[1] = (locid >> 16) & 0xFF;
-  data.data[2] = (locid >> 8) & 0xFF;
-  data.data[3] = locid & 0xFF;
-  data.data[4] = position;
+  data.data[0] = (locid.value() >> 24) & 0xFF;
+  data.data[1] = (locid.value() >> 16) & 0xFF;
+  data.data[2] = (locid.value() >> 8) & 0xFF;
+  data.data[3] = locid.value() & 0xFF;
+  data.data[4] = TurnoutDirectionToIntegral<uint8_t>(position);
   data.data[5] = power;
 }
 
-uint32_t TurnoutPacket::PositionAsHumanValue() const {
-  decltype(locid) locid_human = (locid & 0x0FFF) + 1;
-  return locid_human;
-}
+HumanTurnoutAddress TurnoutPacket::AddressAsHumanValue() const { return HumanTurnoutAddress(locid); }
 
 void TurnoutPacket::printAll() const {
-  printf("Turnout: %#10x, Human Value: %d, Position: %d ", locid, PositionAsHumanValue(), position);
+  printf("Turnout: %#10x, Human Value: %d, Position: %d ", locid, AddressAsHumanValue(), position);
 
   switch (this->position) {
-    case 0:
+    case TurnoutDirection::RED:
       printf("(off, round, red)");
       break;
-    case 1:
+    case TurnoutDirection::GREEN:
       printf("(on, straight, green)");
       break;
-    case 2:
+    case TurnoutDirection::YELLOW:
       printf("(yellow, left)");
       break;
-    case 3:
+    case TurnoutDirection::WHITE:
       printf("(white)");
       break;
   }

@@ -305,9 +305,9 @@ void Station::SendAccessoryPacket(RR32Can::MachineTurnoutAddress turnoutAddress,
   RR32Can::Identifier identifier{kAccessorySwitch, this->senderHash_};
 
   RR32Can::TurnoutPacket payload;
-  payload.locid = turnoutAddress.value();  // Set the turnout address
-  payload.locid |= getAccessoryLocIdMask(protocol);
-  payload.position = RR32Can::TurnoutDirectionToIntegral<uint8_t>(direction);  // Set the turnout direction
+  payload.locid = turnoutAddress;  // Set the turnout address
+  payload.locid = getAccessoryLocIdMask(protocol) | payload.locid.value();
+  payload.position = direction;  // Set the turnout direction
   payload.power = power;
 
   // Serialize the CAN packet and send it

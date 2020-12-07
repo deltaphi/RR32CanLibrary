@@ -10,7 +10,7 @@
 namespace RR32Can {
 
 /// Accessory direction
-enum class TurnoutDirection : uint8_t { RED = 0, GREEN = 1 };
+enum class TurnoutDirection : uint8_t { RED = 0, GREEN = 1, YELLOW = 2, WHITE = 3 };
 
 template <typename IntegralType>
 constexpr IntegralType TurnoutDirectionToIntegral(TurnoutDirection dir) {
@@ -19,7 +19,20 @@ constexpr IntegralType TurnoutDirectionToIntegral(TurnoutDirection dir) {
 
 template <typename IntegralType>
 constexpr TurnoutDirection TurnoutDirectionFromIntegral(IntegralType dir) {
-  return (dir == 0) ? TurnoutDirection::RED : TurnoutDirection::GREEN;
+  switch (dir) {
+    case 0:
+      return TurnoutDirection::RED;
+      break;
+    case 1:
+      return TurnoutDirection::GREEN;
+      break;
+    case 2:
+      return TurnoutDirection::YELLOW;
+      break;
+    case 3:
+      return TurnoutDirection::WHITE;
+      break;
+  }
 }
 
 using LocId_t = uint16_t;
