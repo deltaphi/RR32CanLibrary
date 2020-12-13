@@ -52,48 +52,48 @@ void Station::HandleConfigDataStream(const RR32Can::Data& data) {
   }
 }
 
-void Station::HandleSystemCommand(const RR32Can::Identifier& id, const RR32Can::Data& data) {
+void Station::HandleSystemCommand(const RR32Can::Identifier& id, const RR32Can::SystemMessage& msg) {
   printf("System Command. ");
-  if (data.dlc >= 5) {
+  if (msg.length() >= 5) {
     printf(" Subcommand: ");
-    switch (data.data[4]) {
-      case RR32Can::kSubcommandSystemGo:
+    switch (msg.getSubcommand()) {
+      case RR32Can::SystemSubcommand::SYSTEM_GO:
         printf("GO!\n");
         if (callbacks_.system != nullptr) {
           callbacks_.system->setSystemState(true, id.isResponse());
         }
         break;
-      case RR32Can::kSubcommandSystemHalt: {
+      case RR32Can::SystemSubcommand::SYSTEM_HALT: {
         printf("Halt!\n");
         if (callbacks_.engine != nullptr) {
-          Locomotive::Uid_t uid = uidFromData(data.data);
+          Locomotive::Uid_t uid = msg.getUid();
           callbacks_.engine->setLocoVelocity(uid, 0);
         }
       } break;
-      case RR32Can::kSubcommandSystemStop:
+      case RR32Can::SystemSubcommand::SYSTEM_STOP:
         printf("STOP!\n");
         if (callbacks_.system != nullptr) {
           callbacks_.system->setSystemState(false, id.isResponse());
         }
         break;
-      case kSubcommandLocoEmergencyStop: {
-        Locomotive::Uid_t uid = uidFromData(data.data);
+      case SystemSubcommand::LOCO_EMERGENCY_STOP: {
+        Locomotive::Uid_t uid = msg.getUid();
         if (callbacks_.engine != nullptr) {
           callbacks_.engine->setLocoVelocity(uid, 0);
         }
       } break;
-      case RR32Can::kSubcommandSystemIdentifier:
+      case RR32Can::SystemSubcommand::SYSTEM_IDENTIFIER:
         printf("Identifier.\n");
         break;
-      case RR32Can::kSubcommandSystemOverload:
+      case RR32Can::SystemSubcommand::SYSTEM_OVERLOAD:
         printf("OVERLOAD!\n");
         break;
-      case RR32Can::kSubcommandSystemReset:
+      case RR32Can::SystemSubcommand::SYSTEM_RESET:
         printf("Reset.\n");
         // MaerklinSystem.systemOn = false; // TODO: Bring back the System
         // class
         break;
-      case RR32Can::kSubcommandSystemStatus:
+      case RR32Can::SystemSubcommand::SYSTEM_STATUS:
         printf("Status.\n");
         break;
 
@@ -185,18 +185,11 @@ void Station::RequestEngine(Locomotive& engine, callback::ConfigDataCbk* configD
   callbacks_.tx->SendPacket(id, data);
 }
 
-void Station::uidToData(uint8_t* ptr, Locomotive::Uid_t uid) {
-  ptr[0] = static_cast<uint8_t>(uid >> 24);
-  ptr[1] = static_cast<uint8_t>(uid >> 16);
-  ptr[2] = static_cast<uint8_t>(uid >> 8);
-  ptr[3] = static_cast<uint8_t>(uid);
-}
-
 void Station::RequestEngineDirection(Locomotive& engine) {
   RR32Can::Identifier identifier{Command::LOCO_DIRECTION, this->senderHash_};
   RR32Can::Data data;
   data.dlc = 4;
-  uidToData(data.data, engine.getUid());
+  data.setLocid(engine.getUid());
 
   callbacks_.tx->SendPacket(identifier, data);
 }
@@ -205,7 +198,7 @@ void Station::SendEngineDirection(Locomotive& engine, EngineDirection direction)
   RR32Can::Identifier identifier{Command::LOCO_DIRECTION, this->senderHash_};
   RR32Can::Data data;
   data.dlc = 5;
-  uidToData(data.data, engine.getUid());
+  data.setLocid(engine.getUid());
 
   if ((direction == EngineDirection::FORWARD) || (direction == EngineDirection::REVERSE) ||
       (direction == EngineDirection::CHANGE_DIRECTION)) {
@@ -218,7 +211,7 @@ void Station::RequestEngineVelocity(Locomotive& engine) {
   RR32Can::Identifier identifier{Command::LOCO_SPEED, this->senderHash_};
   RR32Can::Data data;
   data.dlc = 4;
-  uidToData(data.data, engine.getUid());
+  data.setLocid(engine.getUid());
 
   callbacks_.tx->SendPacket(identifier, data);
 }
@@ -227,7 +220,7 @@ void Station::SendEngineVelocity(Locomotive& engine, Locomotive::Velocity_t velo
   RR32Can::Identifier identifier{Command::LOCO_SPEED, this->senderHash_};
   RR32Can::Data data;
   data.dlc = 6;
-  uidToData(data.data, engine.getUid());
+  data.setLocid(engine.getUid());
 
   if (velocity > kMaxEngineVelocity) {
     velocity = kMaxEngineVelocity;
@@ -242,7 +235,7 @@ void Station::RequestEngineFunction(Locomotive& engine, uint8_t function) {
   RR32Can::Identifier identifier{Command::LOCO_FUNCTION, this->senderHash_};
   RR32Can::Data data;
   data.dlc = 5;
-  uidToData(data.data, engine.getUid());
+  data.setLocid(engine.getUid());
   data.data[4] = function;
 
   callbacks_.tx->SendPacket(identifier, data);
@@ -252,7 +245,7 @@ void Station::RequestEngineAllFunctions(Locomotive& engine) {
   RR32Can::Identifier identifier{Command::LOCO_FUNCTION, this->senderHash_};
   RR32Can::Data data;
   data.dlc = 5;
-  uidToData(data.data, engine.getUid());
+  data.setLocid(engine.getUid());
   for (uint8_t i = 0; i < 16; ++i) {
     data.data[4] = i;
     callbacks_.tx->SendPacket(identifier, data);
@@ -263,7 +256,7 @@ void Station::SendEngineFunction(Locomotive& engine, uint8_t function, bool valu
   RR32Can::Identifier identifier{Command::LOCO_FUNCTION, this->senderHash_};
   RR32Can::Data data;
   data.dlc = 6;
-  uidToData(data.data, engine.getUid());
+  data.setLocid(engine.getUid());
   data.data[4] = function;
 
   if (value) {
@@ -279,7 +272,6 @@ void Station::SendEmergencyStop(Locomotive& engine) {
   RR32Can::Identifier identifier{Command::SYSTEM_COMMAND, this->senderHash_};
   RR32Can::Data data;
   data.dlc = 5;
-  uidToData(data.data, engine.getUid());
   data.data[4] = kSubcommandLocoEmergencyStop;
   callbacks_.tx->SendPacket(identifier, data);
 }
@@ -328,9 +320,10 @@ void Station::HandlePacket(const RR32Can::Identifier& id, const RR32Can::Data& d
 #endif
 
   switch (id.getCommand()) {
-    case RR32Can::Command::SYSTEM_COMMAND:
-      this->HandleSystemCommand(id, data);
-      break;
+    case RR32Can::Command::SYSTEM_COMMAND: {
+      const SystemMessage msg(const_cast<RR32Can::Data&>(data));
+      this->HandleSystemCommand(id, msg);
+    } break;
 
     case RR32Can::Command::PING:
 #if (LOG_PING == STD_ON)
@@ -391,15 +384,9 @@ void Station::HandleAccessoryPacket(const RR32Can::Data& data, bool request) {
   }
 }
 
-Locomotive::Uid_t Station::uidFromData(const uint8_t* ptr) {
-  return (static_cast<Locomotive::Uid_t>(ptr[0]) << 24) | (static_cast<Locomotive::Uid_t>(ptr[1]) << 16) |
-         (static_cast<Locomotive::Uid_t>(ptr[2]) << 8) | (ptr[3]);
-}
-
-Locomotive* Station::getLocoForData(const RR32Can::Data& data) {
-  Locomotive::Uid_t uid = uidFromData(data.data);
+Locomotive* Station::getLocoForUid(const RR32Can::Uid_t locid) {
   if (callbacks_.engine != nullptr) {
-    return callbacks_.engine->getLoco(uid);
+    return callbacks_.engine->getLoco(locid);
   } else {
     return nullptr;
   }
@@ -408,7 +395,7 @@ Locomotive* Station::getLocoForData(const RR32Can::Data& data) {
 void Station::HandleLocoDirection(const RR32Can::Data& data) {
   if (data.dlc == 5) {
     // response.
-    Locomotive* engine = getLocoForData(data);
+    Locomotive* engine = getLocoForUid(data.getLocid());
     if (engine == nullptr) {
       return;
     }
@@ -424,7 +411,7 @@ void Station::HandleLocoDirection(const RR32Can::Data& data) {
 
 void Station::HandleLocoSpeed(const RR32Can::Data& data) {
   if (data.dlc == 6) {
-    Locomotive::Uid_t uid = uidFromData(data.data);
+    Locomotive::Uid_t uid = data.getLocid();
     Locomotive::Velocity_t velocity = (data.data[4] << 8) | data.data[5];
     if (callbacks_.engine != nullptr) {
       callbacks_.engine->setLocoVelocity(uid, velocity);
@@ -434,7 +421,7 @@ void Station::HandleLocoSpeed(const RR32Can::Data& data) {
 
 void Station::HandleLocoFunction(const RR32Can::Data& data) {
   if (data.dlc == 6) {
-    Locomotive* engine = getLocoForData(data);
+    Locomotive* engine = getLocoForUid(data.getLocid());
     if (engine == nullptr) {
       return;
     }

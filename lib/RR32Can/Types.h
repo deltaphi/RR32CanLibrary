@@ -38,7 +38,7 @@ constexpr TurnoutDirection TurnoutDirectionFromIntegral(IntegralType dir) {
   }
 }
 
-using LocId_t = uint16_t;
+using LocId_t = uint32_t;
 
 using CommandByte_t = uint8_t;
 

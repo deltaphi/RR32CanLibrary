@@ -7,35 +7,24 @@
 #include <cstdint>
 #endif
 
-#include "RR32Can/messages/Data.h"
+#include "RR32Can/messages/BaseMessage.h"
 
 namespace RR32Can {
 
 /**
  * \brief Resembles a turnout command.
  */
-class TurnoutPacket {
+class TurnoutPacket : public BaseMessage {
  public:
-  TurnoutPacket(RR32Can::Data& data) : data_(data){};
+  using BaseMessage::BaseMessage;
 
   void initData() {
+    BaseMessage::initData();
     data_.dlc = 6;
-    memset(data_.data, 0, sizeof(&(data_.data)));
   }
 
-  MachineTurnoutAddress getLocid() const {
-    using LogcId_t = TurnoutAddressBase::value_type;
-    MachineTurnoutAddress locid = static_cast<LogcId_t>(data_.data[3]) | (static_cast<LogcId_t>(data_.data[2]) << 8) |
-                                  (static_cast<LogcId_t>(data_.data[1]) << 16) |
-                                  (static_cast<LogcId_t>(data_.data[0]) << 24);
-    return locid;
-  }
-  void setLocid(const MachineTurnoutAddress& locid) {
-    data_.data[0] = (locid.value() >> 24) & 0xFF;
-    data_.data[1] = (locid.value() >> 16) & 0xFF;
-    data_.data[2] = (locid.value() >> 8) & 0xFF;
-    data_.data[3] = locid.value() & 0xFF;
-  }
+  MachineTurnoutAddress getLocid() const { return MachineTurnoutAddress(data_.getLocid()); }
+  void setLocid(const MachineTurnoutAddress& locid) { data_.setLocid(locid.value()); }
 
   bool getPower() const { return data_.data[5] != 0; }
   void setPower(bool power) { data_.data[5] = (power ? 1 : 0); }
@@ -72,9 +61,6 @@ class TurnoutPacket {
       return RailProtocol::UNKNOWN;
     }
   }
-
- private:
-  RR32Can::Data& data_;
 };
 
 } /* namespace RR32Can */

@@ -18,6 +18,8 @@
 #include "RR32Can/messages/Data.h"
 #include "RR32Can/messages/Identifier.h"
 
+#include "RR32Can/messages/SystemMessage.h"
+
 namespace RR32Can {
 
 /*
@@ -51,7 +53,7 @@ class Station {
 
   void HandleConfigDataStream(const RR32Can::Data& data);
 
-  void HandleSystemCommand(const RR32Can::Identifier& id, const RR32Can::Data& data);
+  void HandleSystemCommand(const RR32Can::Identifier& id, const RR32Can::SystemMessage& data);
 
   /**
    * \brief Construct a Accessory command packet and send via CAN
@@ -93,10 +95,7 @@ class Station {
   void notifyConfigStreamReceived() { FinishCurrentConfigRequest(); }
 
  private:
-  Locomotive* getLocoForData(const RR32Can::Data& data);
-
-  static Locomotive::Uid_t uidFromData(const uint8_t* ptr);
-  static void uidToData(uint8_t* ptr, Locomotive::Uid_t uid);
+  Locomotive* getLocoForUid(const RR32Can::Uid_t locid);
 
   /* Initialization & Infrastructure */
   uint16_t senderHash_ = 0;

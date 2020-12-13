@@ -52,6 +52,8 @@ add_executable(RR32CanTest
     "lib/RR32Can/messages/Data.cpp"
     "lib/RR32Can/messages/Identifier.cpp"
     "lib/RR32Can/messages/TurnoutPacket.cpp"
+    "lib/RR32Can/messages/SystemMessage.cpp"
+    "lib/RR32Can/messages/BaseMessage.cpp"
 
     "lib/RR32CanEngineDb/util/BufferManager.h"
     "lib/RR32CanEngineDb/util/BufferManager.cpp"
