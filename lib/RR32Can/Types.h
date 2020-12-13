@@ -40,6 +40,8 @@ constexpr TurnoutDirection TurnoutDirectionFromIntegral(IntegralType dir) {
 
 using LocId_t = uint16_t;
 
+using CommandByte_t = uint8_t;
+
 /**
  * \brief Base class for all turnout addresses.
  *

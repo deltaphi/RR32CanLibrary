@@ -60,7 +60,7 @@ void Station::HandleSystemCommand(const RR32Can::Identifier& id, const RR32Can::
       case RR32Can::kSubcommandSystemGo:
         printf("GO!\n");
         if (callbacks_.system != nullptr) {
-          callbacks_.system->setSystemState(true, id.response_);
+          callbacks_.system->setSystemState(true, id.isResponse());
         }
         break;
       case RR32Can::kSubcommandSystemHalt: {
@@ -73,7 +73,7 @@ void Station::HandleSystemCommand(const RR32Can::Identifier& id, const RR32Can::
       case RR32Can::kSubcommandSystemStop:
         printf("STOP!\n");
         if (callbacks_.system != nullptr) {
-          callbacks_.system->setSystemState(false, id.response_);
+          callbacks_.system->setSystemState(false, id.isResponse());
         }
         break;
       case kSubcommandLocoEmergencyStop: {
@@ -112,7 +112,7 @@ void Station::RequestEngineList(uint8_t offset, callback::ConfigDataCbk* configD
   AbortCurrentConfigRequest();
   callbacks_.configData = configDataConsumer;
 
-  Identifier id{kRequestConfigData, senderHash_};
+  Identifier id{Command::REQUEST_CONFIG_DATA, senderHash_};
 
   /* First packet */
   Data data1;
@@ -158,7 +158,7 @@ void Station::RequestEngine(Locomotive& engine, callback::ConfigDataCbk* configD
     callbacks_.configData->startStream();
   }
 
-  Identifier id{kRequestConfigData, senderHash_};
+  Identifier id{Command::REQUEST_CONFIG_DATA, senderHash_};
   Data data;
 
   /* First packet */
@@ -193,7 +193,7 @@ void Station::uidToData(uint8_t* ptr, Locomotive::Uid_t uid) {
 }
 
 void Station::RequestEngineDirection(Locomotive& engine) {
-  RR32Can::Identifier identifier{kLocoDirection, this->senderHash_};
+  RR32Can::Identifier identifier{Command::LOCO_DIRECTION, this->senderHash_};
   RR32Can::Data data;
   data.dlc = 4;
   uidToData(data.data, engine.getUid());
@@ -202,7 +202,7 @@ void Station::RequestEngineDirection(Locomotive& engine) {
 }
 
 void Station::SendEngineDirection(Locomotive& engine, EngineDirection direction) {
-  RR32Can::Identifier identifier{kLocoDirection, this->senderHash_};
+  RR32Can::Identifier identifier{Command::LOCO_DIRECTION, this->senderHash_};
   RR32Can::Data data;
   data.dlc = 5;
   uidToData(data.data, engine.getUid());
@@ -215,7 +215,7 @@ void Station::SendEngineDirection(Locomotive& engine, EngineDirection direction)
 }
 
 void Station::RequestEngineVelocity(Locomotive& engine) {
-  RR32Can::Identifier identifier{kLocoSpeed, this->senderHash_};
+  RR32Can::Identifier identifier{Command::LOCO_SPEED, this->senderHash_};
   RR32Can::Data data;
   data.dlc = 4;
   uidToData(data.data, engine.getUid());
@@ -224,7 +224,7 @@ void Station::RequestEngineVelocity(Locomotive& engine) {
 }
 
 void Station::SendEngineVelocity(Locomotive& engine, Locomotive::Velocity_t velocity) {
-  RR32Can::Identifier identifier{kLocoSpeed, this->senderHash_};
+  RR32Can::Identifier identifier{Command::LOCO_SPEED, this->senderHash_};
   RR32Can::Data data;
   data.dlc = 6;
   uidToData(data.data, engine.getUid());
@@ -239,7 +239,7 @@ void Station::SendEngineVelocity(Locomotive& engine, Locomotive::Velocity_t velo
 }
 
 void Station::RequestEngineFunction(Locomotive& engine, uint8_t function) {
-  RR32Can::Identifier identifier{kLocoFunction, this->senderHash_};
+  RR32Can::Identifier identifier{Command::LOCO_FUNCTION, this->senderHash_};
   RR32Can::Data data;
   data.dlc = 5;
   uidToData(data.data, engine.getUid());
@@ -249,7 +249,7 @@ void Station::RequestEngineFunction(Locomotive& engine, uint8_t function) {
 }
 
 void Station::RequestEngineAllFunctions(Locomotive& engine) {
-  RR32Can::Identifier identifier{kLocoFunction, this->senderHash_};
+  RR32Can::Identifier identifier{Command::LOCO_FUNCTION, this->senderHash_};
   RR32Can::Data data;
   data.dlc = 5;
   uidToData(data.data, engine.getUid());
@@ -260,7 +260,7 @@ void Station::RequestEngineAllFunctions(Locomotive& engine) {
 }
 
 void Station::SendEngineFunction(Locomotive& engine, uint8_t function, bool value) {
-  RR32Can::Identifier identifier{kLocoFunction, this->senderHash_};
+  RR32Can::Identifier identifier{Command::LOCO_FUNCTION, this->senderHash_};
   RR32Can::Data data;
   data.dlc = 6;
   uidToData(data.data, engine.getUid());
@@ -276,7 +276,7 @@ void Station::SendEngineFunction(Locomotive& engine, uint8_t function, bool valu
 }
 
 void Station::SendEmergencyStop(Locomotive& engine) {
-  RR32Can::Identifier identifier{kSystemCommand, this->senderHash_};
+  RR32Can::Identifier identifier{Command::SYSTEM_COMMAND, this->senderHash_};
   RR32Can::Data data;
   data.dlc = 5;
   uidToData(data.data, engine.getUid());
@@ -285,7 +285,7 @@ void Station::SendEmergencyStop(Locomotive& engine) {
 }
 
 void Station::SendSystemStop() {
-  RR32Can::Identifier identifier{kSystemCommand, this->senderHash_};
+  RR32Can::Identifier identifier{Command::SYSTEM_COMMAND, this->senderHash_};
   RR32Can::Data data;
   data.dlc = 5;
   data.data[4] = kSubcommandSystemStop;
@@ -293,7 +293,7 @@ void Station::SendSystemStop() {
 }
 
 void Station::SendSystemGo() {
-  RR32Can::Identifier identifier{kSystemCommand, this->senderHash_};
+  RR32Can::Identifier identifier{Command::SYSTEM_COMMAND, this->senderHash_};
   RR32Can::Data data;
   data.dlc = 5;
   data.data[4] = kSubcommandSystemGo;
@@ -302,7 +302,7 @@ void Station::SendSystemGo() {
 
 void Station::SendAccessoryPacket(RR32Can::MachineTurnoutAddress turnoutAddress, RailProtocol protocol,
                                   TurnoutDirection direction, uint8_t power) {
-  RR32Can::Identifier identifier{kAccessorySwitch, this->senderHash_};
+  RR32Can::Identifier identifier{Command::ACCESSORY_SWITCH, this->senderHash_};
 
   RR32Can::Data data;
 
@@ -327,12 +327,12 @@ void Station::HandlePacket(const RR32Can::Identifier& id, const RR32Can::Data& d
   printf("\n");
 #endif
 
-  switch (id.command_) {
-    case RR32Can::kSystemCommand:
+  switch (id.getCommand()) {
+    case RR32Can::Command::SYSTEM_COMMAND:
       this->HandleSystemCommand(id, data);
       break;
 
-    case RR32Can::kPing:
+    case RR32Can::Command::PING:
 #if (LOG_PING == STD_ON)
       printf("Ping. Payload: 0x");
       data.printAsHex();
@@ -340,25 +340,25 @@ void Station::HandlePacket(const RR32Can::Identifier& id, const RR32Can::Data& d
 #endif
       break;
 
-    case RR32Can::kAccessorySwitch:
+    case RR32Can::Command::ACCESSORY_SWITCH:
       printf("Accessory Switch. Details: ");
-      this->HandleAccessoryPacket(data, id.response_);
+      this->HandleAccessoryPacket(data, id.isResponse());
       printf("\n");
       break;
 
-    case RR32Can::kLocoDirection:
+    case RR32Can::Command::LOCO_DIRECTION:
       this->HandleLocoDirection(data);
       break;
 
-    case RR32Can::kLocoSpeed:
+    case RR32Can::Command::LOCO_SPEED:
       this->HandleLocoSpeed(data);
       break;
 
-    case RR32Can::kLocoFunction:
+    case RR32Can::Command::LOCO_FUNCTION:
       this->HandleLocoFunction(data);
       break;
 
-    case RR32Can::kRequestConfigData:
+    case RR32Can::Command::REQUEST_CONFIG_DATA:
 #if (LOG_CONFIG_DATA_STREAM_LEVEL >= LOG_CONFIG_DATA_STREAM_LEVEL_ALL)
       printf("Request Config Data. Payload: ");
       data.printAsText();
@@ -366,7 +366,7 @@ void Station::HandlePacket(const RR32Can::Identifier& id, const RR32Can::Data& d
 #endif
       break;
 
-    case RR32Can::kConfigDataStream:
+    case RR32Can::Command::CONFIG_DATA_STREAM:
 #if (LOG_CONFIG_DATA_STREAM_LEVEL >= LOG_CONFIG_DATA_STREAM_LEVEL_ALL)
       printf("Config Data Stream.\n");
 #endif
@@ -374,7 +374,7 @@ void Station::HandlePacket(const RR32Can::Identifier& id, const RR32Can::Data& d
       break;
 
     default:
-      printf("Unknown or not implemented. Dump: 0x%#02x\n", id.command_);
+      printf("Unknown or not implemented. Dump: 0x%#02x\n", id.getCommand());
       data.printAsHex();
       printf("\n");
       break;

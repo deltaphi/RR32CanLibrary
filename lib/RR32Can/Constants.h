@@ -14,51 +14,95 @@ namespace RR32Can {
 // these are the command values as defined by Marklin
 // CAN Identifier values are shifted left by one bit.
 
-constexpr uint8_t kSystemCommand = 0x00;
-constexpr uint8_t klocoDiscovery = 0x01;
-constexpr uint8_t kMfxBind = 0x02;
-constexpr uint8_t kMfxVerify = 0x03;
-constexpr uint8_t kLocoSpeed = 0x04;
-constexpr uint8_t kLocoDirection = 0x05;
-constexpr uint8_t kLocoFunction = 0x06;
+constexpr CommandByte_t kSystemCommand = 0x00;
+constexpr CommandByte_t klocoDiscovery = 0x01;
+constexpr CommandByte_t kMfxBind = 0x02;
+constexpr CommandByte_t kMfxVerify = 0x03;
+constexpr CommandByte_t kLocoSpeed = 0x04;
+constexpr CommandByte_t kLocoDirection = 0x05;
+constexpr CommandByte_t kLocoFunction = 0x06;
 
-constexpr uint8_t kReadConfig = 0x07;
-constexpr uint8_t kWriteConfig = 0x08;
-constexpr uint8_t kAccessorySwitch = 0x0B;
-constexpr uint8_t kAccessoryConfig = 0x0C;
+constexpr CommandByte_t kReadConfig = 0x07;
+constexpr CommandByte_t kWriteConfig = 0x08;
+constexpr CommandByte_t kAccessorySwitch = 0x0B;
+constexpr CommandByte_t kAccessoryConfig = 0x0C;
 
-constexpr uint8_t kS88Poll = 0x10;
-constexpr uint8_t kS88Event = 0x11;
-constexpr uint8_t kSX1Event = 0x12;
+constexpr CommandByte_t kS88Poll = 0x10;
+constexpr CommandByte_t kS88Event = 0x11;
+constexpr CommandByte_t kSX1Event = 0x12;
 
-constexpr uint8_t kPing = 0x18;
+constexpr CommandByte_t kPing = 0x18;
 
-constexpr uint8_t kUpdateOffer = 0x19;
-constexpr uint8_t kReadConfigData = 0x1A;
-constexpr uint8_t kBootloaderCan = 0x1B;
-constexpr uint8_t kBootloaderTrack = 0x1C;
-constexpr uint8_t kStatusdataConfig = 0x1D;
-constexpr uint8_t kRequestConfigData = 0x20;
-constexpr uint8_t kConfigDataStream = 0x21;
-constexpr uint8_t k60128DataStream = 0x22;
+constexpr CommandByte_t kUpdateOffer = 0x19;
+constexpr CommandByte_t kReadConfigData = 0x1A;
+constexpr CommandByte_t kBootloaderCan = 0x1B;
+constexpr CommandByte_t kBootloaderTrack = 0x1C;
+constexpr CommandByte_t kStatusdataConfig = 0x1D;
+constexpr CommandByte_t kRequestConfigData = 0x20;
+constexpr CommandByte_t kConfigDataStream = 0x21;
+constexpr CommandByte_t k60128DataStream = 0x22;
+
+enum class Command : CommandByte_t {
+  SYSTEM_COMMAND = kSystemCommand,
+  LOCO_DISCOVERY = klocoDiscovery,
+  MFX_BIND = kMfxBind,
+  MFX_VERIFY = kMfxVerify,
+  LOCO_SPEED = kLocoSpeed,
+  LOCO_DIRECTION = kLocoDirection,
+  LOCO_FUNCTION = kLocoFunction,
+  READ_CONFIG = kReadConfig,
+  WRITE_CONFIG = kWriteConfig,
+  ACCESSORY_SWITCH = kAccessorySwitch,
+  ACCESSORY_CONFIG = kAccessoryConfig,
+  S88_POLL = kS88Poll,
+  S88_EVENT = kS88Event,
+  SX1_EVENT = kSX1Event,
+  PING = kPing,
+  UPDATE_OFFER = kUpdateOffer,
+  READ_CONFIG_DATA = kReadConfigData,
+  BOOTLOADER_CAN = kBootloaderCan,
+  BOOTLOADER_TRACK = kBootloaderTrack,
+  STATUSDATA_CONFIG = kStatusdataConfig,
+  REQUEST_CONFIG_DATA = kRequestConfigData,
+  CONFIG_DATA_STREAM = kConfigDataStream,
+  CMD_60128_DATA_STREAM = k60128DataStream
+};
 
 // Subcommands for system commands
 
-constexpr uint8_t kSubcommandSystemStop = 0x00;
-constexpr uint8_t kSubcommandSystemGo = 0x01;
-constexpr uint8_t kSubcommandSystemHalt = 0x02;
-constexpr uint8_t kSubcommandLocoEmergencyStop = 0x03;
-constexpr uint8_t kSubcommandLocoStopCycle = 0x04;
-constexpr uint8_t kSubcommandLocoDataprotocol = 0x05;
-constexpr uint8_t kSubcommandAccessoryTime = 0x06;
-constexpr uint8_t kSubcommandMfxFastRead = 0x07;
-constexpr uint8_t kSubcommandDataprotocolOn = 0x08;
-constexpr uint8_t kSubcommandMfxSetRegistrationCount = 0x09;
-constexpr uint8_t kSubcommandSystemOverload = 0x0A;
-constexpr uint8_t kSubcommandSystemStatus = 0x0B;
-constexpr uint8_t kSubcommandSystemIdentifier = 0x0C;
-constexpr uint8_t kSubcommandMfxSeek = 0x30;
-constexpr uint8_t kSubcommandSystemReset = 0x80;
+constexpr CommandByte_t kSubcommandSystemStop = 0x00;
+constexpr CommandByte_t kSubcommandSystemGo = 0x01;
+constexpr CommandByte_t kSubcommandSystemHalt = 0x02;
+constexpr CommandByte_t kSubcommandLocoEmergencyStop = 0x03;
+constexpr CommandByte_t kSubcommandLocoStopCycle = 0x04;
+constexpr CommandByte_t kSubcommandLocoDataprotocol = 0x05;
+constexpr CommandByte_t kSubcommandAccessoryTime = 0x06;
+constexpr CommandByte_t kSubcommandMfxFastRead = 0x07;
+constexpr CommandByte_t kSubcommandDataprotocolOn = 0x08;
+constexpr CommandByte_t kSubcommandMfxSetRegistrationCount = 0x09;
+constexpr CommandByte_t kSubcommandSystemOverload = 0x0A;
+constexpr CommandByte_t kSubcommandSystemStatus = 0x0B;
+constexpr CommandByte_t kSubcommandSystemIdentifier = 0x0C;
+constexpr CommandByte_t kSubcommandMfxSeek = 0x30;
+constexpr CommandByte_t kSubcommandSystemReset = 0x80;
+
+enum class SystemSubcommand : CommandByte_t {
+  SYSTEM_STOP = kSubcommandSystemStop,
+  SYSTEM_GO = kSubcommandSystemGo,
+  SYSTEM_HALT = kSubcommandSystemHalt,
+  LOCO_EMERGENCY_STOP = kSubcommandLocoEmergencyStop,
+  LOCO_STOP_CYCLE = kSubcommandLocoStopCycle,
+  LOCO_DATAPROTOCOL = kSubcommandLocoDataprotocol,
+  ACCESSORY_TIME = kSubcommandAccessoryTime,
+  MFX_FAST_READ = kSubcommandMfxFastRead,
+  DATAPROTOCOL_ON = kSubcommandDataprotocolOn,
+  MFX_SET_REGISTRATION_COUNT = kSubcommandMfxSetRegistrationCount,
+  SYSTEM_OVERLOAD = kSubcommandSystemOverload,
+  SYSTEM_STATUS = kSubcommandSystemStatus,
+  SYSTEM_IDENTIFIER = kSubcommandSystemIdentifier,
+  MFX_SEEK = kSubcommandMfxSeek,
+  SYSTEM_RESET = kSubcommandSystemReset
+};
 
 /// Maximum CAN payload length
 constexpr const uint8_t CanDataMaxLength = 8;

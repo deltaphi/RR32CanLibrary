@@ -9,20 +9,20 @@ TEST(Messages, Identifier_Accessory_Request) {
   uint32_t packetId = 0x00163F15;
   RR32Can::Identifier id;
   id = RR32Can::Identifier::GetIdentifier(packetId);
-  EXPECT_EQ(id.prio_, 0);
-  EXPECT_EQ(id.command_, RR32Can::kAccessorySwitch);
-  EXPECT_FALSE(id.response_);
-  EXPECT_EQ(id.hash_, 16149);
+  EXPECT_EQ(id.getPriority(), 0);
+  EXPECT_EQ(id.getCommand(), RR32Can::Command::ACCESSORY_SWITCH);
+  EXPECT_FALSE(id.isResponse());
+  EXPECT_EQ(id.getHash(), 16149);
 }
 
 TEST(Messages, Identifier_Accessory_Response) {
   uint32_t packetId = 0x0017271C;
   RR32Can::Identifier id;
   id = RR32Can::Identifier::GetIdentifier(packetId);
-  EXPECT_EQ(id.prio_, 0);
-  EXPECT_EQ(id.command_, RR32Can::kAccessorySwitch);
-  EXPECT_TRUE(id.response_);
-  EXPECT_EQ(id.hash_, 10012);
+  EXPECT_EQ(id.getPriority(), 0);
+  EXPECT_EQ(id.getCommand(), RR32Can::Command::ACCESSORY_SWITCH);
+  EXPECT_TRUE(id.isResponse());
+  EXPECT_EQ(id.getHash(), 10012);
 }
 
 TEST(Messages, HumanTurnoutAddrEqual) {
