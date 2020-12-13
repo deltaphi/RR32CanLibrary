@@ -116,3 +116,101 @@ TEST(Messages, TurnoutPacket_AddrProto) {
   EXPECT_EQ(packet.getRailProtocol(), RR32Can::RailProtocol::SX1);
   EXPECT_EQ(packet.locid.getNumericAddress(), RR32Can::HumanTurnoutAddress(0x12));
 }
+
+TEST(Messages, TurnoutPacket_Serialize) {
+  {
+    RR32Can::TurnoutPacket packet;
+    packet.locid = RR32Can::HumanTurnoutAddress(13);
+    packet.locid |= RR32Can::kMMAccessoryAddrStart;
+    packet.power = 1;
+    packet.position = RR32Can::TurnoutDirection::WHITE;
+
+    RR32Can::Data data;
+    packet.serialize(data);
+
+    EXPECT_EQ(data.dlc, 6);
+    EXPECT_THAT(data.data, ::testing::ElementsAre(0, 0, 0x30, 12, 3, 1, 0, 0, 0));
+  }
+
+  {
+    RR32Can::TurnoutPacket packet;
+    packet.locid = RR32Can::HumanTurnoutAddress(1);
+    packet.locid |= RR32Can::kMMAccessoryAddrStart;
+    packet.power = 0;
+    packet.position = RR32Can::TurnoutDirection::RED;
+
+    RR32Can::Data data;
+    packet.serialize(data);
+
+    EXPECT_EQ(data.dlc, 6);
+    EXPECT_THAT(data.data, ::testing::ElementsAre(0, 0, 0x30, 0, 0, 0, 0, 0, 0));
+  }
+
+  {
+    RR32Can::TurnoutPacket packet;
+    packet.locid = RR32Can::HumanTurnoutAddress(320);
+    packet.locid |= RR32Can::kMMAccessoryAddrStart;
+    packet.power = 1;
+    packet.position = RR32Can::TurnoutDirection::GREEN;
+
+    RR32Can::Data data;
+    packet.serialize(data);
+
+    EXPECT_EQ(data.dlc, 6);
+    EXPECT_THAT(data.data, ::testing::ElementsAre(0, 0, 0x31, 0x3F, 1, 1, 0, 0, 0));
+  }
+}
+
+TEST(Messages, TurnoutPacket_Deserialize) {
+  {
+    RR32Can::Data data;
+    data.dlc = 6;
+    data.data[0] = 0;
+    data.data[1] = 0;
+    data.data[2] = 0x30;
+    data.data[3] = 12;
+    data.data[4] = 3;
+    data.data[5] = 1;
+
+    RR32Can::TurnoutPacket packet = RR32Can::TurnoutPacket::FromCanPacket(data);
+    RR32Can::MachineTurnoutAddress expectedAddress = RR32Can::kMMAccessoryAddrStart;
+    expectedAddress |= RR32Can::HumanTurnoutAddress(13);
+    EXPECT_EQ(packet.locid, expectedAddress);
+    EXPECT_EQ(packet.power, 1);
+    EXPECT_EQ(packet.position, RR32Can::TurnoutDirection::WHITE);
+  }
+  {
+    RR32Can::Data data;
+    data.dlc = 6;
+    data.data[0] = 0;
+    data.data[1] = 0;
+    data.data[2] = 0x30;
+    data.data[3] = 0;
+    data.data[4] = 0;
+    data.data[5] = 0;
+
+    RR32Can::TurnoutPacket packet = RR32Can::TurnoutPacket::FromCanPacket(data);
+    RR32Can::MachineTurnoutAddress expectedAddress = RR32Can::kMMAccessoryAddrStart;
+    expectedAddress |= RR32Can::HumanTurnoutAddress(1);
+    EXPECT_EQ(packet.locid, expectedAddress);
+    EXPECT_EQ(packet.power, 0);
+    EXPECT_EQ(packet.position, RR32Can::TurnoutDirection::RED);
+  }
+  {
+    RR32Can::Data data;
+    data.dlc = 6;
+    data.data[0] = 0;
+    data.data[1] = 0;
+    data.data[2] = 0x31;
+    data.data[3] = 0x3F;
+    data.data[4] = 1;
+    data.data[5] = 1;
+
+    RR32Can::TurnoutPacket packet = RR32Can::TurnoutPacket::FromCanPacket(data);
+    RR32Can::MachineTurnoutAddress expectedAddress = RR32Can::kMMAccessoryAddrStart;
+    expectedAddress |= RR32Can::HumanTurnoutAddress(320);
+    EXPECT_EQ(packet.locid, expectedAddress);
+    EXPECT_EQ(packet.power, 1);
+    EXPECT_EQ(packet.position, RR32Can::TurnoutDirection::GREEN);
+  }
+}
