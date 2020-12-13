@@ -17,7 +17,7 @@ class AccessoryCbk {
    * \param packet The packet that was received.
    * \param request Whether the packet was a request (false) or a response (true).
    */
-  virtual void OnAccessoryPacket(TurnoutPacket& packet, bool response) = 0;
+  virtual void OnAccessoryPacket(const TurnoutPacket& packet, bool response) = 0;
 };
 
 }  // namespace callback

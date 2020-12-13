@@ -304,15 +304,14 @@ void Station::SendAccessoryPacket(RR32Can::MachineTurnoutAddress turnoutAddress,
                                   TurnoutDirection direction, uint8_t power) {
   RR32Can::Identifier identifier{kAccessorySwitch, this->senderHash_};
 
-  RR32Can::TurnoutPacket payload;
-  payload.locid = turnoutAddress;  // Set the turnout address
-  payload.locid |= getAccessoryLocIdMask(protocol);
-  payload.position = direction;  // Set the turnout direction
-  payload.power = power;
-
-  // Serialize the CAN packet and send it
   RR32Can::Data data;
-  payload.serialize(data);
+
+  RR32Can::TurnoutPacket payload(data);
+  payload.initData();
+  turnoutAddress |= getAccessoryLocIdMask(protocol);
+  payload.setLocid(turnoutAddress);  // Set the turnout address
+  payload.setDirection(direction);   // Set the turnout direction
+  payload.setPower(power);
 
 #if (LOG_CAN_OUT_MSG == STD_ON)
   printf("Setting turnout %d to position %s %s\n", payload.locid & (~0x3000), payload.position == 0 ? "RED " : "GREEN",
@@ -383,7 +382,8 @@ void Station::HandlePacket(const RR32Can::Identifier& id, const RR32Can::Data& d
 }
 
 void Station::HandleAccessoryPacket(const RR32Can::Data& data, bool request) {
-  RR32Can::TurnoutPacket turnoutPacket = RR32Can::TurnoutPacket::FromCanPacket(data);
+  // Create a const packet from const data by using some dangerous casts.
+  const RR32Can::TurnoutPacket turnoutPacket(const_cast<RR32Can::Data&>(data));
   turnoutPacket.printAll();
 
   if (callbacks_.accessory != nullptr) {

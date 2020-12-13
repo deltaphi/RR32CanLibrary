@@ -16,26 +16,32 @@ namespace RR32Can {
  */
 class TurnoutPacket {
  public:
-  /// Turnout-address (0-based)
-  MachineTurnoutAddress locid = 0;
+  TurnoutPacket(RR32Can::Data& data) : data_(data){};
 
-  /// Whether to set the turnout to straight or branching
-  TurnoutDirection position = TurnoutDirection::RED;
+  void initData() {
+    data_.dlc = 6;
+    memset(data_.data, 0, sizeof(&(data_.data)));
+  }
 
-  /// Whether to switch the actuator on or off
-  uint8_t power = 0;
+  MachineTurnoutAddress getLocid() const {
+    using LogcId_t = TurnoutAddressBase::value_type;
+    MachineTurnoutAddress locid = static_cast<LogcId_t>(data_.data[3]) | (static_cast<LogcId_t>(data_.data[2]) << 8) |
+                                  (static_cast<LogcId_t>(data_.data[1]) << 16) |
+                                  (static_cast<LogcId_t>(data_.data[0]) << 24);
+    return locid;
+  }
+  void setLocid(const MachineTurnoutAddress& locid) {
+    data_.data[0] = (locid.value() >> 24) & 0xFF;
+    data_.data[1] = (locid.value() >> 16) & 0xFF;
+    data_.data[2] = (locid.value() >> 8) & 0xFF;
+    data_.data[3] = locid.value() & 0xFF;
+  }
 
-  /**
-   * \brief Parse a CAN payload into a turnout packet.
-   *
-   * This does not check the type of the contents of Data.
-   */
-  static TurnoutPacket FromCanPacket(const Data& data);
+  bool getPower() const { return data_.data[5] != 0; }
+  void setPower(bool power) { data_.data[5] = (power ? 1 : 0); }
 
-  /**
-   * \brief Serialize the fields of this TurnoutPacket into a CAN payload.
-   */
-  void serialize(Data& data) const;
+  TurnoutDirection getDirection() const { return TurnoutDirectionFromIntegral(data_.data[4]); }
+  void setDirection(TurnoutDirection direction) { data_.data[4] = TurnoutDirectionToIntegral<uint8_t>(direction); }
 
   /**
    * \brief Obtain the human-readable turnout address (1-based)
@@ -55,6 +61,7 @@ class TurnoutPacket {
    * \return MM1, DCC, SX1 or UNKOWN.
    */
   RailProtocol getRailProtocol() const {
+    MachineTurnoutAddress locid = getLocid();
     if (kSX1AccessoryAddrStart <= locid && locid <= kSX1AccessoryAddrStop) {
       return RailProtocol::SX1;
     } else if (kMMAccessoryAddrStart <= locid && locid <= kMMAccessoryAddrStop) {
@@ -65,6 +72,9 @@ class TurnoutPacket {
       return RailProtocol::UNKNOWN;
     }
   }
+
+ private:
+  RR32Can::Data& data_;
 };
 
 } /* namespace RR32Can */

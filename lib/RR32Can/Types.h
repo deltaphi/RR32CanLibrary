@@ -32,6 +32,9 @@ constexpr TurnoutDirection TurnoutDirectionFromIntegral(IntegralType dir) {
     case 3:
       return TurnoutDirection::WHITE;
       break;
+    default:
+      return TurnoutDirection::RED;
+      break;
   }
 }
 

@@ -68,93 +68,93 @@ TEST(Messages, MixedTurnoutAddrEqual) {
 
 TEST(Messages, TurnoutPacket) {
   {
-    RR32Can::TurnoutPacket packet;
-    packet.locid = RR32Can::HumanTurnoutAddress(11);
-    packet.position = RR32Can::TurnoutDirection::GREEN;
-    packet.power = 1;
-
     RR32Can::Data busData;
-    packet.serialize(busData);
+    RR32Can::TurnoutPacket packet(busData);
+    packet.initData();
+    packet.setLocid(RR32Can::HumanTurnoutAddress(11));
+    packet.setDirection(RR32Can::TurnoutDirection::GREEN);
+    packet.setPower(1);
 
     ASSERT_EQ(busData.dlc, 6);
     EXPECT_THAT(busData.data, ::testing::ElementsAre(0, 0, 0, 10, 1, 1, 0, 0, 0));
 
-    RR32Can::TurnoutPacket recvPacket = RR32Can::TurnoutPacket::FromCanPacket(busData);
-
-    EXPECT_EQ(packet, recvPacket);
+    EXPECT_EQ(packet.getLocid(), RR32Can::HumanTurnoutAddress(11));
+    EXPECT_EQ(packet.getDirection(), RR32Can::TurnoutDirection::GREEN);
+    EXPECT_TRUE(packet.getPower());
   }
 
   {
-    RR32Can::TurnoutPacket packet;
-    packet.locid = RR32Can::HumanTurnoutAddress(1);
-    packet.position = RR32Can::TurnoutDirection::YELLOW;
-    packet.power = 0;
-
     RR32Can::Data busData;
-    packet.serialize(busData);
+    RR32Can::TurnoutPacket packet(busData);
+    packet.initData();
+    packet.setLocid(RR32Can::HumanTurnoutAddress(1));
+    packet.setDirection(RR32Can::TurnoutDirection::YELLOW);
+    packet.setPower(false);
 
     ASSERT_EQ(busData.dlc, 6);
     EXPECT_THAT(busData.data, ::testing::ElementsAre(0, 0, 0, 0, 2, 0, 0, 0, 0));
 
-    RR32Can::TurnoutPacket recvPacket = RR32Can::TurnoutPacket::FromCanPacket(busData);
-
-    EXPECT_EQ(packet, recvPacket);
+    EXPECT_EQ(packet.getLocid(), RR32Can::HumanTurnoutAddress(1));
+    EXPECT_EQ(packet.getDirection(), RR32Can::TurnoutDirection::YELLOW);
+    EXPECT_FALSE(packet.getPower());
   }
 }
 
 TEST(Messages, TurnoutPacket_AddrProto) {
-  RR32Can::TurnoutPacket packet;
-  packet.locid = RR32Can::HumanTurnoutAddress(0x3012);  // MM2 addr
+  RR32Can::Data busData;
+  RR32Can::TurnoutPacket packet(busData);
+  packet.initData();
+  packet.setLocid(RR32Can::HumanTurnoutAddress(0x3012));  // MM2 addr
   EXPECT_EQ(packet.getRailProtocol(), RR32Can::RailProtocol::MM1);
-  EXPECT_EQ(packet.locid.getNumericAddress(), RR32Can::HumanTurnoutAddress(0x12));
+  EXPECT_EQ(packet.getLocid().getNumericAddress(), RR32Can::HumanTurnoutAddress(0x12));
 
-  packet.locid = RR32Can::HumanTurnoutAddress(0x3812);  // DCC Addr
+  packet.setLocid(RR32Can::HumanTurnoutAddress(0x3812));  // DCC Addr
   EXPECT_EQ(packet.getRailProtocol(), RR32Can::RailProtocol::DCC);
-  EXPECT_EQ(packet.locid.getNumericAddress(), RR32Can::HumanTurnoutAddress(0x12));
+  EXPECT_EQ(packet.getLocid().getNumericAddress(), RR32Can::HumanTurnoutAddress(0x12));
 
-  packet.locid = RR32Can::HumanTurnoutAddress(0x2812);  // SX Addr
+  packet.setLocid(RR32Can::HumanTurnoutAddress(0x2812));  // SX Addr
   EXPECT_EQ(packet.getRailProtocol(), RR32Can::RailProtocol::SX1);
-  EXPECT_EQ(packet.locid.getNumericAddress(), RR32Can::HumanTurnoutAddress(0x12));
+  EXPECT_EQ(packet.getLocid().getNumericAddress(), RR32Can::HumanTurnoutAddress(0x12));
 }
 
 TEST(Messages, TurnoutPacket_Serialize) {
   {
-    RR32Can::TurnoutPacket packet;
-    packet.locid = RR32Can::HumanTurnoutAddress(13);
-    packet.locid |= RR32Can::kMMAccessoryAddrStart;
-    packet.power = 1;
-    packet.position = RR32Can::TurnoutDirection::WHITE;
-
     RR32Can::Data data;
-    packet.serialize(data);
+    RR32Can::TurnoutPacket packet(data);
+    packet.initData();
+    RR32Can::MachineTurnoutAddress locid = RR32Can::HumanTurnoutAddress(13);
+    locid |= RR32Can::kMMAccessoryAddrStart;
+    packet.setLocid(locid);
+    packet.setPower(true);
+    packet.setDirection(RR32Can::TurnoutDirection::WHITE);
 
     EXPECT_EQ(data.dlc, 6);
     EXPECT_THAT(data.data, ::testing::ElementsAre(0, 0, 0x30, 12, 3, 1, 0, 0, 0));
   }
 
   {
-    RR32Can::TurnoutPacket packet;
-    packet.locid = RR32Can::HumanTurnoutAddress(1);
-    packet.locid |= RR32Can::kMMAccessoryAddrStart;
-    packet.power = 0;
-    packet.position = RR32Can::TurnoutDirection::RED;
-
     RR32Can::Data data;
-    packet.serialize(data);
+    RR32Can::TurnoutPacket packet(data);
+    packet.initData();
+    RR32Can::MachineTurnoutAddress locid = RR32Can::HumanTurnoutAddress(1);
+    locid |= RR32Can::kMMAccessoryAddrStart;
+    packet.setLocid(locid);
+    packet.setPower(false);
+    packet.setDirection(RR32Can::TurnoutDirection::RED);
 
     EXPECT_EQ(data.dlc, 6);
     EXPECT_THAT(data.data, ::testing::ElementsAre(0, 0, 0x30, 0, 0, 0, 0, 0, 0));
   }
 
   {
-    RR32Can::TurnoutPacket packet;
-    packet.locid = RR32Can::HumanTurnoutAddress(320);
-    packet.locid |= RR32Can::kMMAccessoryAddrStart;
-    packet.power = 1;
-    packet.position = RR32Can::TurnoutDirection::GREEN;
-
     RR32Can::Data data;
-    packet.serialize(data);
+    RR32Can::TurnoutPacket packet(data);
+    packet.initData();
+    RR32Can::MachineTurnoutAddress locid = RR32Can::HumanTurnoutAddress(320);
+    locid |= RR32Can::kMMAccessoryAddrStart;
+    packet.setLocid(locid);
+    packet.setPower(true);
+    packet.setDirection(RR32Can::TurnoutDirection::GREEN);
 
     EXPECT_EQ(data.dlc, 6);
     EXPECT_THAT(data.data, ::testing::ElementsAre(0, 0, 0x31, 0x3F, 1, 1, 0, 0, 0));
@@ -172,12 +172,12 @@ TEST(Messages, TurnoutPacket_Deserialize) {
     data.data[4] = 3;
     data.data[5] = 1;
 
-    RR32Can::TurnoutPacket packet = RR32Can::TurnoutPacket::FromCanPacket(data);
+    RR32Can::TurnoutPacket packet(data);
     RR32Can::MachineTurnoutAddress expectedAddress = RR32Can::kMMAccessoryAddrStart;
     expectedAddress |= RR32Can::HumanTurnoutAddress(13);
-    EXPECT_EQ(packet.locid, expectedAddress);
-    EXPECT_EQ(packet.power, 1);
-    EXPECT_EQ(packet.position, RR32Can::TurnoutDirection::WHITE);
+    EXPECT_EQ(packet.getLocid(), expectedAddress);
+    EXPECT_TRUE(packet.getPower());
+    EXPECT_EQ(packet.getDirection(), RR32Can::TurnoutDirection::WHITE);
   }
   {
     RR32Can::Data data;
@@ -189,12 +189,12 @@ TEST(Messages, TurnoutPacket_Deserialize) {
     data.data[4] = 0;
     data.data[5] = 0;
 
-    RR32Can::TurnoutPacket packet = RR32Can::TurnoutPacket::FromCanPacket(data);
+    RR32Can::TurnoutPacket packet(data);
     RR32Can::MachineTurnoutAddress expectedAddress = RR32Can::kMMAccessoryAddrStart;
     expectedAddress |= RR32Can::HumanTurnoutAddress(1);
-    EXPECT_EQ(packet.locid, expectedAddress);
-    EXPECT_EQ(packet.power, 0);
-    EXPECT_EQ(packet.position, RR32Can::TurnoutDirection::RED);
+    EXPECT_EQ(packet.getLocid(), expectedAddress);
+    EXPECT_FALSE(packet.getPower());
+    EXPECT_EQ(packet.getDirection(), RR32Can::TurnoutDirection::RED);
   }
   {
     RR32Can::Data data;
@@ -206,11 +206,11 @@ TEST(Messages, TurnoutPacket_Deserialize) {
     data.data[4] = 1;
     data.data[5] = 1;
 
-    RR32Can::TurnoutPacket packet = RR32Can::TurnoutPacket::FromCanPacket(data);
+    const RR32Can::TurnoutPacket packet(data);
     RR32Can::MachineTurnoutAddress expectedAddress = RR32Can::kMMAccessoryAddrStart;
     expectedAddress |= RR32Can::HumanTurnoutAddress(320);
-    EXPECT_EQ(packet.locid, expectedAddress);
-    EXPECT_EQ(packet.power, 1);
-    EXPECT_EQ(packet.position, RR32Can::TurnoutDirection::GREEN);
+    EXPECT_EQ(packet.getLocid(), expectedAddress);
+    EXPECT_TRUE(packet.getPower());
+    EXPECT_EQ(packet.getDirection(), RR32Can::TurnoutDirection::GREEN);
   }
 }

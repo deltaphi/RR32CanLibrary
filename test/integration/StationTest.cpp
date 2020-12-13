@@ -189,10 +189,14 @@ TEST_F(StationTestFixture, ReceiveAccessory_Request) {
   data.data[4] = 0x01;
   data.data[5] = 0x01;
 
-  RR32Can::TurnoutPacket expectedPacket;
-  expectedPacket.locid = 0x3000 /* MM2 */ | RR32Can::MachineTurnoutAddress(RR32Can::HumanTurnoutAddress(42)).value();
-  expectedPacket.position = RR32Can::TurnoutDirection::GREEN;
-  expectedPacket.power = true;
+  RR32Can::Data expectedData;
+  RR32Can::TurnoutPacket expectedPacket(expectedData);
+  expectedPacket.initData();
+  RR32Can::MachineTurnoutAddress locid = RR32Can::HumanTurnoutAddress(42);
+  locid |= RR32Can::kMMAccessoryAddrStart;
+  expectedPacket.setLocid(locid);
+  expectedPacket.setDirection(RR32Can::TurnoutDirection::GREEN);
+  expectedPacket.setPower(true);
 
   EXPECT_CALL(accessoryCbk, OnAccessoryPacket(expectedPacket, false));
 
@@ -213,10 +217,14 @@ TEST_F(StationTestFixture, ReceiveAccessory_Response) {
   data.data[4] = 0x01;
   data.data[5] = 0x01;
 
-  RR32Can::TurnoutPacket expectedPacket;
-  expectedPacket.locid = 0x3000 /* MM2 */ | RR32Can::MachineTurnoutAddress(RR32Can::HumanTurnoutAddress(42)).value();
-  expectedPacket.position = RR32Can::TurnoutDirection::GREEN;
-  expectedPacket.power = true;
+  RR32Can::Data expectedData;
+  RR32Can::TurnoutPacket expectedPacket(expectedData);
+  expectedPacket.initData();
+  RR32Can::MachineTurnoutAddress locid = RR32Can::HumanTurnoutAddress(42);
+  locid |= RR32Can::kMMAccessoryAddrStart;
+  expectedPacket.setLocid(locid);
+  expectedPacket.setDirection(RR32Can::TurnoutDirection::GREEN);
+  expectedPacket.setPower(true);
 
   EXPECT_CALL(accessoryCbk, OnAccessoryPacket(expectedPacket, true));
 
