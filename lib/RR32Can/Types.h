@@ -9,7 +9,12 @@
 
 namespace RR32Can {
 
-/// Accessory direction
+/// Rail communication protocols.
+enum class RailProtocol { MM1, MM2, MFX, SX1, SX2, DCC, UNKNOWN };
+class MachineTurnoutAddress;
+MachineTurnoutAddress getAccessoryLocIdMask(RailProtocol proto);
+
+/// Accessory direction.
 enum class TurnoutDirection : uint8_t { RED = 0, GREEN = 1, YELLOW = 2, WHITE = 3 };
 
 template <typename IntegralType>
@@ -93,6 +98,11 @@ class MachineTurnoutAddress : public TurnoutAddressBase {
    * \brief Address without the protocol part.
    */
   MachineTurnoutAddress getNumericAddress() const { return MachineTurnoutAddress(value() & 0x03FF); }
+  void setProtocol(RailProtocol protocol) {
+    MachineTurnoutAddress addr(getNumericAddress());
+    addr |= getAccessoryLocIdMask(protocol);
+    *this = addr;
+  }
 };
 
 /// Engine Direction

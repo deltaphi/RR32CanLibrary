@@ -134,8 +134,6 @@ constexpr const MachineTurnoutAddress kTurnoutAddressMax = 319;
 
 // Address ranges for engine protocols
 
-enum class RailProtocol { MM1, MM2, MFX, SX1, SX2, DCC, UNKNOWN };
-
 extern const char* kProtocolNameMM1;
 extern const char* kProtocolNameMM2;
 extern const char* kProtocolNameMFX;
@@ -174,7 +172,6 @@ constexpr LocId_t kSX2AddrStop = 0xBFFF;
 constexpr LocId_t kDCCAddrStart = 0xC000;
 constexpr LocId_t kDCCAddrStop = 0xFFFF;
 
-MachineTurnoutAddress getAccessoryLocIdMask(RailProtocol proto);
 
 /// Upper limit for engine speed data
 constexpr Velocity_t kMaxEngineVelocity = 1000;

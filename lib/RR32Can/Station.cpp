@@ -313,6 +313,11 @@ void Station::SendAccessoryPacket(RR32Can::MachineTurnoutAddress turnoutAddress,
   callbacks_.tx->SendPacket(identifier, data);
 }
 
+void Station::SendPacket(RR32Can::Identifier identifier, const RR32Can::Data & data) {
+  identifier.setHash(this->senderHash_);
+  callbacks_.tx->SendPacket(identifier, data);
+}
+
 void Station::HandlePacket(const RR32Can::Identifier& id, const RR32Can::Data& data) {
 #if LOG_CAN_RAW_MSG_IN == STD_ON
   id.printAll();

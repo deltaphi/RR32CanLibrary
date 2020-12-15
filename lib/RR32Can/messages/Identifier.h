@@ -85,13 +85,13 @@ class Identifier {
    */
   void printAll() const;
 
- private:
   void setHash(uint16_t hash) {  // Clear hash bits
     identifier_ &= ~kHashBitMask;
     // Set new bits
     identifier_ |= hash;
   }
-
+ 
+ private:
   value_type identifier_;
 };
 
