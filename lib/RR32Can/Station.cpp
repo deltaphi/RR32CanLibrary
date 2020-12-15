@@ -313,7 +313,7 @@ void Station::SendAccessoryPacket(RR32Can::MachineTurnoutAddress turnoutAddress,
   callbacks_.tx->SendPacket(identifier, data);
 }
 
-void Station::SendPacket(RR32Can::Identifier identifier, const RR32Can::Data & data) {
+void Station::SendPacket(RR32Can::Identifier identifier, const RR32Can::Data& data) {
   identifier.setHash(this->senderHash_);
   callbacks_.tx->SendPacket(identifier, data);
 }

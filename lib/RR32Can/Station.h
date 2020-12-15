@@ -88,7 +88,7 @@ class Station {
   void SendSystemStop();
   void SendSystemGo();
 
-  void SendPacket(Identifier identifier, const Data & data);
+  void SendPacket(Identifier identifier, const Data& data);
 
   void HandleLocoDirection(const RR32Can::Data& data);
   void HandleLocoSpeed(const RR32Can::Data& data);

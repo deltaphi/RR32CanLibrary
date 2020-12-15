@@ -172,7 +172,6 @@ constexpr LocId_t kSX2AddrStop = 0xBFFF;
 constexpr LocId_t kDCCAddrStart = 0xC000;
 constexpr LocId_t kDCCAddrStop = 0xFFFF;
 
-
 /// Upper limit for engine speed data
 constexpr Velocity_t kMaxEngineVelocity = 1000;
 

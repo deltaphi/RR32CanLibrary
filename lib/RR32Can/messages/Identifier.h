@@ -90,7 +90,7 @@ class Identifier {
     // Set new bits
     identifier_ |= hash;
   }
- 
+
  private:
   value_type identifier_;
 };

@@ -23,8 +23,6 @@ class BaseMessage {
     memset(data_.data, 0, sizeof(&(data_.data)));
   }
 
-  
-
   RR32Can::Data& data_;
 };
 
