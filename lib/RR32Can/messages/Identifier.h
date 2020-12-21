@@ -91,6 +91,9 @@ class Identifier {
     identifier_ |= hash;
   }
 
+  value_type& rawValue() { return identifier_; }
+  const value_type& rawValue() const { return identifier_; }
+
  private:
   value_type identifier_;
 };
