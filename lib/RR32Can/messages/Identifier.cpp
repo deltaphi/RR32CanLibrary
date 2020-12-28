@@ -20,8 +20,8 @@ Identifier Identifier::GetIdentifier(uint8_t buffer[4]) {
 }
 
 void Identifier::printAll() const {
-  printf("Prio: %#04X, Command: %#04X, Response: %#04X, Hash: %#06X", getPriority(), getCommand(), isResponse(),
-         getHash());
+  printf("Prio: %#04X, Command: %#04X, Response: %#04X, Hash: %#06X", getPriority(),
+         static_cast<CommandByte_t>(getCommand()), isResponse(), getHash());
 }
 
 } /* namespace RR32Can */

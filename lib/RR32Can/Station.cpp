@@ -372,7 +372,7 @@ void Station::HandlePacket(const RR32Can::Identifier& id, const RR32Can::Data& d
       break;
 
     default:
-      printf("Unknown or not implemented. Dump: 0x%#02x\n", id.getCommand());
+      printf("Unknown or not implemented. Dump: 0x%#02x\n", static_cast<CommandByte_t>(id.getCommand()));
       data.printAsHex();
       printf("\n");
       break;

@@ -32,7 +32,7 @@ void ConfigDataStreamParser::addMessage(const Data& data) {
         printf(
             " Stream length: %i Bytes. CRC requested: %#04x CRC actual: "
             "%#04x.\n",
-            remainingBytes_, crc_, this->crc_.getCrc());
+            remainingBytes_, crc_.getReference(), this->crc_.getCrc());
 
         if (data.dlc == 7) {
           // Initial compressed
