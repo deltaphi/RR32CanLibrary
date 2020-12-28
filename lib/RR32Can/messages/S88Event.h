@@ -12,16 +12,9 @@ namespace messages {
  */
 class S88Event : public BaseMessage {
  public:
-  enum class Subtype {
-    REQUEST,
-    EVENT,
-    RESPONSE
-  }
+  enum class Subtype { REQUEST, EVENT, RESPONSE };
 
-  void
-  initData() {
-    BaseMessage::initData();
-  }
+  void initData() { BaseMessage::initData(); }
 
   Subtype getSubtype() const {
     switch (length()) {
@@ -49,7 +42,7 @@ class S88Event : public BaseMessage {
   }
 
   MachineTurnoutAddress getDeviceId() const {
-    uint16_t addr = data_.data[0] << 8 || data_.data[1];
+    uint16_t addr = data_.data[0] << 8 | data_.data[1];
     return MachineTurnoutAddress(addr);
   }
 
@@ -60,7 +53,7 @@ class S88Event : public BaseMessage {
   }
 
   MachineTurnoutAddress getContactId() const {
-    uint16_t addr = data_.data[2] << 8 || data_.data[3];
+    uint16_t addr = data_.data[2] << 8 | data_.data[3];
     return MachineTurnoutAddress(addr);
   }
 
