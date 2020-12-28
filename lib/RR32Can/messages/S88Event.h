@@ -12,7 +12,9 @@ namespace RR32Can {
 class S88Event : public BaseMessage {
  public:
   enum class Subtype { REQUEST, EVENT, RESPONSE };
+  enum class State { OPEN = 0, CLOSED = 1 };
 
+  using BaseMessage::BaseMessage;
   void initData() { BaseMessage::initData(); }
 
   Subtype getSubtype() const {
@@ -60,6 +62,24 @@ class S88Event : public BaseMessage {
     auto value = addr.value();
     data_.data[3] = value;
     data_.data[2] = value >> 8;
+  }
+
+  void setStates(State oldState, State newState) {
+    data_.data[4] = static_cast<uint8_t>(oldState);
+    data_.data[5] = static_cast<uint8_t>(newState);
+  }
+
+  State getOldState() const { return static_cast<State>(data_.data[4]); }
+  State getNewState() const { return static_cast<State>(data_.data[5]); }
+
+  void setTime(uint16_t time) {
+    data_.data[7] = time;
+    data_.data[6] = time >> 8;
+  }
+
+  uint16_t getTime() const {
+    uint16_t time = (data_.data[6] << 8) | data_.data[7];
+    return time;
   }
 };
 
