@@ -5,7 +5,6 @@
 #include "RR32Can/messages/BaseMessage.h"
 
 namespace RR32Can {
-namespace messages {
 
 /*
  * \brief Class S88Event
@@ -64,7 +63,6 @@ class S88Event : public BaseMessage {
   }
 };
 
-}  // namespace messages
 }  // namespace RR32Can
 
 #endif  // __RR32CAN__MESSAGES__S88EVENT_H__
