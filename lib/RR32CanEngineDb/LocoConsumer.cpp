@@ -65,6 +65,6 @@ void LocoConsumer::setStreamComplete() {
   printf("\n");
 }
 
-void LocoConsumer::setStreamAborted(){};
+void LocoConsumer::setStreamAborted() {}
 
 }  // namespace RR32Can

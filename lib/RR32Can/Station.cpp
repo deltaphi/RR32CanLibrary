@@ -268,7 +268,7 @@ void Station::SendEngineFunction(Locomotive& engine, uint8_t function, bool valu
   callbacks_.tx->SendPacket(identifier, data);
 }
 
-void Station::SendEmergencyStop(Locomotive& engine) {
+void Station::SendEmergencyStop() {
   RR32Can::Identifier identifier{Command::SYSTEM_COMMAND, this->senderHash_};
   RR32Can::Data data;
   data.dlc = 5;

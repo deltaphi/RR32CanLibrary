@@ -37,7 +37,6 @@ TEST(Crc, reset) {
 
 TEST(Crc, data1) {
   uint16_t streamCRC = 0xDEC2;
-  uint16_t streamLength = 88;
 
   uint8_t streamData[11][8] = {
       // clang-format off
@@ -67,6 +66,7 @@ TEST(Crc, data1) {
   }
 
   EXPECT_TRUE(crc.isCrcValid());
+  EXPECT_EQ(crc.getCrc(), streamCRC);
 }
 
 } /* namespace RR32Can */
