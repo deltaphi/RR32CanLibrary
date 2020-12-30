@@ -41,8 +41,10 @@ MachineLocomotiveAddress getLocomotiveLocIdMask(RailProtocol proto) {
   switch (proto) {
     case RailProtocol::MM1:
     case RailProtocol::MM2:
+      return kMMEngineFunctionAddrStart;
+      break;
     case RailProtocol::MFX:
-      return kMMEngineAddrStart;
+      return kMFXAddrStart;
       break;
     case RailProtocol::SX1:
     case RailProtocol::SX2:
