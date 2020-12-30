@@ -9,7 +9,7 @@ HumanTurnoutAddress TurnoutPacket::AddressAsHumanValue() const { return HumanTur
 void TurnoutPacket::printAll() const {
   RR32Can::TurnoutDirection position = getDirection();
   printf("Turnout: %#10x, Human Value: %d, Position: %d ", getLocid().value(), AddressAsHumanValue().value(),
-         TurnoutDirectionToIntegral<int>(position));
+         TurnoutDirectionToIntegral(position));
 
   switch (position) {
     case TurnoutDirection::RED:

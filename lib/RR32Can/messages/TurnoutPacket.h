@@ -30,7 +30,7 @@ class TurnoutPacket : public BaseMessage {
   void setPower(bool power) { data_.data[5] = (power ? 1 : 0); }
 
   TurnoutDirection getDirection() const { return TurnoutDirectionFromIntegral(data_.data[4]); }
-  void setDirection(TurnoutDirection direction) { data_.data[4] = TurnoutDirectionToIntegral<uint8_t>(direction); }
+  void setDirection(TurnoutDirection direction) { data_.data[4] = TurnoutDirectionToIntegral(direction); }
 
   /**
    * \brief Obtain the human-readable turnout address (1-based)

@@ -82,6 +82,7 @@ add_executable(RR32CanTest
     "test/RR32Can/TextParserTest.cpp"
     "test/RR32Can/CrcTest.cpp"
     "test/RR32Can/ConstantsTest.cpp"
+    "test/RR32Can/TypesTest.cpp"
 )
 target_link_libraries(RR32CanTest gtest_main gmock)
 add_test(NAME gtest_rr32can_test COMMAND RR32CanTest)

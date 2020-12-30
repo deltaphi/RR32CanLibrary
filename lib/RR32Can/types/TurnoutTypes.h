@@ -9,32 +9,15 @@ class MachineTurnoutAddress;
 MachineTurnoutAddress getAccessoryLocIdMask(RailProtocol proto);
 
 /// Accessory direction.
-enum class TurnoutDirection : uint8_t { RED = 0, GREEN = 1, YELLOW = 2, WHITE = 3 };
+using TurnoutDirection_UnderlyingType = uint8_t;
+enum class TurnoutDirection : TurnoutDirection_UnderlyingType { RED = 0, GREEN = 1, YELLOW = 2, WHITE = 3 };
 
-template <typename IntegralType>
-constexpr IntegralType TurnoutDirectionToIntegral(TurnoutDirection dir) {
-  return static_cast<IntegralType>(dir);
+constexpr TurnoutDirection_UnderlyingType TurnoutDirectionToIntegral(TurnoutDirection dir) {
+  return static_cast<TurnoutDirection_UnderlyingType>(dir);
 }
 
-template <typename IntegralType>
-constexpr TurnoutDirection TurnoutDirectionFromIntegral(IntegralType dir) {
-  switch (dir) {
-    case 0:
-      return TurnoutDirection::RED;
-      break;
-    case 1:
-      return TurnoutDirection::GREEN;
-      break;
-    case 2:
-      return TurnoutDirection::YELLOW;
-      break;
-    case 3:
-      return TurnoutDirection::WHITE;
-      break;
-    default:
-      return TurnoutDirection::RED;
-      break;
-  }
+constexpr TurnoutDirection TurnoutDirectionFromIntegral(TurnoutDirection_UnderlyingType dir) {
+  return static_cast<TurnoutDirection>(dir);
 }
 
 /**
@@ -87,9 +70,8 @@ class MachineTurnoutAddress : public TurnoutAddressBase {
    */
   MachineTurnoutAddress getNumericAddress() const { return MachineTurnoutAddress(value() & 0x03FF); }
   void setProtocol(RailProtocol protocol) {
-    MachineTurnoutAddress addr(getNumericAddress());
-    addr |= getAccessoryLocIdMask(protocol);
-    *this = addr;
+    *this = getNumericAddress();
+    *this |= getAccessoryLocIdMask(protocol);
   }
 };
 

@@ -7,7 +7,7 @@
 #include <cstdint>
 #endif
 
-#include "Types.h"
+#include "RR32Can/Types.h"
 
 namespace RR32Can {
 

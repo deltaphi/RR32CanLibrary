@@ -12,4 +12,10 @@ EngineDirection switchDirection(EngineDirection direction) {
   }
 }
 
+HumanLocomotiveAddress::HumanLocomotiveAddress(const MachineLocomotiveAddress& other)
+    : LocomotiveAddressBase(other.value() + 1) {}
+
+MachineLocomotiveAddress::MachineLocomotiveAddress(const HumanLocomotiveAddress& other)
+    : LocomotiveAddressBase(other.value() - 1) {}
+
 }  // namespace RR32Can

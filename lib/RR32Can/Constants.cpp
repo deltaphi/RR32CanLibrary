@@ -37,4 +37,23 @@ MachineTurnoutAddress getAccessoryLocIdMask(RailProtocol proto) {
   }
 }
 
+MachineLocomotiveAddress getLocomotiveLocIdMask(RailProtocol proto) {
+  switch (proto) {
+    case RailProtocol::MM1:
+    case RailProtocol::MM2:
+    case RailProtocol::MFX:
+      return kMMEngineAddrStart;
+      break;
+    case RailProtocol::SX1:
+    case RailProtocol::SX2:
+      return kSX1AddrStart;
+      break;
+    case RailProtocol::DCC:
+      return kDCCAddrStart;
+      break;
+    default:
+      return 0xFF00;  // Guard Value that shows up as an error.
+  }
+}
+
 }  // namespace RR32Can

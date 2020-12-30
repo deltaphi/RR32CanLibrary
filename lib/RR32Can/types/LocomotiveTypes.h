@@ -16,6 +16,54 @@ using Velocity_t = uint16_t;
 using EngineAddress_t = uint32_t;
 using FunctionBits_t = uint16_t;
 
+/// Opaque Typedefs for Locomotive Addresses
+class LocomotiveAddressBase {
+ public:
+  using value_type = LocId_t;
+  constexpr value_type value() const { return addr_; }
+
+  LocomotiveAddressBase() : addr_(0){};
+  constexpr LocomotiveAddressBase(value_type addr) : addr_(addr) {}
+
+ protected:
+  value_type addr_;
+};
+
+class MachineLocomotiveAddress;
+MachineLocomotiveAddress getLocomotiveLocIdMask(RailProtocol proto);
+
+/// 1-based engine address
+class HumanLocomotiveAddress : public LocomotiveAddressBase {
+ public:
+  using LocomotiveAddressBase::LocomotiveAddressBase;
+  HumanLocomotiveAddress(const MachineLocomotiveAddress& other);
+
+  constexpr bool operator==(const HumanLocomotiveAddress& other) const { return value() == other.value(); };
+  constexpr bool operator!=(const HumanLocomotiveAddress& other) const { return !operator==(other); };
+};
+
+/// 0-based engine address that can optionally have a protocol
+class MachineLocomotiveAddress : public LocomotiveAddressBase {
+ public:
+  MachineLocomotiveAddress() = default;
+  using LocomotiveAddressBase::LocomotiveAddressBase;
+  MachineLocomotiveAddress(const HumanLocomotiveAddress& other);
+
+  constexpr bool operator==(const MachineLocomotiveAddress& other) const { return value() == other.value(); };
+  constexpr bool operator!=(const MachineLocomotiveAddress& other) const { return !operator==(other); };
+  void operator|=(const MachineLocomotiveAddress& other) { addr_ = addr_ | other.value(); };
+  constexpr bool operator<=(const MachineLocomotiveAddress& other) const { return value() <= other.value(); };
+
+  /**
+   * \brief Address without the protocol part.
+   */
+  MachineLocomotiveAddress getNumericAddress() const { return MachineLocomotiveAddress(value() & 0x03FF); }
+  void setProtocol(RailProtocol protocol) {
+    *this = getNumericAddress();
+    *this |= getLocomotiveLocIdMask(protocol);
+  }
+};
+
 }  // namespace RR32Can
 
 #endif  // __RR32CAN__TYPES__LOCOMOTIVETYPES_H__
