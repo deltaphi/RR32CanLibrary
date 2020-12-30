@@ -1,4 +1,4 @@
-#include "RR32Can/Types.h"
+#include "RR32Can/types/LocomotiveTypes.h"
 
 namespace RR32Can {
 
@@ -11,10 +11,5 @@ EngineDirection switchDirection(EngineDirection direction) {
     return EngineDirection::UNKNOWN;
   }
 }
-
-HumanTurnoutAddress::HumanTurnoutAddress(const MachineTurnoutAddress& other) : TurnoutAddressBase(other.value() + 1) {}
-
-MachineTurnoutAddress::MachineTurnoutAddress(const HumanTurnoutAddress& other)
-    : TurnoutAddressBase(other.value() - 1) {}
 
 }  // namespace RR32Can
