@@ -9,6 +9,13 @@ if (NOT MSVC)
   add_compile_options(-Wall -Wextra -pedantic)
 endif()
 
+option(ENABLE_COVERAGE "enable_language measurement option add_compile_definitions coverage" OFF)
+
+if (ENABLE_COVERAGE)
+    include(CodeCoverage.cmake)
+    append_coverage_compiler_flags()
+endif()
+
 # Download and unpack googletest at configure time
 configure_file(CMakeLists.txt.in googletest-download/CMakeLists.txt)
 execute_process(COMMAND ${CMAKE_COMMAND} -G "${CMAKE_GENERATOR}" .
@@ -77,3 +84,12 @@ add_executable(RR32CanTest
 )
 target_link_libraries(RR32CanTest gtest_main gmock)
 add_test(NAME gtest_rr32can_test COMMAND RR32CanTest)
+
+if (ENABLE_COVERAGE)
+setup_target_for_coverage_gcovr_html(
+  NAME RR32CanTest-gcovr
+  EXECUTABLE ctest
+  DEPENDENCIES RR32CanTest
+  EXCLUDE build test
+)
+endif()
