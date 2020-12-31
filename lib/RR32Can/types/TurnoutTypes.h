@@ -33,7 +33,7 @@ class TurnoutAddressBase {
   constexpr value_type value() const { return addr_; }
 
   TurnoutAddressBase() : addr_(0){};
-  constexpr TurnoutAddressBase(value_type addr) : addr_(addr) {}
+  constexpr explicit TurnoutAddressBase(value_type addr) : addr_(addr) {}
 
  protected:
   value_type addr_;

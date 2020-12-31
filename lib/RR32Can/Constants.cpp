@@ -33,7 +33,7 @@ MachineTurnoutAddress getAccessoryLocIdMask(RailProtocol proto) {
       return kDCCAccessoryAddrStart;
       break;
     default:
-      return 0xFF00;  // Guard Value that shows up as an error.
+      return MachineTurnoutAddress(0xFF00);  // Guard Value that shows up as an error.
   }
 }
 
