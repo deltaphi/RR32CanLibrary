@@ -21,7 +21,7 @@ void LocomotiveShortInfo::print() const {
 void Locomotive::print() const {
   LocomotiveShortInfo::print();
   if (availability_ == AvailabilityStatus::FULL_DETAILS) {
-    printf("UID: %#10x Proto: %s Addr: %i V: %i Dir: %i, F: %i\n", uid_, protocol_, address_, velocity_,
+    printf("UID: %#10x Proto: %s Addr: %i V: %i Dir: %i, F: %i\n", uid_, protocol_, address_.value(), velocity_,
            static_cast<uint8_t>(direction_), functionBits_);
   }
 }

@@ -45,7 +45,9 @@ void LocoConsumer::consumeConfigData(BufferManager& section, BufferManager& key,
       printf("Setting protocol\n");
 #endif
     } else if (strncmp(kEngineKeyAddress, key.data(), key.length()) == 0) {
-      currentEngine->setAddress(strtoul(value.data(), NULL, 16));
+      MachineLocomotiveAddress engineAddr{
+          static_cast<MachineLocomotiveAddress::value_type>(strtoul(value.data(), NULL, 16))};
+      currentEngine->setAddress(engineAddr);
 #if (LOG_CONFIG_DATA_STREAM_LEVEL >= LOG_CONFIG_DATA_STREAM_LEVEL_EVENTS)
       printf("Setting Address\n");
 #endif

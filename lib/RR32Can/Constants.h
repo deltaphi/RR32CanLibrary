@@ -142,38 +142,38 @@ extern const char* kProtocolNameSX2;
 extern const char* kProtocolNameDCC;
 extern const char* kProtocolNameUnknown;
 
-constexpr LocId_t kMMEngineFunctionAddrStart = 0x0000;
-constexpr LocId_t kMMEngineFunctionAddrStop = 0x03FF;
+constexpr MachineLocomotiveAddress kMMEngineFunctionAddrStart{0x0000};
+constexpr MachineLocomotiveAddress kMMEngineFunctionAddrStop{0x03FF};
 
-constexpr LocId_t kSX1AddrStart = 0x0800;
-constexpr LocId_t kSX1AddrStop = 0x0BFF;
+constexpr MachineLocomotiveAddress kSX1AddrStart{0x0800};
+constexpr MachineLocomotiveAddress kSX1AddrStop{0x0BFF};
 
-constexpr LocId_t kMMFunctionAddrStart = 0x1000;
-constexpr LocId_t kMMFunctionAddrStop = 0x13FF;
+constexpr MachineLocomotiveAddress kMMFunctionAddrStart{0x1000};
+constexpr MachineLocomotiveAddress kMMFunctionAddrStop{0x13FF};
 
-constexpr LocId_t kMMEngineAddrStart = 0x2000;
-constexpr LocId_t kMMEngineAddrStop = 0x23FF;
+constexpr MachineLocomotiveAddress kMMEngineAddrStart{0x2000};
+constexpr MachineLocomotiveAddress kMMEngineAddrStop{0x23FF};
 
-constexpr MachineTurnoutAddress kSX1AccessoryAddrStart = 0x2800;
-constexpr MachineTurnoutAddress kSX1AccessoryAddrStop = 0x2BFF;
+constexpr MachineTurnoutAddress kSX1AccessoryAddrStart{0x2800};
+constexpr MachineTurnoutAddress kSX1AccessoryAddrStop{0x2BFF};
 
-constexpr MachineTurnoutAddress kMMAccessoryAddrStart = 0x3000;
-constexpr MachineTurnoutAddress kMMAccessoryAddrStop = 0x33FF;
+constexpr MachineTurnoutAddress kMMAccessoryAddrStart{0x3000};
+constexpr MachineTurnoutAddress kMMAccessoryAddrStop{0x33FF};
 
-constexpr MachineTurnoutAddress kDCCAccessoryAddrStart = 0x3800;
-constexpr MachineTurnoutAddress kDCCccessoryAddrStop = 0x3FFF;
+constexpr MachineTurnoutAddress kDCCAccessoryAddrStart{0x3800};
+constexpr MachineTurnoutAddress kDCCccessoryAddrStop{0x3FFF};
 
-constexpr LocId_t kMFXAddrStart = 0x4000;
-constexpr LocId_t kMFXAddrStop = 0x7FFF;
+constexpr MachineLocomotiveAddress kMFXAddrStart{0x4000};
+constexpr MachineLocomotiveAddress kMFXAddrStop{0x7FFF};
 
-constexpr LocId_t kSX2AddrStart = 0x8000;
-constexpr LocId_t kSX2AddrStop = 0xBFFF;
+constexpr MachineLocomotiveAddress kSX2AddrStart{0x8000};
+constexpr MachineLocomotiveAddress kSX2AddrStop{0xBFFF};
 
-constexpr LocId_t kDCCAddrStart = 0xC000;
-constexpr LocId_t kDCCAddrStop = 0xFFFF;
+constexpr MachineLocomotiveAddress kDCCAddrStart{0xC000};
+constexpr MachineLocomotiveAddress kDCCAddrStop{0xFFFF};
 
 /// Upper limit for engine speed data
-constexpr Velocity_t kMaxEngineVelocity = 1000;
+constexpr Velocity_t kMaxEngineVelocity{1000};
 
 // Filenames of configuration data files
 namespace Filenames {

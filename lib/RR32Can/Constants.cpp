@@ -54,7 +54,7 @@ MachineLocomotiveAddress getLocomotiveLocIdMask(RailProtocol proto) {
       return kDCCAddrStart;
       break;
     default:
-      return 0xFF00;  // Guard Value that shows up as an error.
+      return MachineLocomotiveAddress(0xFF00);  // Guard Value that shows up as an error.
   }
 }
 

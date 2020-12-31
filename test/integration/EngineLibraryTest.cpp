@@ -127,7 +127,7 @@ TEST_F(LocolistTestFixture, Download_Engine) {
 
   EXPECT_NE(actualEngine.getUid(), 0xc00a);
   EXPECT_STRNE(actualEngine.getProtocolString(), "dcc");
-  EXPECT_NE(actualEngine.getAddress(), 0xa);
+  EXPECT_NE(actualEngine.getAddress(), RR32Can::MachineLocomotiveAddress(0xa));
 
   {
     // Send initial packet
@@ -158,7 +158,7 @@ TEST_F(LocolistTestFixture, Download_Engine) {
 
   EXPECT_EQ(actualEngine.getUid(), 0xc00a);
   EXPECT_STREQ(actualEngine.getProtocolString(), "dcc");
-  EXPECT_EQ(actualEngine.getAddress(), 0xa);
+  EXPECT_EQ(actualEngine.getAddress(), RR32Can::MachineLocomotiveAddress(0xa));
 }
 
 }  // namespace integration

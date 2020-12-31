@@ -78,7 +78,7 @@ class Locomotive : public LocomotiveShortInfo {
   using Uid_t = RR32Can::Uid_t;
   // Velocities have a range of 0..1000 (..1023).
   using Velocity_t = RR32Can::Velocity_t;
-  using Address_t = RR32Can::EngineAddress_t;
+  using Address_t = RR32Can::MachineLocomotiveAddress;
   using FunctionBits_t = RR32Can::FunctionBits_t;
 
   static constexpr const uint8_t kProtocolNameMaxLength = 8;
@@ -91,7 +91,7 @@ class Locomotive : public LocomotiveShortInfo {
     uid_ = 0;
     velocity_ = 0;
     direction_ = RR32Can::EngineDirection::UNKNOWN;
-    address_ = 0;
+    address_ = MachineLocomotiveAddress(0);
     functionBits_ = 0;
     memset(protocol_, 0, kProtocolNameMaxLength);
   }
