@@ -77,34 +77,24 @@ class LocomotiveShortInfo {
 };
 
 /**
- * \brief Locomotive with full data.
+ * Non-String data portion of a Locomotive.
  */
-class Locomotive : public LocomotiveShortInfo {
+class LocomotiveData {
  public:
-  using LocomotiveShortInfo::LocomotiveShortInfo;
-
   using Uid_t = RR32Can::Uid_t;
   // Velocities have a range of 0..1000 (..1023).
   using Velocity_t = RR32Can::Velocity_t;
   using Address_t = RR32Can::MachineLocomotiveAddress;
   using FunctionBits_t = RR32Can::FunctionBits_t;
 
-  static constexpr const uint8_t kProtocolNameMaxLength = 8;
-
-  using ProtocolName_t = char[kProtocolNameMaxLength];
-
   void reset() {
     // Remove all data of this class
-    LocomotiveShortInfo::reset();
     uid_ = 0;
     velocity_ = 0;
     direction_ = RR32Can::EngineDirection::UNKNOWN;
     address_ = MachineLocomotiveAddress(0);
     functionBits_ = 0;
-    memset(protocol_, 0, kProtocolNameMaxLength);
   }
-
-  bool isFullDetailsKnown() const { return availability_ == AvailabilityStatus::FULL_DETAILS; }
 
   void setUid(Uid_t uid) { this->uid_ = uid; }
   Uid_t getUid() const { return uid_; }
@@ -150,17 +140,42 @@ class Locomotive : public LocomotiveShortInfo {
     }
   }
 
+  void print() const;
+
+ private:
+  Uid_t uid_;
+  Velocity_t velocity_;
+  RR32Can::EngineDirection direction_;
+  Address_t address_;
+  FunctionBits_t functionBits_;
+};
+
+/**
+ * \brief Locomotive with full data.
+ */
+class Locomotive : public LocomotiveShortInfo, public LocomotiveData {
+ public:
+  using LocomotiveShortInfo::LocomotiveShortInfo;
+
+  static constexpr const uint8_t kProtocolNameMaxLength = 8;
+
+  using ProtocolName_t = char[kProtocolNameMaxLength];
+
+  void reset() {
+    // Remove all data of this class
+    LocomotiveShortInfo::reset();
+    LocomotiveData::reset();
+    memset(protocol_, 0, kProtocolNameMaxLength);
+  }
+
+  bool isFullDetailsKnown() const { return availability_ == AvailabilityStatus::FULL_DETAILS; }
+
   void print() const override;
 
   void setProtocolString(const char* protocolString) { strncpy(protocol_, protocolString, kProtocolNameMaxLength); }
   const char* getProtocolString() const { return protocol_; }
 
  protected:
-  Uid_t uid_;
-  Velocity_t velocity_;
-  RR32Can::EngineDirection direction_;
-  Address_t address_;
-  FunctionBits_t functionBits_;
   ProtocolName_t protocol_;
 };
 

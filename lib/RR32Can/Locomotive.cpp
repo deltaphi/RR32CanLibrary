@@ -18,11 +18,16 @@ void LocomotiveShortInfo::print() const {
   }
 }
 
+void LocomotiveData::print() const {
+  printf("UID: %#10x Addr: %i V: %i Dir: %i, F: %#04x\n", uid_, address_.value(), velocity_,
+         static_cast<uint8_t>(direction_), functionBits_);
+}
+
 void Locomotive::print() const {
   LocomotiveShortInfo::print();
   if (availability_ == AvailabilityStatus::FULL_DETAILS) {
-    printf("UID: %#10x Proto: %s Addr: %i V: %i Dir: %i, F: %i\n", uid_, protocol_, address_.value(), velocity_,
-           static_cast<uint8_t>(direction_), functionBits_);
+    LocomotiveData::print();
+    printf(" Proto: %s\n", protocol_);
   }
 }
 
