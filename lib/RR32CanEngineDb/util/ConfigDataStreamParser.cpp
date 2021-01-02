@@ -73,12 +73,7 @@ void ConfigDataStreamParser::addMessage(const Data& data) {
           crc_.updateCrc(data.data[i]);
         }
 
-        // TODO: Remove this string copy. Requires BufferManager to be
-        // constructible on a const char*
-        char buffer[CanDataMaxLength];
-        strncpy(buffer, data.dataAsString(), CanDataMaxLength);
-
-        BufferManager input(buffer, data.dlc, CanDataMaxLength);
+        const BufferManager input(const_cast<char*>(data.dataAsString()), data.dlc, CanDataMaxLength);
         textParser_.addText(input);
 
         if (remainingBytes_ == 0) {
