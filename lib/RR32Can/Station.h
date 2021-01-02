@@ -76,13 +76,13 @@ class Station {
   void RequestEngine(Locomotive& engine, callback::ConfigDataCbk* configDataConsumer);
   void RequestEngineList(uint8_t offset, callback::ConfigDataCbk* configDataConsumer);
 
-  void RequestEngineDirection(Locomotive& engine);
-  void SendEngineDirection(Locomotive& engine, EngineDirection direction);
-  void RequestEngineVelocity(Locomotive& engine);
-  void SendEngineVelocity(Locomotive& engine, Locomotive::Velocity_t velocity);
-  void RequestEngineFunction(Locomotive& engine, uint8_t function);
-  void RequestEngineAllFunctions(Locomotive& engine);
-  void SendEngineFunction(Locomotive& engine, uint8_t function, bool value);
+  void RequestEngineDirection(LocomotiveData& engine);
+  void SendEngineDirection(LocomotiveData& engine, EngineDirection direction);
+  void RequestEngineVelocity(LocomotiveData& engine);
+  void SendEngineVelocity(LocomotiveData& engine, LocomotiveData::Velocity_t velocity);
+  void RequestEngineFunction(LocomotiveData& engine, uint8_t function);
+  void RequestEngineAllFunctions(LocomotiveData& engine);
+  void SendEngineFunction(LocomotiveData& engine, uint8_t function, bool value);
 
   void SendEmergencyStop();
   void SendSystemStop();
