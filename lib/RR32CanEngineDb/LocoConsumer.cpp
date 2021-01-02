@@ -56,10 +56,6 @@ void LocoConsumer::consumeConfigData(BufferManager& section, BufferManager& key,
 }
 
 void LocoConsumer::setStreamComplete() {
-  if (streamEndCallback_ != nullptr) {
-    streamEndCallback_->streamComplete(this);
-  }
-
   if (currentEngine == nullptr) {
     return;
   }
@@ -69,6 +65,10 @@ void LocoConsumer::setStreamComplete() {
   printf("Downloaded Engine: ");
   currentEngine->print();
   printf("\n");
+
+  if (streamEndCallback_ != nullptr) {
+    streamEndCallback_->streamComplete(this);
+  }
 }
 
 void LocoConsumer::setStreamAborted() {
