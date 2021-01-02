@@ -75,6 +75,37 @@ class LocolistTestFixture : public ::testing::Test {
     station.RequestEngine(engine, &parser);
   }
 
+  void RequestEngineDataFeeder(RR32Can::Locomotive& destinationLocomotive, const uint16_t streamLength,
+                               const uint16_t crc, const char testData[][8]) {
+    RR32Can::Identifier id;
+    id.setCommand(RR32Can::Command::CONFIG_DATA_STREAM);
+
+    locoConsumer.setEngine(&destinationLocomotive);
+
+    {
+      // Send initial packet
+      RR32Can::Data data;
+      data.dlc = 6;
+
+      data.data[0] = streamLength >> 24;
+      data.data[1] = streamLength >> 16;
+      data.data[2] = streamLength >> 8;
+      data.data[3] = streamLength;
+
+      data.data[4] = crc >> 8;
+      data.data[5] = crc;
+
+      station.HandlePacket(id, data);
+    }
+
+    for (int i = 0; i < data::testData2NumChunks; ++i) {
+      RR32Can::Data data;
+      data.dlc = 8;
+      strncpy(data.dataAsString(), testData[i], RR32Can::Data::kDataBufferLength);
+      station.HandlePacket(id, data);
+    }
+  }
+
   ::testing::NaggyMock<mocks::StationTxCbkMock> txCbk;
   RR32Can::Station station;
 
@@ -123,7 +154,24 @@ TEST_F(LocolistTestFixture, Download_Enginelist) {
   EXPECT_EQ(locoList.getNumEnginesKnownByMaster(), 12);
 }
 
-TEST_F(LocolistTestFixture, Download_Engine) {
+TEST_F(LocolistTestFixture, Download_Engine_1) {
+  RequestEngineHelper();
+
+  EXPECT_CALL(endStreamCallback, streamComplete(&locoConsumer));
+
+  RR32Can::Locomotive actualEngine;
+
+  EXPECT_NE(actualEngine.getUid(), 0xc00a);
+  EXPECT_STRNE(actualEngine.getProtocolString(), "dcc");
+  EXPECT_NE(actualEngine.getAddress(), RR32Can::MachineLocomotiveAddress(0xa));
+
+  RequestEngineDataFeeder(actualEngine, data::testData2NumChunks * RR32Can::CanDataMaxLength, 0xdecc, data::testData2);
+
+  EXPECT_EQ(actualEngine.getUid(), 0xc00a);
+  EXPECT_STREQ(actualEngine.getProtocolString(), "dcc");
+  EXPECT_EQ(actualEngine.getAddress(), RR32Can::MachineLocomotiveAddress(0xa));
+}
+TEST_F(LocolistTestFixture, Download_Engine_2) {
   RequestEngineHelper();
 
   EXPECT_CALL(endStreamCallback, streamComplete(&locoConsumer));
@@ -132,42 +180,16 @@ TEST_F(LocolistTestFixture, Download_Engine) {
   id.setCommand(RR32Can::Command::CONFIG_DATA_STREAM);
 
   RR32Can::Locomotive actualEngine;
-  locoConsumer.setEngine(&actualEngine);
 
   EXPECT_NE(actualEngine.getUid(), 0xc00a);
   EXPECT_STRNE(actualEngine.getProtocolString(), "dcc");
   EXPECT_NE(actualEngine.getAddress(), RR32Can::MachineLocomotiveAddress(0xa));
 
-  {
-    // Send initial packet
-    RR32Can::Data data;
-    data.dlc = 6;
+  RequestEngineDataFeeder(actualEngine, data::testData3NumChunks * RR32Can::CanDataMaxLength, 0x9B2F, data::testData3);
 
-    uint32_t streamLength = data::testData2NumChunks * RR32Can::CanDataMaxLength;
-
-    data.data[0] = streamLength >> 24;
-    data.data[1] = streamLength >> 16;
-    data.data[2] = streamLength >> 8;
-    data.data[3] = streamLength;
-
-    uint16_t expectedCrc = 0xdecc;
-
-    data.data[4] = expectedCrc >> 8;
-    data.data[5] = expectedCrc;
-
-    station.HandlePacket(id, data);
-  }
-
-  for (int i = 0; i < data::testData2NumChunks; ++i) {
-    RR32Can::Data data;
-    data.dlc = 8;
-    strncpy(data.dataAsString(), data::testData2[i], RR32Can::Data::kDataBufferLength);
-    station.HandlePacket(id, data);
-  }
-
-  EXPECT_EQ(actualEngine.getUid(), 0xc00a);
+  EXPECT_EQ(actualEngine.getUid(), 0xc032);
   EXPECT_STREQ(actualEngine.getProtocolString(), "dcc");
-  EXPECT_EQ(actualEngine.getAddress(), RR32Can::MachineLocomotiveAddress(0xa));
+  EXPECT_EQ(actualEngine.getAddress(), RR32Can::MachineLocomotiveAddress(0x32));
 }
 
 }  // namespace integration
