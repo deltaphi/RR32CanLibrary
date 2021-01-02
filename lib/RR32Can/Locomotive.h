@@ -21,15 +21,7 @@ class LocomotiveShortInfo {
 
   LocomotiveShortInfo() : availability_(AvailabilityStatus::EMPTY) { eraseName(); }
 
-  // Note: There must explicitly be no statement on the destructor. If possible,
-  // a default destructor shall be available. However, on certain systems (e.g.,
-  // STM32) and when storing Locomotive in static memory, having a destructor
-  // defined leads to a linker error for __dso_handle, as there is no static
-  // shutdown code.
-  //
-  // Sadly, this prevents us from enforcing a virtual destructor.
-  //
-  // virtual ~LocomotiveShortInfo() = default;
+  virtual ~LocomotiveShortInfo() = default;
 
   virtual void reset() {
     availability_ = AvailabilityStatus::EMPTY;
