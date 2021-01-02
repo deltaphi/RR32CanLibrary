@@ -73,7 +73,7 @@ class Station {
    *
    * \param engine An engine with its name set.
    */
-  void RequestEngine(Locomotive& engine, callback::ConfigDataCbk* configDataConsumer);
+  void RequestEngine(const LocomotiveShortInfo& engine, callback::ConfigDataCbk* configDataConsumer);
   void RequestEngineList(uint8_t offset, callback::ConfigDataCbk* configDataConsumer);
 
   void RequestEngineDirection(LocomotiveData& engine);

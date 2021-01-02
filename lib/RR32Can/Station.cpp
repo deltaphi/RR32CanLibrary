@@ -135,7 +135,7 @@ void Station::RequestEngineList(uint8_t offset, callback::ConfigDataCbk* configD
   }
 }
 
-void Station::RequestEngine(Locomotive& engine, callback::ConfigDataCbk* configDataConsumer) {
+void Station::RequestEngine(const LocomotiveShortInfo& engine, callback::ConfigDataCbk* configDataConsumer) {
   if (!engine.isNameKnown()) {
 #if LOG_CAN_OUT_MSG == STD_ON
     printf("Station::RequestEngine: No Engine Name given, dropping request.\n");
