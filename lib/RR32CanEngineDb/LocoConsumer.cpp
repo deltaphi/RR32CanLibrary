@@ -56,6 +56,10 @@ void LocoConsumer::consumeConfigData(BufferManager& section, BufferManager& key,
 }
 
 void LocoConsumer::setStreamComplete() {
+  if (streamEndCallback_ != nullptr) {
+    streamEndCallback_->streamComplete(this);
+  }
+
   if (currentEngine == nullptr) {
     return;
   }
@@ -67,6 +71,10 @@ void LocoConsumer::setStreamComplete() {
   printf("\n");
 }
 
-void LocoConsumer::setStreamAborted() {}
+void LocoConsumer::setStreamAborted() {
+  if (streamEndCallback_ != nullptr) {
+    streamEndCallback_->streamAborted(this);
+  }
+}
 
 }  // namespace RR32Can

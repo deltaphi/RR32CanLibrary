@@ -14,6 +14,9 @@ namespace integration {
 
 class LocolistTestFixture : public ::testing::Test {
   void SetUp() {
+    locoConsumer.setStreamEndCallback(&endStreamCallback);
+    locoList.setStreamEndCallback(&endStreamCallback);
+
     RR32Can::Station::CallbackStruct callbacks;
     callbacks.tx = &txCbk;
 
@@ -47,21 +50,21 @@ class LocolistTestFixture : public ::testing::Test {
 
   void RequestEngineHelper() {
     // Expect the request to be transmitted
-    RR32Can::Identifier expectedIdentifier;
-    expectedIdentifier.setCommand(RR32Can::Command::REQUEST_CONFIG_DATA);
+    RR32Can::Identifier id;
+    id.setCommand(RR32Can::Command::REQUEST_CONFIG_DATA);
 
-    RR32Can::Data expectedData[3];
-    expectedData[0].dlc = 8;
-    strncpy(expectedData[0].dataAsString(), "lokinfo", 8);
+    RR32Can::Data data[3];
+    data[0].dlc = 8;
+    strncpy(data[0].dataAsString(), "lokinfo", 8);
 
-    expectedData[1].dlc = 8;
-    strncpy(expectedData[1].dataAsString(), "98 1001", 8);
+    data[1].dlc = 8;
+    strncpy(data[1].dataAsString(), "98 1001", 8);
 
-    expectedData[2].dlc = 8;
+    data[2].dlc = 8;
 
-    EXPECT_CALL(txCbk, SendPacket(expectedIdentifier, expectedData[0]));
-    EXPECT_CALL(txCbk, SendPacket(expectedIdentifier, expectedData[1]));
-    EXPECT_CALL(txCbk, SendPacket(expectedIdentifier, expectedData[2]));
+    EXPECT_CALL(txCbk, SendPacket(id, data[0]));
+    EXPECT_CALL(txCbk, SendPacket(id, data[1]));
+    EXPECT_CALL(txCbk, SendPacket(id, data[2]));
 
     parser.startStream(&locoConsumer);
 
@@ -78,10 +81,14 @@ class LocolistTestFixture : public ::testing::Test {
   RR32Can::ConfigDataStreamParser parser;
   RR32Can::LocoListConsumer locoList;
   RR32Can::LocoConsumer locoConsumer;
+
+  ::testing::StrictMock<mocks::ConfigDataEndStreamMock> endStreamCallback;
 };
 
 TEST_F(LocolistTestFixture, Download_Enginelist) {
   RequestEngineListHelper();
+
+  EXPECT_CALL(endStreamCallback, streamComplete(&locoList));
 
   RR32Can::Identifier id;
   id.setCommand(RR32Can::Command::CONFIG_DATA_STREAM);
@@ -118,6 +125,8 @@ TEST_F(LocolistTestFixture, Download_Enginelist) {
 
 TEST_F(LocolistTestFixture, Download_Engine) {
   RequestEngineHelper();
+
+  EXPECT_CALL(endStreamCallback, streamComplete(&locoConsumer));
 
   RR32Can::Identifier id;
   id.setCommand(RR32Can::Command::CONFIG_DATA_STREAM);

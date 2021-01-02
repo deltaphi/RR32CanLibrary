@@ -10,6 +10,9 @@
 #include "RR32Can/callback/SystemCbk.h"
 #include "RR32Can/callback/TxCbk.h"
 
+#include "RR32CanEngineDb/util/ConfigDataConsumer.h"
+#include "RR32CanEngineDb/util/ConfigDataEndStreamCallback.h"
+
 namespace mocks {
 
 class SystemCbkMock : public RR32Can::callback::SystemCbk {
@@ -44,6 +47,12 @@ class AccessoryCbkMock : public RR32Can::callback::AccessoryCbk {
 class StationTxCbkMock : public RR32Can::callback::TxCbk {
  public:
   MOCK_METHOD(void, SendPacket, (const RR32Can::Identifier &, const RR32Can::Data &));
+};
+
+class ConfigDataEndStreamMock : public RR32Can::ConfigDataEndStreamCallback {
+ public:
+  MOCK_METHOD(void, streamComplete, (RR32Can::ConfigDataConsumer *), (override));
+  MOCK_METHOD(void, streamAborted, (RR32Can::ConfigDataConsumer *), (override));
 };
 
 }  // namespace mocks
