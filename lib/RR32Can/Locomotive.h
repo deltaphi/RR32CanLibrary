@@ -153,6 +153,8 @@ class Locomotive : public LocomotiveShortInfo, public LocomotiveData {
 
   using ProtocolName_t = char[kProtocolNameMaxLength];
 
+  Locomotive() { reset(); }
+
   void reset() {
     // Remove all data of this class
     LocomotiveShortInfo::reset();
