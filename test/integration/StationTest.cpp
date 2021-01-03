@@ -97,6 +97,25 @@ TEST_F(StationTestFixture, RecvStopResp) {
   station.HandlePacket(id, data);
 }
 
+TEST_F(StationTestFixture, RecvEngineEmergencyStop) {
+  RR32Can::Identifier id;
+  RR32Can::Data data;
+
+  id.setCommand(RR32Can::Command::SYSTEM_COMMAND);
+  id.setResponse(false);
+
+  data.dlc = 5;
+  data.data[4] = RR32Can::kSubcommandLocoEmergencyStop;
+  data.data[0] = 0x00;
+  data.data[1] = 0x00;
+  data.data[2] = 0x48;
+  data.data[3] = 0x03;
+
+  EXPECT_CALL(engineCbk, setLocoVelocity(0x4803, 0));
+
+  station.HandlePacket(id, data);
+}
+
 TEST_F(StationTestFixture, RecvGoResp) {
   RR32Can::Identifier id;
   RR32Can::Data data;
