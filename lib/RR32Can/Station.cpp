@@ -66,8 +66,7 @@ void Station::HandleSystemCommand(const RR32Can::Identifier& id, const RR32Can::
       case RR32Can::SystemSubcommand::SYSTEM_HALT: {
         printf("Halt!\n");
         if (callbacks_.engine != nullptr) {
-          Locomotive::Uid_t uid = msg.getUid();
-          callbacks_.engine->setLocoVelocity(uid, 0);
+          callbacks_.engine->setLocoVelocity(0);
         }
       } break;
       case RR32Can::SystemSubcommand::SYSTEM_STOP:

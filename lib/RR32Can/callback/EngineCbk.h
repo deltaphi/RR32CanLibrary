@@ -22,8 +22,7 @@ class EngineCbk {
   virtual void setLocoVelocity(Locomotive::Uid_t engineUid, RR32Can::Velocity_t velocity) = 0;
 
   /**
-   * \brief Unconditionally set the velocity of the currently controlled engine
-   * to 0.
+   * \brief Unconditionally set the velocity of Engine(s). Used for the SYSTEM_HALT command.
    */
   virtual void setLocoVelocity(RR32Can::Velocity_t velocity) = 0;
 };
