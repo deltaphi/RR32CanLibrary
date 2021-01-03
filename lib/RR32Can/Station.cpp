@@ -18,7 +18,7 @@
 
 namespace RR32Can {
 
-void Station::begin(uint16_t stationUUID, CallbackStruct& callbacks) {
+void Station::begin(const uint16_t stationUUID, CallbackStruct& callbacks) {
   AbortCurrentConfigRequest();
   this->callbacks_ = callbacks;
   senderHash_ = computeSenderHash(stationUUID);
@@ -107,7 +107,7 @@ void Station::HandleSystemCommand(const RR32Can::Identifier& id, const RR32Can::
   }
 }
 
-void Station::RequestEngineList(uint8_t offset, callback::ConfigDataCbk* configDataConsumer) {
+void Station::RequestEngineList(const uint8_t offset, callback::ConfigDataCbk* configDataConsumer) {
   AbortCurrentConfigRequest();
   callbacks_.configData = configDataConsumer;
 
@@ -184,7 +184,7 @@ void Station::RequestEngine(const LocomotiveShortInfo& engine, callback::ConfigD
   callbacks_.tx->SendPacket(id, data);
 }
 
-void Station::RequestEngineDirection(LocomotiveData& engine) {
+void Station::RequestEngineDirection(const LocomotiveData& engine) {
   RR32Can::Identifier identifier{Command::LOCO_DIRECTION, this->senderHash_};
   RR32Can::Data data;
   data.dlc = 4;
@@ -193,7 +193,7 @@ void Station::RequestEngineDirection(LocomotiveData& engine) {
   callbacks_.tx->SendPacket(identifier, data);
 }
 
-void Station::SendEngineDirection(LocomotiveData& engine, EngineDirection direction) {
+void Station::SendEngineDirection(const LocomotiveData& engine, const EngineDirection direction) {
   RR32Can::Identifier identifier{Command::LOCO_DIRECTION, this->senderHash_};
   RR32Can::Data data;
   data.dlc = 5;
@@ -206,7 +206,7 @@ void Station::SendEngineDirection(LocomotiveData& engine, EngineDirection direct
   }  // else: not implemented.
 }
 
-void Station::RequestEngineVelocity(LocomotiveData& engine) {
+void Station::RequestEngineVelocity(const LocomotiveData& engine) {
   RR32Can::Identifier identifier{Command::LOCO_SPEED, this->senderHash_};
   RR32Can::Data data;
   data.dlc = 4;
@@ -215,22 +215,21 @@ void Station::RequestEngineVelocity(LocomotiveData& engine) {
   callbacks_.tx->SendPacket(identifier, data);
 }
 
-void Station::SendEngineVelocity(LocomotiveData& engine, LocomotiveData::Velocity_t velocity) {
+void Station::SendEngineVelocity(const LocomotiveData& engine, const LocomotiveData::Velocity_t velocity) {
   RR32Can::Identifier identifier{Command::LOCO_SPEED, this->senderHash_};
   RR32Can::Data data;
   data.dlc = 6;
   data.setLocid(engine.getUid());
 
-  if (velocity > kMaxEngineVelocity) {
-    velocity = kMaxEngineVelocity;
-  }
-  data.data[4] = velocity >> 8;
-  data.data[5] = velocity;
+  auto limitedVelocity{(velocity > kMaxEngineVelocity) ? kMaxEngineVelocity : velocity};
+
+  data.data[4] = limitedVelocity >> 8;
+  data.data[5] = limitedVelocity;
 
   callbacks_.tx->SendPacket(identifier, data);
 }
 
-void Station::RequestEngineFunction(LocomotiveData& engine, uint8_t function) {
+void Station::RequestEngineFunction(const LocomotiveData& engine, const uint8_t function) {
   RR32Can::Identifier identifier{Command::LOCO_FUNCTION, this->senderHash_};
   RR32Can::Data data;
   data.dlc = 5;
@@ -240,7 +239,7 @@ void Station::RequestEngineFunction(LocomotiveData& engine, uint8_t function) {
   callbacks_.tx->SendPacket(identifier, data);
 }
 
-void Station::RequestEngineAllFunctions(LocomotiveData& engine) {
+void Station::RequestEngineAllFunctions(const LocomotiveData& engine) {
   RR32Can::Identifier identifier{Command::LOCO_FUNCTION, this->senderHash_};
   RR32Can::Data data;
   data.dlc = 5;
@@ -251,7 +250,7 @@ void Station::RequestEngineAllFunctions(LocomotiveData& engine) {
   }
 }
 
-void Station::SendEngineFunction(LocomotiveData& engine, uint8_t function, bool value) {
+void Station::SendEngineFunction(const LocomotiveData& engine, const uint8_t function, const bool value) {
   RR32Can::Identifier identifier{Command::LOCO_FUNCTION, this->senderHash_};
   RR32Can::Data data;
   data.dlc = 6;
@@ -291,8 +290,8 @@ void Station::SendSystemGo() {
   callbacks_.tx->SendPacket(identifier, data);
 }
 
-void Station::SendAccessoryPacket(RR32Can::MachineTurnoutAddress turnoutAddress, RailProtocol protocol,
-                                  TurnoutDirection direction, uint8_t power) {
+void Station::SendAccessoryPacket(RR32Can::MachineTurnoutAddress turnoutAddress, const RailProtocol protocol,
+                                  const TurnoutDirection direction, const uint8_t power) {
   RR32Can::Identifier identifier{Command::ACCESSORY_SWITCH, this->senderHash_};
 
   RR32Can::Data data;

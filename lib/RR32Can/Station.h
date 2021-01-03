@@ -36,7 +36,7 @@ class Station {
   } CallbackStruct;
 
   /* Initialization & Infrastructure */
-  void begin(uint16_t stationUUID, CallbackStruct& callbacks);
+  void begin(const uint16_t stationUUID, CallbackStruct& callbacks);
   void loop();
 
   /* Generic message handling */
@@ -58,8 +58,8 @@ class Station {
   /**
    * \brief Construct a Accessory command packet and send via CAN
    */
-  void SendAccessoryPacket(RR32Can::MachineTurnoutAddress turnoutAddress, RailProtocol protocol,
-                           TurnoutDirection direction, uint8_t power);
+  void SendAccessoryPacket(RR32Can::MachineTurnoutAddress turnoutAddress, const RailProtocol protocol,
+                           const TurnoutDirection direction, const uint8_t power);
 
   /* Engine Database */
   void FinishCurrentConfigRequest();
@@ -74,21 +74,21 @@ class Station {
    * \param engine An engine with its name set.
    */
   void RequestEngine(const LocomotiveShortInfo& engine, callback::ConfigDataCbk* configDataConsumer);
-  void RequestEngineList(uint8_t offset, callback::ConfigDataCbk* configDataConsumer);
+  void RequestEngineList(const uint8_t offset, callback::ConfigDataCbk* configDataConsumer);
 
-  void RequestEngineDirection(LocomotiveData& engine);
-  void SendEngineDirection(LocomotiveData& engine, EngineDirection direction);
-  void RequestEngineVelocity(LocomotiveData& engine);
-  void SendEngineVelocity(LocomotiveData& engine, LocomotiveData::Velocity_t velocity);
-  void RequestEngineFunction(LocomotiveData& engine, uint8_t function);
-  void RequestEngineAllFunctions(LocomotiveData& engine);
-  void SendEngineFunction(LocomotiveData& engine, uint8_t function, bool value);
+  void RequestEngineDirection(const LocomotiveData& engine);
+  void SendEngineDirection(const LocomotiveData& engine, const EngineDirection direction);
+  void RequestEngineVelocity(const LocomotiveData& engine);
+  void SendEngineVelocity(const LocomotiveData& engine, const LocomotiveData::Velocity_t velocity);
+  void RequestEngineFunction(const LocomotiveData& engine, const uint8_t function);
+  void RequestEngineAllFunctions(const LocomotiveData& engine);
+  void SendEngineFunction(const LocomotiveData& engine, const uint8_t function, const bool value);
 
   void SendEmergencyStop();
   void SendSystemStop();
   void SendSystemGo();
 
-  void SendPacket(Identifier identifier, const Data& data);
+  void SendPacket(const Identifier identifier, const Data& data);
 
   void HandleLocoDirection(const RR32Can::Data& data);
   void HandleLocoSpeed(const RR32Can::Data& data);
