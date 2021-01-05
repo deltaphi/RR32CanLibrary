@@ -46,7 +46,7 @@ class AccessoryCbkMock : public RR32Can::callback::AccessoryCbk {
 
 class StationTxCbkMock : public RR32Can::callback::TxCbk {
  public:
-  MOCK_METHOD(void, SendPacket, (const RR32Can::Identifier &, const RR32Can::Data &));
+  MOCK_METHOD(void, SendPacket, (const RR32Can::CanFrame &));
 };
 
 class ConfigDataEndStreamMock : public RR32Can::ConfigDataEndStreamCallback {

@@ -28,19 +28,19 @@ class LocolistTestFixture : public ::testing::Test {
  public:
   void RequestEngineListHelper() {
     // Expect the request to be transmitted
-    RR32Can::Identifier expectedIdentifier;
-    expectedIdentifier.setCommand(RR32Can::Command::REQUEST_CONFIG_DATA);
+    RR32Can::CanFrame expectedFrame1;
+    expectedFrame1.id.setCommand(RR32Can::Command::REQUEST_CONFIG_DATA);
 
-    RR32Can::Data expectedData1;
-    expectedData1.dlc = 8;
-    strncpy(expectedData1.dataAsString(), "loknamen", 8);
+    expectedFrame1.data.dlc = 8;
+    strncpy(expectedFrame1.data.dataAsString(), "loknamen", 8);
 
-    RR32Can::Data expectedData2;
-    expectedData2.dlc = 3;
-    strncpy(expectedData2.dataAsString(), "0 2", 8);
+    RR32Can::CanFrame expectedFrame2;
+    expectedFrame2.id.setCommand(RR32Can::Command::REQUEST_CONFIG_DATA);
+    expectedFrame2.data.dlc = 3;
+    strncpy(expectedFrame2.data.dataAsString(), "0 2", 8);
 
-    EXPECT_CALL(txCbk, SendPacket(expectedIdentifier, expectedData1));
-    EXPECT_CALL(txCbk, SendPacket(expectedIdentifier, expectedData2));
+    EXPECT_CALL(txCbk, SendPacket(expectedFrame1));
+    EXPECT_CALL(txCbk, SendPacket(expectedFrame2));
 
     parser.startStream(&locoList);
 
@@ -50,22 +50,24 @@ class LocolistTestFixture : public ::testing::Test {
 
   void RequestEngineHelper() {
     // Expect the request to be transmitted
-    RR32Can::Identifier id;
-    id.setCommand(RR32Can::Command::REQUEST_CONFIG_DATA);
+    {
+      RR32Can::CanFrame frames[3];
+      for (auto& frame : frames) {
+        frame.id.setCommand(RR32Can::Command::REQUEST_CONFIG_DATA);
+      }
 
-    RR32Can::Data data[3];
-    data[0].dlc = 8;
-    strncpy(data[0].dataAsString(), "lokinfo", 8);
+      frames[0].data.dlc = 8;
+      strncpy(frames[0].data.dataAsString(), "lokinfo", 8);
 
-    data[1].dlc = 8;
-    strncpy(data[1].dataAsString(), "98 1001", 8);
+      frames[1].data.dlc = 8;
+      strncpy(frames[1].data.dataAsString(), "98 1001", 8);
 
-    data[2].dlc = 8;
+      frames[2].data.dlc = 8;
 
-    EXPECT_CALL(txCbk, SendPacket(id, data[0]));
-    EXPECT_CALL(txCbk, SendPacket(id, data[1]));
-    EXPECT_CALL(txCbk, SendPacket(id, data[2]));
-
+      for (auto& frame : frames) {
+        EXPECT_CALL(txCbk, SendPacket(frame));
+      }
+    }
     parser.startStream(&locoConsumer);
 
     RR32Can::Locomotive engine;
@@ -95,14 +97,14 @@ class LocolistTestFixture : public ::testing::Test {
       data.data[4] = crc >> 8;
       data.data[5] = crc;
 
-      station.HandlePacket(id, data);
+      station.HandlePacket({id, data});
     }
 
     for (int i = 0; i < data::testData2NumChunks; ++i) {
       RR32Can::Data data;
       data.dlc = 8;
       strncpy(data.dataAsString(), testData[i], RR32Can::Data::kDataBufferLength);
-      station.HandlePacket(id, data);
+      station.HandlePacket({id, data});
     }
   }
 
@@ -121,34 +123,33 @@ TEST_F(LocolistTestFixture, Download_Enginelist) {
 
   EXPECT_CALL(endStreamCallback, streamComplete(&locoList));
 
-  RR32Can::Identifier id;
-  id.setCommand(RR32Can::Command::CONFIG_DATA_STREAM);
-
   {
     // Send initial packet
-    RR32Can::Data data;
-    data.dlc = 6;
+    RR32Can::CanFrame frame;
+    frame.id.setCommand(RR32Can::Command::CONFIG_DATA_STREAM);
+    frame.data.dlc = 6;
 
     uint32_t streamLength = data::testData1NumChunks * RR32Can::CanDataMaxLength;
 
-    data.data[0] = streamLength >> 24;
-    data.data[1] = streamLength >> 16;
-    data.data[2] = streamLength >> 8;
-    data.data[3] = streamLength;
+    frame.data.data[0] = streamLength >> 24;
+    frame.data.data[1] = streamLength >> 16;
+    frame.data.data[2] = streamLength >> 8;
+    frame.data.data[3] = streamLength;
 
     uint16_t expectedCrc = 0x34e1;
 
-    data.data[4] = expectedCrc >> 8;
-    data.data[5] = expectedCrc;
+    frame.data.data[4] = expectedCrc >> 8;
+    frame.data.data[5] = expectedCrc;
 
-    station.HandlePacket(id, data);
+    station.HandlePacket(frame);
   }
 
   for (int i = 0; i < data::testData1NumChunks; ++i) {
-    RR32Can::Data data;
-    data.dlc = 8;
-    strncpy(data.dataAsString(), data::testData1[i], RR32Can::Data::kDataBufferLength);
-    station.HandlePacket(id, data);
+    RR32Can::CanFrame frame;
+    frame.id.setCommand(RR32Can::Command::CONFIG_DATA_STREAM);
+    frame.data.dlc = 8;
+    strncpy(frame.data.dataAsString(), data::testData1[i], RR32Can::Data::kDataBufferLength);
+    station.HandlePacket(frame);
   }
 
   EXPECT_EQ(locoList.getNumEnginesKnownByMaster(), 12);

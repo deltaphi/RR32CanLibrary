@@ -29,19 +29,19 @@ class StationTestFixture : public ::testing::Test {
  public:
   void RequestEngineHelper() {
     // Expect the request to be transmitted
-    RR32Can::Identifier expectedIdentifier;
-    expectedIdentifier.setCommand(RR32Can::Command::REQUEST_CONFIG_DATA);
+    RR32Can::CanFrame expectedFrames[2];
+    for (auto& frame : expectedFrames) {
+      frame.id.setCommand(RR32Can::Command::REQUEST_CONFIG_DATA);
+    }
 
-    RR32Can::Data expectedData1;
-    expectedData1.dlc = 8;
-    strncpy(expectedData1.dataAsString(), "loknamen", 8);
+    expectedFrames[0].data.dlc = 8;
+    strncpy(expectedFrames[0].data.dataAsString(), "loknamen", 8);
 
-    RR32Can::Data expectedData2;
-    expectedData2.dlc = 3;
-    strncpy(expectedData2.dataAsString(), "0 2", 8);
+    expectedFrames[1].data.dlc = 3;
+    strncpy(expectedFrames[1].data.dataAsString(), "0 2", 8);
 
-    EXPECT_CALL(txCbk, SendPacket(expectedIdentifier, expectedData1));
-    EXPECT_CALL(txCbk, SendPacket(expectedIdentifier, expectedData2));
+    EXPECT_CALL(txCbk, SendPacket(expectedFrames[0]));
+    EXPECT_CALL(txCbk, SendPacket(expectedFrames[1]));
 
     // Start request to inject the callback
     station.RequestEngineList(0, &configDataCbk);
@@ -56,156 +56,146 @@ class StationTestFixture : public ::testing::Test {
 };
 
 TEST_F(StationTestFixture, RecvStopReq) {
-  RR32Can::Identifier id;
-  RR32Can::Data data;
+  RR32Can::CanFrame frame;
 
-  id.setCommand(RR32Can::Command::SYSTEM_COMMAND);
-  id.setResponse(false);
-  data.dlc = 5;
-  data.data[4] = RR32Can::kSubcommandSystemStop;
+  frame.id.setCommand(RR32Can::Command::SYSTEM_COMMAND);
+  frame.id.setResponse(false);
+  frame.data.dlc = 5;
+  frame.data.data[4] = RR32Can::kSubcommandSystemStop;
 
   EXPECT_CALL(systemCbk, setSystemState(false, false));
 
-  station.HandlePacket(id, data);
+  station.HandlePacket(frame);
 }
 
 TEST_F(StationTestFixture, RecvGoReq) {
-  RR32Can::Identifier id;
-  RR32Can::Data data;
+  RR32Can::CanFrame frame;
 
-  id.setCommand(RR32Can::Command::SYSTEM_COMMAND);
-  id.setResponse(false);
-  data.dlc = 5;
-  data.data[4] = RR32Can::kSubcommandSystemGo;
+  frame.id.setCommand(RR32Can::Command::SYSTEM_COMMAND);
+  frame.id.setResponse(false);
+  frame.data.dlc = 5;
+  frame.data.data[4] = RR32Can::kSubcommandSystemGo;
 
   EXPECT_CALL(systemCbk, setSystemState(true, false));
 
-  station.HandlePacket(id, data);
+  station.HandlePacket(frame);
 }
 
 TEST_F(StationTestFixture, RecvStopResp) {
-  RR32Can::Identifier id;
-  RR32Can::Data data;
+  RR32Can::CanFrame frame;
 
-  id.setCommand(RR32Can::Command::SYSTEM_COMMAND);
-  id.setResponse(true);
-  data.dlc = 5;
-  data.data[4] = RR32Can::kSubcommandSystemStop;
+  frame.id.setCommand(RR32Can::Command::SYSTEM_COMMAND);
+  frame.id.setResponse(true);
+  frame.data.dlc = 5;
+  frame.data.data[4] = RR32Can::kSubcommandSystemStop;
 
   EXPECT_CALL(systemCbk, setSystemState(false, true));
 
-  station.HandlePacket(id, data);
+  station.HandlePacket(frame);
 }
 
 TEST_F(StationTestFixture, RecvEngineEmergencyStop) {
-  RR32Can::Identifier id;
-  RR32Can::Data data;
+  RR32Can::CanFrame frame;
 
-  id.setCommand(RR32Can::Command::SYSTEM_COMMAND);
-  id.setResponse(false);
+  frame.id.setCommand(RR32Can::Command::SYSTEM_COMMAND);
+  frame.id.setResponse(false);
 
-  data.dlc = 5;
-  data.data[4] = RR32Can::kSubcommandLocoEmergencyStop;
-  data.data[0] = 0x00;
-  data.data[1] = 0x00;
-  data.data[2] = 0x48;
-  data.data[3] = 0x03;
+  frame.data.dlc = 5;
+  frame.data.data[4] = RR32Can::kSubcommandLocoEmergencyStop;
+  frame.data.data[0] = 0x00;
+  frame.data.data[1] = 0x00;
+  frame.data.data[2] = 0x48;
+  frame.data.data[3] = 0x03;
 
   EXPECT_CALL(engineCbk, setLocoVelocity(0x4803, 0));
 
-  station.HandlePacket(id, data);
+  station.HandlePacket(frame);
 }
 
 TEST_F(StationTestFixture, RecvGoResp) {
-  RR32Can::Identifier id;
-  RR32Can::Data data;
+  RR32Can::CanFrame frame;
 
-  id.setCommand(RR32Can::Command::SYSTEM_COMMAND);
-  id.setResponse(true);
-  data.dlc = 5;
-  data.data[4] = RR32Can::kSubcommandSystemGo;
+  frame.id.setCommand(RR32Can::Command::SYSTEM_COMMAND);
+  frame.id.setResponse(true);
+  frame.data.dlc = 5;
+  frame.data.data[4] = RR32Can::kSubcommandSystemGo;
 
   EXPECT_CALL(systemCbk, setSystemState(true, true));
 
-  station.HandlePacket(id, data);
+  station.HandlePacket(frame);
 }
 
 TEST_F(StationTestFixture, SendGo) {
-  RR32Can::Identifier id;
-  RR32Can::Data data;
+  RR32Can::CanFrame frame;
 
-  id.setCommand(RR32Can::Command::SYSTEM_COMMAND);
-  data.dlc = 5;
-  data.data[4] = RR32Can::kSubcommandSystemGo;
+  frame.id.setCommand(RR32Can::Command::SYSTEM_COMMAND);
+  frame.data.dlc = 5;
+  frame.data.data[4] = RR32Can::kSubcommandSystemGo;
 
-  EXPECT_CALL(txCbk, SendPacket(id, data));
+  EXPECT_CALL(txCbk, SendPacket(frame));
 
   station.SendSystemGo();
 }
 
 TEST_F(StationTestFixture, SendStop) {
-  RR32Can::Identifier id;
-  RR32Can::Data data;
+  RR32Can::CanFrame frame;
 
-  id.setCommand(RR32Can::Command::SYSTEM_COMMAND);
-  data.dlc = 5;
-  data.data[4] = RR32Can::kSubcommandSystemStop;
+  frame.id.setCommand(RR32Can::Command::SYSTEM_COMMAND);
+  frame.data.dlc = 5;
+  frame.data.data[4] = RR32Can::kSubcommandSystemStop;
 
-  EXPECT_CALL(txCbk, SendPacket(id, data));
+  EXPECT_CALL(txCbk, SendPacket(frame));
 
   station.SendSystemStop();
 }
 
 TEST_F(StationTestFixture, SendAccessory_MFX) {
-  RR32Can::Identifier id;
-  RR32Can::Data data;
+  RR32Can::CanFrame frame;
 
-  id.setCommand(RR32Can::Command::ACCESSORY_SWITCH);
-  data.dlc = 6;
-  data.data[0] = 0;
-  data.data[1] = 0;
-  data.data[2] = 0x30;
-  data.data[3] = 0x29;
-  data.data[4] = 0x01;
-  data.data[5] = 0x01;
+  frame.id.setCommand(RR32Can::Command::ACCESSORY_SWITCH);
+  frame.data.dlc = 6;
+  frame.data.data[0] = 0;
+  frame.data.data[1] = 0;
+  frame.data.data[2] = 0x30;
+  frame.data.data[3] = 0x29;
+  frame.data.data[4] = 0x01;
+  frame.data.data[5] = 0x01;
 
-  EXPECT_CALL(txCbk, SendPacket(id, data));
+  EXPECT_CALL(txCbk, SendPacket(frame));
 
   station.SendAccessoryPacket(RR32Can::HumanTurnoutAddress(42), RR32Can::RailProtocol::MM2,
                               RR32Can::TurnoutDirection::GREEN, true);
 }
 
 TEST_F(StationTestFixture, SendAccessory_DCC) {
-  RR32Can::Identifier id;
-  RR32Can::Data data;
+  RR32Can::CanFrame frame;
 
-  id.setCommand(RR32Can::Command::ACCESSORY_SWITCH);
-  data.dlc = 6;
-  data.data[0] = 0;
-  data.data[1] = 0;
-  data.data[2] = 0x38;
-  data.data[3] = 0x29;
-  data.data[4] = 0x01;
-  data.data[5] = 0x01;
+  frame.id.setCommand(RR32Can::Command::ACCESSORY_SWITCH);
+  frame.data.dlc = 6;
+  frame.data.data[0] = 0;
+  frame.data.data[1] = 0;
+  frame.data.data[2] = 0x38;
+  frame.data.data[3] = 0x29;
+  frame.data.data[4] = 0x01;
+  frame.data.data[5] = 0x01;
 
-  EXPECT_CALL(txCbk, SendPacket(id, data));
+  EXPECT_CALL(txCbk, SendPacket(frame));
 
   station.SendAccessoryPacket(RR32Can::HumanTurnoutAddress(42), RR32Can::RailProtocol::DCC,
                               RR32Can::TurnoutDirection::GREEN, true);
 }
 
 TEST_F(StationTestFixture, ReceiveAccessory_Request) {
-  RR32Can::Identifier id;
-  RR32Can::Data data;
+  RR32Can::CanFrame frame;
 
-  id.setCommand(RR32Can::Command::ACCESSORY_SWITCH);
-  data.dlc = 6;
-  data.data[0] = 0;
-  data.data[1] = 0;
-  data.data[2] = 0x30;  // MM2
-  data.data[3] = 0x29;
-  data.data[4] = 0x01;
-  data.data[5] = 0x01;
+  frame.id.setCommand(RR32Can::Command::ACCESSORY_SWITCH);
+  frame.data.dlc = 6;
+  frame.data.data[0] = 0;
+  frame.data.data[1] = 0;
+  frame.data.data[2] = 0x30;  // MM2
+  frame.data.data[3] = 0x29;
+  frame.data.data[4] = 0x01;
+  frame.data.data[5] = 0x01;
 
   RR32Can::Data expectedData;
   RR32Can::TurnoutPacket expectedPacket(expectedData);
@@ -218,22 +208,21 @@ TEST_F(StationTestFixture, ReceiveAccessory_Request) {
 
   EXPECT_CALL(accessoryCbk, OnAccessoryPacket(expectedPacket, false));
 
-  station.HandlePacket(id, data);
+  station.HandlePacket(frame);
 }
 
 TEST_F(StationTestFixture, ReceiveAccessory_Response) {
-  RR32Can::Identifier id;
-  RR32Can::Data data;
+  RR32Can::CanFrame frame;
 
-  id.setCommand(RR32Can::Command::ACCESSORY_SWITCH);
-  id.setResponse(true);
-  data.dlc = 6;
-  data.data[0] = 0;
-  data.data[1] = 0;
-  data.data[2] = 0x30;  // MM2
-  data.data[3] = 0x29;
-  data.data[4] = 0x01;
-  data.data[5] = 0x01;
+  frame.id.setCommand(RR32Can::Command::ACCESSORY_SWITCH);
+  frame.id.setResponse(true);
+  frame.data.dlc = 6;
+  frame.data.data[0] = 0;
+  frame.data.data[1] = 0;
+  frame.data.data[2] = 0x30;  // MM2
+  frame.data.data[3] = 0x29;
+  frame.data.data[4] = 0x01;
+  frame.data.data[5] = 0x01;
 
   RR32Can::Data expectedData;
   RR32Can::TurnoutPacket expectedPacket(expectedData);
@@ -246,30 +235,26 @@ TEST_F(StationTestFixture, ReceiveAccessory_Response) {
 
   EXPECT_CALL(accessoryCbk, OnAccessoryPacket(expectedPacket, true));
 
-  station.HandlePacket(id, data);
+  station.HandlePacket(frame);
 }
 
 TEST_F(StationTestFixture, ReceiveConfigData_NoParser_data1) {
-  RR32Can::Identifier id;
-  id.setCommand(RR32Can::Command::CONFIG_DATA_STREAM);
-
   for (int i = 0; i < data::testData1NumChunks; ++i) {
-    RR32Can::Data data;
-    data.dlc = 8;
-    strncpy(data.dataAsString(), data::testData1[i], RR32Can::Data::kDataBufferLength);
-    station.HandlePacket(id, data);
+    RR32Can::CanFrame frame;
+    frame.id.setCommand(RR32Can::Command::CONFIG_DATA_STREAM);
+    frame.data.dlc = 8;
+    strncpy(frame.data.dataAsString(), data::testData1[i], RR32Can::Data::kDataBufferLength);
+    station.HandlePacket(frame);
   }
 }
 
 TEST_F(StationTestFixture, ReceiveConfigData_NoParser_data2) {
-  RR32Can::Identifier id;
-  id.setCommand(RR32Can::Command::CONFIG_DATA_STREAM);
-
   for (int i = 0; i < data::testData2NumChunks; ++i) {
-    RR32Can::Data data;
-    data.dlc = 8;
-    strncpy(data.dataAsString(), data::testData2[i], RR32Can::Data::kDataBufferLength);
-    station.HandlePacket(id, data);
+    RR32Can::CanFrame frame;
+    frame.id.setCommand(RR32Can::Command::CONFIG_DATA_STREAM);
+    frame.data.dlc = 8;
+    strncpy(frame.data.dataAsString(), data::testData2[i], RR32Can::Data::kDataBufferLength);
+    station.HandlePacket(frame);
   }
 }
 
@@ -280,14 +265,12 @@ TEST_F(StationTestFixture, ReceiveConfigData_WithParser_data1) {
 
   EXPECT_CALL(configDataCbk, addMessage(::testing::_)).Times(data::testData1NumChunks);
 
-  RR32Can::Identifier id;
-  id.setCommand(RR32Can::Command::CONFIG_DATA_STREAM);
-
   for (int i = 0; i < data::testData1NumChunks; ++i) {
-    RR32Can::Data data;
-    data.dlc = 8;
-    strncpy(data.dataAsString(), data::testData1[i], RR32Can::Data::kDataBufferLength);
-    station.HandlePacket(id, data);
+    RR32Can::CanFrame frame;
+    frame.id.setCommand(RR32Can::Command::CONFIG_DATA_STREAM);
+    frame.data.dlc = 8;
+    strncpy(frame.data.dataAsString(), data::testData1[i], RR32Can::Data::kDataBufferLength);
+    station.HandlePacket(frame);
   }
 }
 
@@ -298,14 +281,12 @@ TEST_F(StationTestFixture, ReceiveConfigData_WithParser_data2) {
 
   EXPECT_CALL(configDataCbk, addMessage(::testing::_)).Times(data::testData2NumChunks);
 
-  RR32Can::Identifier id;
-  id.setCommand(RR32Can::Command::CONFIG_DATA_STREAM);
-
   for (int i = 0; i < data::testData2NumChunks; ++i) {
-    RR32Can::Data data;
-    data.dlc = 8;
-    strncpy(data.dataAsString(), data::testData2[i], RR32Can::Data::kDataBufferLength);
-    station.HandlePacket(id, data);
+    RR32Can::CanFrame frame;
+    frame.id.setCommand(RR32Can::Command::CONFIG_DATA_STREAM);
+    frame.data.dlc = 8;
+    strncpy(frame.data.dataAsString(), data::testData2[i], RR32Can::Data::kDataBufferLength);
+    station.HandlePacket(frame);
   }
 }
 

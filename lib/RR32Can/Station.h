@@ -15,8 +15,7 @@
 #include "RR32Can/callback/EngineCbk.h"
 #include "RR32Can/callback/SystemCbk.h"
 #include "RR32Can/callback/TxCbk.h"
-#include "RR32Can/messages/Data.h"
-#include "RR32Can/messages/Identifier.h"
+#include "RR32Can/messages/CanFrame.h"
 
 #include "RR32Can/messages/SystemMessage.h"
 
@@ -44,7 +43,7 @@ class Station {
   /**
    * \brief handle an incoming packet
    */
-  void HandlePacket(const RR32Can::Identifier& id, const RR32Can::Data& data);
+  void HandlePacket(const RR32Can::CanFrame& canFrame);
 
   /**
    * \brief Handle an incoming accessory command
@@ -88,7 +87,7 @@ class Station {
   void SendSystemStop();
   void SendSystemGo();
 
-  void SendPacket(const Identifier identifier, const Data& data);
+  void SendPacket(RR32Can::CanFrame& canFrame);
 
   void HandleLocoDirection(const RR32Can::Data& data);
   void HandleLocoSpeed(const RR32Can::Data& data);
