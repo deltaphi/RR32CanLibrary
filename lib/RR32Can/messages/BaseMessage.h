@@ -10,15 +10,15 @@ namespace RR32Can {
  */
 class BaseMessage {
  public:
-  BaseMessage(RR32Can::Data& data) : data_(data){};
+  constexpr BaseMessage(RR32Can::Data& data) : data_(data){};
 
-  uint8_t length() const { return data_.dlc; }
+  constexpr uint8_t length() const { return data_.dlc; }
 
  protected:
   /**
    * Zeroes the entire message.
    */
-  void initData() {
+  constexpr void initData() {
     data_.dlc = 0;
     memset(data_.data, 0, sizeof(&(data_.data)));
   }

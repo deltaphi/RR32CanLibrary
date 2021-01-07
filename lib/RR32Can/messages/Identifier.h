@@ -24,15 +24,15 @@ class Identifier {
   constexpr static const value_type kCommandBitMask = (0xFF << 17);
   // constexpr static const value_type kPrioBitMask = (0x0F << 25);
 
-  Identifier() : identifier_(0){};
-  Identifier(value_type packetId) : identifier_(packetId){};
-  Identifier(Command command, uint16_t hash) : identifier_(0) {
+  constexpr Identifier() : identifier_(0){};
+  constexpr Identifier(value_type packetId) : identifier_(packetId){};
+  constexpr Identifier(Command command, uint16_t hash) : identifier_(0) {
     setCommand(command);
     setHash(hash);
   }
 
-  bool isResponse() const { return (identifier_ & kResponseBitMask) != 0; };
-  void setResponse(bool response) {
+  constexpr bool isResponse() const { return (identifier_ & kResponseBitMask) != 0; };
+  constexpr void setResponse(bool response) {
     if (response) {
       identifier_ |= kResponseBitMask;
     } else {
@@ -40,12 +40,12 @@ class Identifier {
     }
   }
 
-  uint8_t getPriority() const { return (identifier_ >> 25) & 0x0F; }
+  constexpr uint8_t getPriority() const { return (identifier_ >> 25) & 0x0F; }
   // void setPriority(uint8_t priority);
 
   Command getCommand() const { return static_cast<Command>((identifier_ >> 17) & 0xFF); };
 
-  void setCommand(Command command) {
+  constexpr void setCommand(Command command) {
     // Shift commandByte to the correct place
     uint32_t commandByte = static_cast<CommandByte_t>(command);
     commandByte <<= 17;
@@ -55,9 +55,9 @@ class Identifier {
     identifier_ |= commandByte;
   }
 
-  uint16_t getHash() const { return identifier_ & kHashBitMask; }
+  constexpr uint16_t getHash() const { return identifier_ & kHashBitMask; }
 
-  bool operator==(const Identifier& other) const { return identifier_ == other.identifier_; }
+  constexpr bool operator==(const Identifier& other) const { return identifier_ == other.identifier_; }
 
   /**
    * \brief Turn a 32-bit CAN identifier into a Marklin Identifier
@@ -72,27 +72,27 @@ class Identifier {
   /**
    * \brief Determine the correct hash value given the address of this component
    */
-  void computeAndSetHash(uint32_t deviceUuid) { setHash(computeSenderHash(deviceUuid)); }
+  constexpr void computeAndSetHash(uint32_t deviceUuid) { setHash(computeSenderHash(deviceUuid)); }
 
   /**
    * \brief convert this Marklin Identifier into a 29bit CAN extended
    * identifier.
    */
-  uint32_t makeIdentifier() const { return identifier_; }
+  constexpr uint32_t makeIdentifier() const { return identifier_; }
 
   /**
    * \brief Print the identifier to serial in human-readable form.
    */
   void printAll() const;
 
-  void setHash(uint16_t hash) {  // Clear hash bits
+  constexpr void setHash(uint16_t hash) {  // Clear hash bits
     identifier_ &= ~kHashBitMask;
     // Set new bits
     identifier_ |= hash;
   }
 
-  value_type& rawValue() { return identifier_; }
-  const value_type& rawValue() const { return identifier_; }
+  constexpr value_type& rawValue() { return identifier_; }
+  constexpr const value_type& rawValue() const { return identifier_; }
 
  private:
   value_type identifier_;

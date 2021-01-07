@@ -17,7 +17,7 @@ class S88Event : public BaseMessage {
   using BaseMessage::BaseMessage;
   void initData() { BaseMessage::initData(); }
 
-  Subtype getSubtype() const {
+  constexpr Subtype getSubtype() const {
     switch (length()) {
       case 4:
         return Subtype::REQUEST;
@@ -28,7 +28,7 @@ class S88Event : public BaseMessage {
     }
   }
 
-  void setSubtype(Subtype subtype) {
+  constexpr void setSubtype(Subtype subtype) {
     switch (subtype) {
       case Subtype::REQUEST:
         data_.dlc = 4;
@@ -42,42 +42,42 @@ class S88Event : public BaseMessage {
     }
   }
 
-  MachineTurnoutAddress getDeviceId() const {
+  constexpr MachineTurnoutAddress getDeviceId() const {
     uint16_t addr = data_.data[0] << 8 | data_.data[1];
     return MachineTurnoutAddress(addr);
   }
 
-  void setDeviceId(MachineTurnoutAddress addr) const {
+  constexpr void setDeviceId(MachineTurnoutAddress addr) const {
     auto value = addr.value();
     data_.data[1] = value;
     data_.data[0] = value >> 8;
   }
 
-  MachineTurnoutAddress getContactId() const {
+  constexpr MachineTurnoutAddress getContactId() const {
     uint16_t addr = data_.data[2] << 8 | data_.data[3];
     return MachineTurnoutAddress(addr);
   }
 
-  void setContactId(MachineTurnoutAddress addr) const {
+  constexpr void setContactId(MachineTurnoutAddress addr) const {
     auto value = addr.value();
     data_.data[3] = value;
     data_.data[2] = value >> 8;
   }
 
-  void setStates(State oldState, State newState) {
+  constexpr void setStates(State oldState, State newState) {
     data_.data[4] = static_cast<uint8_t>(oldState);
     data_.data[5] = static_cast<uint8_t>(newState);
   }
 
-  State getOldState() const { return static_cast<State>(data_.data[4]); }
-  State getNewState() const { return static_cast<State>(data_.data[5]); }
+  constexpr State getOldState() const { return static_cast<State>(data_.data[4]); }
+  constexpr State getNewState() const { return static_cast<State>(data_.data[5]); }
 
-  void setTime(uint16_t time) {
+  constexpr void setTime(uint16_t time) {
     data_.data[7] = time;
     data_.data[6] = time >> 8;
   }
 
-  uint16_t getTime() const {
+  constexpr uint16_t getTime() const {
     uint16_t time = (data_.data[6] << 8) | data_.data[7];
     return time;
   }

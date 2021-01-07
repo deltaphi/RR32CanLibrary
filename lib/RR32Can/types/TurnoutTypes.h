@@ -62,18 +62,23 @@ class MachineTurnoutAddress : public TurnoutAddressBase {
 
   constexpr bool operator==(const MachineTurnoutAddress& other) const { return value() == other.value(); };
   constexpr bool operator!=(const MachineTurnoutAddress& other) const { return !operator==(other); };
-  void operator|=(const MachineTurnoutAddress& other) { addr_ = addr_ | other.value(); };
+  constexpr void operator|=(const MachineTurnoutAddress& other) { addr_ = addr_ | other.value(); };
+
   constexpr bool operator<=(const MachineTurnoutAddress& other) const { return value() <= other.value(); };
 
   /**
    * \brief Address without the protocol part.
    */
-  MachineTurnoutAddress getNumericAddress() const { return MachineTurnoutAddress(value() & 0x03FF); }
+  constexpr MachineTurnoutAddress getNumericAddress() const { return MachineTurnoutAddress(value() & 0x03FF); }
   void setProtocol(RailProtocol protocol) {
     *this = getNumericAddress();
     *this |= getAccessoryLocIdMask(protocol);
   }
 };
+
+constexpr MachineTurnoutAddress operator|(const MachineTurnoutAddress& left, const MachineTurnoutAddress& right) {
+  return MachineTurnoutAddress{left.value() | right.value()};
+}
 
 }  // namespace RR32Can
 

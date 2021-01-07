@@ -71,7 +71,6 @@ add_executable(RR32CanTest
     "lib/RR32CanEngineDb/util/TextParser.cpp"
     "lib/RR32CanEngineDb/util/Crc.h"
     "lib/RR32CanEngineDb/util/Crc.cpp"
-    "lib/RR32Can/util/utils.cpp"
     "lib/RR32CanEngineDb/util/ConfigDataStreamParser.cpp"
 
     "test/integration/StationTest.cpp"

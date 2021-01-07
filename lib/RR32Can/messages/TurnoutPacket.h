@@ -18,24 +18,24 @@ class TurnoutPacket : public BaseMessage {
  public:
   using BaseMessage::BaseMessage;
 
-  void initData() {
+  constexpr void initData() {
     BaseMessage::initData();
     data_.dlc = 6;
   }
 
-  MachineTurnoutAddress getLocid() const { return MachineTurnoutAddress(data_.getLocid()); }
-  void setLocid(const MachineTurnoutAddress& locid) { data_.setLocid(locid.value()); }
+  constexpr MachineTurnoutAddress getLocid() const { return MachineTurnoutAddress(data_.getLocid()); }
+  constexpr void setLocid(const MachineTurnoutAddress& locid) { data_.setLocid(locid.value()); }
 
-  bool getPower() const { return data_.data[5] != 0; }
-  void setPower(bool power) { data_.data[5] = (power ? 1 : 0); }
+  constexpr bool getPower() const { return data_.data[5] != 0; }
+  constexpr void setPower(bool power) { data_.data[5] = (power ? 1 : 0); }
 
-  TurnoutDirection getDirection() const { return TurnoutDirectionFromIntegral(data_.data[4]); }
-  void setDirection(TurnoutDirection direction) { data_.data[4] = TurnoutDirectionToIntegral(direction); }
+  constexpr TurnoutDirection getDirection() const { return TurnoutDirectionFromIntegral(data_.data[4]); }
+  constexpr void setDirection(TurnoutDirection direction) { data_.data[4] = TurnoutDirectionToIntegral(direction); }
 
   /**
    * \brief Obtain the human-readable turnout address (1-based)
    */
-  HumanTurnoutAddress AddressAsHumanValue() const;
+  HumanTurnoutAddress AddressAsHumanValue() const { return HumanTurnoutAddress(getLocid()); }
 
   /**
    * \brief Print a human-readable version of this Turnout Packet.
@@ -49,7 +49,7 @@ class TurnoutPacket : public BaseMessage {
    *
    * \return MM1, DCC, SX1 or UNKOWN.
    */
-  RailProtocol getRailProtocol() const {
+  constexpr RailProtocol getRailProtocol() const {
     MachineTurnoutAddress locid = getLocid();
     if (kSX1AccessoryAddrStart <= locid && locid <= kSX1AccessoryAddrStop) {
       return RailProtocol::SX1;

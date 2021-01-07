@@ -4,8 +4,6 @@
 
 namespace RR32Can {
 
-HumanTurnoutAddress TurnoutPacket::AddressAsHumanValue() const { return HumanTurnoutAddress(getLocid()); }
-
 void TurnoutPacket::printAll() const {
   RR32Can::TurnoutDirection position = getDirection();
   printf("Turnout: %#10x, Human Value: %d, Position: %d ", getLocid().value(), AddressAsHumanValue().value(),

@@ -18,44 +18,4 @@ const char* kEngineNames = "loknamen";
 
 }  // namespace Filenames
 
-MachineTurnoutAddress getAccessoryLocIdMask(const RailProtocol proto) {
-  switch (proto) {
-    case RailProtocol::MM1:
-    case RailProtocol::MM2:
-    case RailProtocol::MFX:
-      return kMMAccessoryAddrStart;
-      break;
-    case RailProtocol::SX1:
-    case RailProtocol::SX2:
-      return kSX1AccessoryAddrStart;
-      break;
-    case RailProtocol::DCC:
-      return kDCCAccessoryAddrStart;
-      break;
-    default:
-      return MachineTurnoutAddress(0xFF00);  // Guard Value that shows up as an error.
-  }
-}
-
-MachineLocomotiveAddress getLocomotiveLocIdMask(const RailProtocol proto) {
-  switch (proto) {
-    case RailProtocol::MM1:
-    case RailProtocol::MM2:
-      return kMMEngineFunctionAddrStart;
-      break;
-    case RailProtocol::MFX:
-      return kMFXAddrStart;
-      break;
-    case RailProtocol::SX1:
-    case RailProtocol::SX2:
-      return kSX1AddrStart;
-      break;
-    case RailProtocol::DCC:
-      return kDCCAddrStart;
-      break;
-    default:
-      return MachineLocomotiveAddress(0xFF00);  // Guard Value that shows up as an error.
-  }
-}
-
 }  // namespace RR32Can

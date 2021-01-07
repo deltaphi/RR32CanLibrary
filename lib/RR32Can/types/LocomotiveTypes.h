@@ -64,6 +64,11 @@ class MachineLocomotiveAddress : public LocomotiveAddressBase {
   }
 };
 
+constexpr MachineLocomotiveAddress operator|(const MachineLocomotiveAddress& left,
+                                             const MachineLocomotiveAddress& right) {
+  return MachineLocomotiveAddress{left.value() | right.value()};
+}
+
 }  // namespace RR32Can
 
 #endif  // __RR32CAN__TYPES__LOCOMOTIVETYPES_H__
