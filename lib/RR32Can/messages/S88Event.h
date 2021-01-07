@@ -15,7 +15,7 @@ class S88Event : public BaseMessage {
   enum class State { OPEN = 0, CLOSED = 1 };
 
   using BaseMessage::BaseMessage;
-  void initData() { BaseMessage::initData(); }
+  constexpr void initData() { BaseMessage::initData(); }
 
   constexpr Subtype getSubtype() const {
     switch (length()) {

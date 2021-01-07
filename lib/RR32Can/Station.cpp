@@ -75,7 +75,7 @@ void Station::HandleSystemCommand(const RR32Can::Identifier& id, const RR32Can::
         }
         break;
       case SystemSubcommand::LOCO_EMERGENCY_STOP: {
-        Locomotive::Uid_t uid = msg.getUid();
+        Locomotive::Uid_t uid = msg.getLocid();
         if (callbacks_.engine != nullptr) {
           callbacks_.engine->setLocoVelocity(uid, 0);
         }

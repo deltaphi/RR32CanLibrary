@@ -1,9 +1,9 @@
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
 
-#include "RR32Can/Station.h"
-
 #include "RR32Can/Locomotive.h"
+#include "RR32Can/Station.h"
+#include "RR32Can/util/constexpr.h"
 
 #include "data/ConfigData.h"
 
@@ -30,15 +30,8 @@ class StationTestFixture : public ::testing::Test {
   void RequestEngineHelper() {
     // Expect the request to be transmitted
     RR32Can::CanFrame expectedFrames[2];
-    for (auto& frame : expectedFrames) {
-      frame.id.setCommand(RR32Can::Command::REQUEST_CONFIG_DATA);
-    }
-
-    expectedFrames[0].data.dlc = 8;
-    strncpy(expectedFrames[0].data.dataAsString(), "loknamen", 8);
-
-    expectedFrames[1].data.dlc = 3;
-    strncpy(expectedFrames[1].data.dataAsString(), "0 2", 8);
+    expectedFrames[0] = RR32Can::util::Request_Config_Data("loknamen");
+    expectedFrames[1] = RR32Can::util::Request_Config_Data("0 2");
 
     EXPECT_CALL(txCbk, SendPacket(expectedFrames[0]));
     EXPECT_CALL(txCbk, SendPacket(expectedFrames[1]));
@@ -76,6 +69,8 @@ TEST_F(StationTestFixture, RecvGoReq) {
   frame.data.dlc = 5;
   frame.data.data[4] = RR32Can::kSubcommandSystemGo;
 
+  EXPECT_EQ(frame, RR32Can::util::System_Go(false));
+
   EXPECT_CALL(systemCbk, setSystemState(true, false));
 
   station.HandlePacket(frame);
@@ -88,6 +83,8 @@ TEST_F(StationTestFixture, RecvStopResp) {
   frame.id.setResponse(true);
   frame.data.dlc = 5;
   frame.data.data[4] = RR32Can::kSubcommandSystemStop;
+
+  EXPECT_EQ(frame, RR32Can::util::System_Stop(true));
 
   EXPECT_CALL(systemCbk, setSystemState(false, true));
 
@@ -107,6 +104,8 @@ TEST_F(StationTestFixture, RecvEngineEmergencyStop) {
   frame.data.data[2] = 0x48;
   frame.data.data[3] = 0x03;
 
+  EXPECT_EQ(frame, RR32Can::util::System_LocoEmStop(false, RR32Can::util::MFX_Loco(0x803u)));
+
   EXPECT_CALL(engineCbk, setLocoVelocity(0x4803, 0));
 
   station.HandlePacket(frame);
@@ -119,6 +118,8 @@ TEST_F(StationTestFixture, RecvGoResp) {
   frame.id.setResponse(true);
   frame.data.dlc = 5;
   frame.data.data[4] = RR32Can::kSubcommandSystemGo;
+
+  EXPECT_EQ(frame, RR32Can::util::System_Go(true));
 
   EXPECT_CALL(systemCbk, setSystemState(true, true));
 
@@ -161,6 +162,9 @@ TEST_F(StationTestFixture, SendAccessory_MFX) {
   frame.data.data[4] = 0x01;
   frame.data.data[5] = 0x01;
 
+  EXPECT_EQ(frame,
+            RR32Can::util::Turnout(false, RR32Can::util::MM2_Turnout(41u), RR32Can::TurnoutDirection::GREEN, true));
+
   EXPECT_CALL(txCbk, SendPacket(frame));
 
   station.SendAccessoryPacket(RR32Can::HumanTurnoutAddress(42), RR32Can::RailProtocol::MM2,
@@ -178,6 +182,9 @@ TEST_F(StationTestFixture, SendAccessory_DCC) {
   frame.data.data[3] = 0x29;
   frame.data.data[4] = 0x01;
   frame.data.data[5] = 0x01;
+
+  EXPECT_EQ(frame,
+            RR32Can::util::Turnout(false, RR32Can::util::DCC_Turnout(41u), RR32Can::TurnoutDirection::GREEN, true));
 
   EXPECT_CALL(txCbk, SendPacket(frame));
 
@@ -197,14 +204,9 @@ TEST_F(StationTestFixture, ReceiveAccessory_Request) {
   frame.data.data[4] = 0x01;
   frame.data.data[5] = 0x01;
 
-  RR32Can::Data expectedData;
-  RR32Can::TurnoutPacket expectedPacket(expectedData);
-  expectedPacket.initData();
-  RR32Can::MachineTurnoutAddress locid = RR32Can::HumanTurnoutAddress(42);
-  locid |= RR32Can::kMMAccessoryAddrStart;
-  expectedPacket.setLocid(locid);
-  expectedPacket.setDirection(RR32Can::TurnoutDirection::GREEN);
-  expectedPacket.setPower(true);
+  auto expectedFrame{
+      RR32Can::util::Turnout(false, RR32Can::util::MM2_Turnout(41u), RR32Can::TurnoutDirection::GREEN, true)};
+  RR32Can::TurnoutPacket expectedPacket(expectedFrame.data);
 
   EXPECT_CALL(accessoryCbk, OnAccessoryPacket(expectedPacket, false));
 
@@ -224,14 +226,9 @@ TEST_F(StationTestFixture, ReceiveAccessory_Response) {
   frame.data.data[4] = 0x01;
   frame.data.data[5] = 0x01;
 
-  RR32Can::Data expectedData;
-  RR32Can::TurnoutPacket expectedPacket(expectedData);
-  expectedPacket.initData();
-  RR32Can::MachineTurnoutAddress locid = RR32Can::HumanTurnoutAddress(42);
-  locid |= RR32Can::kMMAccessoryAddrStart;
-  expectedPacket.setLocid(locid);
-  expectedPacket.setDirection(RR32Can::TurnoutDirection::GREEN);
-  expectedPacket.setPower(true);
+  auto expectedFrame{
+      RR32Can::util::Turnout(true, RR32Can::util::MM2_Turnout(41u), RR32Can::TurnoutDirection::GREEN, true)};
+  RR32Can::TurnoutPacket expectedPacket(expectedFrame.data);
 
   EXPECT_CALL(accessoryCbk, OnAccessoryPacket(expectedPacket, true));
 
@@ -240,20 +237,15 @@ TEST_F(StationTestFixture, ReceiveAccessory_Response) {
 
 TEST_F(StationTestFixture, ReceiveConfigData_NoParser_data1) {
   for (int i = 0; i < data::testData1NumChunks; ++i) {
-    RR32Can::CanFrame frame;
-    frame.id.setCommand(RR32Can::Command::CONFIG_DATA_STREAM);
-    frame.data.dlc = 8;
-    strncpy(frame.data.dataAsString(), data::testData1[i], RR32Can::Data::kDataBufferLength);
+    auto frame = RR32Can::util::Config_Data_Stream(data::testData1[i]);
     station.HandlePacket(frame);
   }
 }
 
 TEST_F(StationTestFixture, ReceiveConfigData_NoParser_data2) {
   for (int i = 0; i < data::testData2NumChunks; ++i) {
-    RR32Can::CanFrame frame;
-    frame.id.setCommand(RR32Can::Command::CONFIG_DATA_STREAM);
-    frame.data.dlc = 8;
-    strncpy(frame.data.dataAsString(), data::testData2[i], RR32Can::Data::kDataBufferLength);
+    auto frame = RR32Can::util::Config_Data_Stream(data::testData2[i]);
+    ;
     station.HandlePacket(frame);
   }
 }
@@ -266,10 +258,7 @@ TEST_F(StationTestFixture, ReceiveConfigData_WithParser_data1) {
   EXPECT_CALL(configDataCbk, addMessage(::testing::_)).Times(data::testData1NumChunks);
 
   for (int i = 0; i < data::testData1NumChunks; ++i) {
-    RR32Can::CanFrame frame;
-    frame.id.setCommand(RR32Can::Command::CONFIG_DATA_STREAM);
-    frame.data.dlc = 8;
-    strncpy(frame.data.dataAsString(), data::testData1[i], RR32Can::Data::kDataBufferLength);
+    auto frame = RR32Can::util::Config_Data_Stream(data::testData1[i]);
     station.HandlePacket(frame);
   }
 }
@@ -282,10 +271,7 @@ TEST_F(StationTestFixture, ReceiveConfigData_WithParser_data2) {
   EXPECT_CALL(configDataCbk, addMessage(::testing::_)).Times(data::testData2NumChunks);
 
   for (int i = 0; i < data::testData2NumChunks; ++i) {
-    RR32Can::CanFrame frame;
-    frame.id.setCommand(RR32Can::Command::CONFIG_DATA_STREAM);
-    frame.data.dlc = 8;
-    strncpy(frame.data.dataAsString(), data::testData2[i], RR32Can::Data::kDataBufferLength);
+    auto frame = RR32Can::util::Config_Data_Stream(data::testData1[i]);
     station.HandlePacket(frame);
   }
 }
