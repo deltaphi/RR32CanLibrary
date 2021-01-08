@@ -98,7 +98,7 @@ constexpr RR32Can::CanFrame Turnout(bool response, RR32Can::MachineTurnoutAddres
 }
 
 constexpr RR32Can::CanFrame S88Event(RR32Can::MachineTurnoutAddress device, RR32Can::MachineTurnoutAddress contact,
-                                     RR32Can::S88Event::State oldState, RR32Can::S88Event::State newState) {
+                                     RR32Can::SensorState oldState, RR32Can::SensorState newState) {
   RR32Can::CanFrame frame{{RR32Can::Command::S88_EVENT, 0}, {}};
   RR32Can::S88Event msg{frame.data};
   msg.initData();
@@ -108,6 +108,13 @@ constexpr RR32Can::CanFrame S88Event(RR32Can::MachineTurnoutAddress device, RR32
   msg.setContactId(contact);
   msg.setStates(oldState, newState);
   return frame;
+}
+
+constexpr RR32Can::CanFrame S88Event(RR32Can::MachineTurnoutAddress device, RR32Can::MachineTurnoutAddress contact,
+                                     RR32Can::SensorState newState) {
+  RR32Can::SensorState oldState{newState == RR32Can::SensorState::OPEN ? RR32Can::SensorState::CLOSED
+                                                                       : RR32Can::SensorState::OPEN};
+  return S88Event(device, contact, oldState, newState);
 }
 
 constexpr RR32Can::CanFrame System_Stop(bool response) {

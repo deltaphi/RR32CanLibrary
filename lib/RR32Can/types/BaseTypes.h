@@ -33,6 +33,8 @@ enum class ConfigDataStreamType {
   LDBVER
 };
 
+enum class SensorState { OPEN = 0, CLOSED = 1 };
+
 }  // namespace RR32Can
 
 #endif  // __RR32CAN__TYPES__BASETYPES_H__
