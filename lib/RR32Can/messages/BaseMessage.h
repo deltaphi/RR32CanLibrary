@@ -18,10 +18,7 @@ class BaseMessage {
   /**
    * Zeroes the entire message.
    */
-  constexpr void initData() {
-    data_.dlc = 0;
-    memset(data_.data, 0, sizeof(&(data_.data)));
-  }
+  constexpr void initData() { data_ = RR32Can::Data{}; }
 
   RR32Can::Data& data_;
 };
