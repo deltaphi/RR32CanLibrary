@@ -26,13 +26,10 @@ void TurnoutPacket::printAll() const {
 
   bool power = getPower();
   printf(" Power: %d ", power);
-  switch (power) {
-    case false:
+  if (!power) {
       printf("(off, button release)");
-      break;
-    case true:
+  } else {
       printf("(on, button press)");
-      break;
   }
 }
 

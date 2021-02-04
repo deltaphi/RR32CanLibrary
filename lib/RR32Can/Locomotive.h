@@ -155,7 +155,7 @@ class Locomotive : public LocomotiveShortInfo, public LocomotiveData {
 
   Locomotive() { reset(); }
 
-  void reset() {
+  void reset() override {
     // Remove all data of this class
     LocomotiveShortInfo::reset();
     LocomotiveData::reset();

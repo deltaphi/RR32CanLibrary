@@ -26,13 +26,13 @@ namespace RR32Can {
  */
 class Station {
  public:
-  typedef struct {
+  struct CallbackStruct {
     callback::TxCbk* tx = nullptr;
     callback::SystemCbk* system = nullptr;
     callback::EngineCbk* engine = nullptr;
     callback::AccessoryCbk* accessory = nullptr;
     callback::ConfigDataCbk* configData = nullptr;
-  } CallbackStruct;
+  };
 
   /* Initialization & Infrastructure */
   void begin(const uint16_t stationUUID, CallbackStruct& callbacks);
