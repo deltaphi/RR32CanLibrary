@@ -144,6 +144,14 @@ constexpr RR32Can::CanFrame System_Halt(bool response) {
   return frame;
 }
 
+constexpr RR32Can::CanFrame System_GetStatus() {
+  RR32Can::CanFrame frame{{RR32Can::Command::SYSTEM_COMMAND, 0}, {}};
+  frame.id.setResponse(false);
+  frame.data = Data{};
+  frame.data.dlc = 4;
+  return frame;
+}
+
 constexpr RR32Can::CanFrame System_LocoEmStop(bool response, const RR32Can::MachineLocomotiveAddress address) {
   RR32Can::CanFrame frame{{RR32Can::Command::SYSTEM_COMMAND, 0}, {}};
   frame.id.setResponse(response);
