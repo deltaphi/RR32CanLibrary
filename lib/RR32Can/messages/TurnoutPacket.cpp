@@ -27,9 +27,9 @@ void TurnoutPacket::printAll() const {
   bool power = getPower();
   printf(" Power: %d ", power);
   if (!power) {
-      printf("(off, button release)");
+    printf("(off, button release)");
   } else {
-      printf("(on, button press)");
+    printf("(on, button press)");
   }
 }
 
