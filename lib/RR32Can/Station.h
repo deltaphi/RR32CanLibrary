@@ -26,13 +26,13 @@ namespace RR32Can {
  */
 class Station {
  public:
-  typedef struct {
+  struct CallbackStruct {
     callback::TxCbk* tx = nullptr;
     callback::SystemCbk* system = nullptr;
     callback::EngineCbk* engine = nullptr;
     callback::AccessoryCbk* accessory = nullptr;
     callback::ConfigDataCbk* configData = nullptr;
-  } CallbackStruct;
+  };
 
   /* Initialization & Infrastructure */
   void begin(const uint16_t stationUUID, CallbackStruct& callbacks);
@@ -96,8 +96,6 @@ class Station {
   void notifyConfigStreamReceived() { FinishCurrentConfigRequest(); }
 
  private:
-  Locomotive* getLocoForUid(const RR32Can::Uid_t locid);
-
   /* Initialization & Infrastructure */
   uint16_t senderHash_ = 0;
 

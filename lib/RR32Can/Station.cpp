@@ -372,27 +372,16 @@ void Station::HandleAccessoryPacket(const RR32Can::Data& data, bool request) {
   }
 }
 
-Locomotive* Station::getLocoForUid(const RR32Can::Uid_t locid) {
-  if (callbacks_.engine != nullptr) {
-    return callbacks_.engine->getLoco(locid);
-  } else {
-    return nullptr;
-  }
-}
-
 void Station::HandleLocoDirection(const RR32Can::Data& data) {
-  if (data.dlc == 5) {
+  const bool isResponse = data.dlc == 5;
+  if (isResponse) {
     // response.
-    Locomotive* engine = getLocoForUid(data.getLocid());
-    if (engine == nullptr) {
-      return;
-    }
-
-    EngineDirection direction = static_cast<EngineDirection>(data.data[4]);
+    const Locomotive::Uid_t uid = data.getLocid();
+    const EngineDirection direction = static_cast<EngineDirection>(data.data[4]);
     if (direction == EngineDirection::FORWARD || direction == EngineDirection::REVERSE) {
-      engine->setDirection(direction);
+      callbacks_.engine->setLocoDirection(uid, direction);
     } else if (direction == EngineDirection::CHANGE_DIRECTION) {
-      engine->changeDirection();
+      callbacks_.engine->changeLocoDirection(uid);
     }
   }  // else: requests are ignored.
 }
@@ -409,11 +398,8 @@ void Station::HandleLocoSpeed(const RR32Can::Data& data) {
 
 void Station::HandleLocoFunction(const RR32Can::Data& data) {
   if (data.dlc == 6) {
-    Locomotive* engine = getLocoForUid(data.getLocid());
-    if (engine == nullptr) {
-      return;
-    }
-    engine->setFunction(data.data[4], data.data[5]);
+    const Locomotive::Uid_t uid = data.getLocid();
+    callbacks_.engine->setLocoFunction(uid, data.data[4], data.data[5]);
   }
 }
 

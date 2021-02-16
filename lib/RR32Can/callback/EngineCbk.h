@@ -8,12 +8,7 @@ namespace callback {
  * \brief Class EngineCbk
  */
 class EngineCbk {
- public: /**
-          * \brief Return the loco with the given Uid or nullptr, if the engine is not
-          * known.
-          */
-  virtual Locomotive* getLoco(Locomotive::Uid_t uid) = 0;
-
+ public:
   /**
    * \brief Set the velocity of the loco with the given UID.
    *
@@ -25,6 +20,18 @@ class EngineCbk {
    * \brief Unconditionally set the velocity of Engine(s). Used for the SYSTEM_HALT command.
    */
   virtual void setLocoVelocity(RR32Can::Velocity_t velocity) = 0;
+
+  /**
+   * \brief Set the function to on or off.
+   *
+   * \param uid UID of the Locomotive.
+   * \param functionIdx Number of the function.
+   * \param functionOn true == function is on, false == function is off.
+   */
+  virtual void setLocoFunction(const Locomotive::Uid_t uid, uint8_t functionIdx, bool functionOn) = 0;
+
+  virtual void setLocoDirection(const Uid_t uid, const EngineDirection direction) = 0;
+  virtual void changeLocoDirection(const Uid_t uid) = 0;
 };
 
 }  // namespace callback
