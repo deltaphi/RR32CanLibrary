@@ -22,9 +22,11 @@ class SystemCbkMock : public RR32Can::callback::SystemCbk {
 
 class EngineCbkMock : public RR32Can::callback::EngineCbk {
  public:
-  MOCK_METHOD(RR32Can::Locomotive *, getLoco, (RR32Can::Locomotive::Uid_t), (override));
   MOCK_METHOD(void, setLocoVelocity, (RR32Can::Locomotive::Uid_t, RR32Can::Velocity_t), (override));
   MOCK_METHOD(void, setLocoVelocity, (RR32Can::Velocity_t), (override));
+  MOCK_METHOD(void, setLocoFunction, (const RR32Can::Locomotive::Uid_t, uint8_t, bool), (override));
+  MOCK_METHOD(void, setLocoDirection, (const RR32Can::Locomotive::Uid_t, const RR32Can::EngineDirection), (override));
+  MOCK_METHOD(void, changeLocoDirection, (const RR32Can::Locomotive::Uid_t), (override));
 };
 
 class ConfigDataCbkMock : public RR32Can::callback::ConfigDataCbk {

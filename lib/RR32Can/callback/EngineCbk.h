@@ -30,8 +30,8 @@ class EngineCbk {
    */
   virtual void setLocoFunction(const Locomotive::Uid_t uid, uint8_t functionIdx, bool functionOn) = 0;
 
-  virtual void setLocoDirection(const Uid_t uid, const EngineDirection direction) = 0;
-  virtual void changeLocoDirection(const Uid_t uid) = 0;
+  virtual void setLocoDirection(const Locomotive::Uid_t uid, const EngineDirection direction) = 0;
+  virtual void changeLocoDirection(const Locomotive::Uid_t uid) = 0;
 };
 
 }  // namespace callback
