@@ -9,6 +9,11 @@ if (NOT MSVC)
   add_compile_options(-Wall -Wextra -pedantic)
 endif()
 
+if (WIN32)
+    # Disable Windows libc depreciation warnings for POSIX functions used in the embedded code.
+    add_compile_definitions(_CRT_SECURE_NO_WARNINGS)
+endif()
+
 option(ENABLE_COVERAGE "enable_language measurement option add_compile_definitions coverage" OFF)
 
 if (ENABLE_COVERAGE)
