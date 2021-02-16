@@ -44,6 +44,9 @@ void ConfigDataStreamParser::addMessage(const Data& data) {
           streamState = StreamState::WAITING_DATA_PACKET;
         } else {
           streamState = StreamState::STREAM_DONE;
+          if (consumer_ != nullptr) {
+            consumer_->setStreamComplete();
+          }
         }
 
       } else if (data.dlc >= 8) {
