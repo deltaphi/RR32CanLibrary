@@ -12,3 +12,7 @@ CMakeSettings.json
 .cproject
 *.launch
 .settings
+
+# CLion
+cmake-build-*
+.idea
