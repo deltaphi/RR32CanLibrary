@@ -96,8 +96,6 @@ class Station {
   void notifyConfigStreamReceived() { FinishCurrentConfigRequest(); }
 
  private:
-  Locomotive* getLocoForUid(const RR32Can::Uid_t locid);
-
   /* Initialization & Infrastructure */
   uint16_t senderHash_ = 0;
 
