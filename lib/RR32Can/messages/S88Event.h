@@ -72,7 +72,7 @@ class S88Event : public BaseMessage {
   constexpr SensorState getNewState() const { return static_cast<SensorState>(data_.data[5]); }
 
   constexpr void setTime(uint16_t time) {
-    data_.data[7] = time;
+    data_.data[7] = time & 0xFF;
     data_.data[6] = time >> 8;
   }
 

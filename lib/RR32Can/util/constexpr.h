@@ -199,7 +199,9 @@ inline RR32Can::CanFrame Request_Config_Data(const char* text, uint8_t msgLen) {
   return frame;
 }
 
-inline RR32Can::CanFrame Request_Config_Data(const char* text) { return Request_Config_Data(text, strlen(text)); }
+inline RR32Can::CanFrame Request_Config_Data(const char* text) {
+  return Request_Config_Data(text, static_cast<uint8_t>(strlen(text)));
+}
 
 }  // namespace util
 }  // namespace RR32Can
