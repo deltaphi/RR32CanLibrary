@@ -79,6 +79,11 @@ class LocomotiveData {
   using Address_t = RR32Can::MachineLocomotiveAddress;
   using FunctionBits_t = RR32Can::FunctionBits_t;
 
+  LocomotiveData() = default;
+  constexpr LocomotiveData(Uid_t uid, Address_t addr, Velocity_t velocity, RR32Can::EngineDirection direction,
+                           FunctionBits_t functionBits)
+      : uid_(uid), address_(addr), velocity_(velocity), direction_(direction), functionBits_(functionBits) {}
+
   void reset() {
     // Remove all data of this class
     uid_ = 0;
