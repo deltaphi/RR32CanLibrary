@@ -82,7 +82,7 @@ class LocomotiveData {
   LocomotiveData() = default;
   constexpr LocomotiveData(Uid_t uid, Address_t addr, Velocity_t velocity, RR32Can::EngineDirection direction,
                            FunctionBits_t functionBits)
-      : uid_(uid), address_(addr), velocity_(velocity), direction_(direction), functionBits_(functionBits) {}
+      : uid_(uid), velocity_(velocity), direction_(direction), address_(addr), functionBits_(functionBits) {}
 
   void reset() {
     // Remove all data of this class
