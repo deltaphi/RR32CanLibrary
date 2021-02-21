@@ -140,11 +140,11 @@ class LocomotiveData {
   void print() const;
 
  private:
-  Uid_t uid_;
-  Velocity_t velocity_;
-  RR32Can::EngineDirection direction_;
-  Address_t address_;
-  FunctionBits_t functionBits_;
+  Uid_t uid_ = 0U;
+  Velocity_t velocity_ = 0U;
+  RR32Can::EngineDirection direction_ = RR32Can::EngineDirection::UNKNOWN;
+  Address_t address_ = RR32Can::MachineLocomotiveAddress(0U);
+  FunctionBits_t functionBits_ = 0U;
 };
 
 /**
