@@ -11,6 +11,7 @@
 #include "RR32Can/Constants.h"
 #include "RR32Can/messages/CanFrame.h"
 #include "RR32Can/messages/TurnoutPacket.h"
+#include "RR32Can/util/constexpr.h"
 #include "RR32Can/util/utils.h"
 
 #include "RR32Can_config.h"
@@ -210,14 +211,7 @@ void Station::RequestEngineVelocity(const LocomotiveData& engine) {
 }
 
 void Station::SendEngineVelocity(const LocomotiveData& engine, const LocomotiveData::Velocity_t velocity) {
-  CanFrame frame{{Command::LOCO_SPEED, this->senderHash_}, {}};
-  frame.data.dlc = 6;
-  frame.data.setLocid(engine.getUid());
-
-  const auto limitedVelocity{(velocity > kMaxEngineVelocity) ? kMaxEngineVelocity : velocity};
-
-  frame.data.data[4] = limitedVelocity >> 8;
-  frame.data.data[5] = limitedVelocity;
+  CanFrame frame{util::LocoSpeed(false, engine.getUid(), velocity)};
 
   callbacks_.tx->SendPacket(frame);
 }

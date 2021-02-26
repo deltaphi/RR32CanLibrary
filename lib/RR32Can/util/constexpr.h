@@ -8,6 +8,8 @@
 #include "RR32Can/messages/SystemMessage.h"
 #include "RR32Can/messages/TurnoutPacket.h"
 
+#include "RR32Can/Locomotive.h"
+
 namespace RR32Can {
 namespace util {
 
@@ -162,6 +164,26 @@ constexpr RR32Can::CanFrame System_LocoEmStop(bool response, const RR32Can::Mach
   msg.setSubcommand(RR32Can::SystemSubcommand::LOCO_EMERGENCY_STOP);
   return frame;
 }
+
+constexpr RR32Can::CanFrame LocoSpeed(bool response, const RR32Can::Uid_t uid, const RR32Can::Velocity_t velocity) {
+  RR32Can::CanFrame frame{{RR32Can::Command::LOCO_SPEED, 0}, {}};
+  frame.id.setResponse(response);
+  frame.data.dlc = 6;
+  frame.data.setLocid(uid);
+
+  const auto limitedVelocity{(velocity > kMaxEngineVelocity) ? kMaxEngineVelocity : velocity};
+
+  frame.data.data[4] = limitedVelocity >> 8;
+  frame.data.data[5] = limitedVelocity;
+
+  return frame;
+}
+
+/*
+constexpr RR32Can::CanFrame LocoSpeed(bool response, const RR32Can::LocomotiveData & engine) {
+  return LocoSpeed(response, engine.getUid(), engine.getVelocity());
+}
+*/
 
 // Untested so far. Kept around in case it should eventually be needed.
 // template<size_t length>
