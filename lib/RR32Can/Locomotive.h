@@ -51,6 +51,7 @@ class LocomotiveShortInfo {
   const char* getName() const { return name_; }
 
   AvailabilityStatus getAvailability() const { return availability_; }
+  void setAvailability(AvailabilityStatus availability) { availability_ = availability; }
   bool isNameKnown() const { return availability_ != AvailabilityStatus::EMPTY; }
 
   bool isNameOnlyKnown() const { return availability_ == AvailabilityStatus::NAME_KNOWN; }
@@ -64,8 +65,6 @@ class LocomotiveShortInfo {
   char name_[kEngineNameLength + 1];
 
   void eraseName() { memset(this->name_, '\0', kEngineNameLength + 1); }
-
-  friend class LocoConsumer;
 };
 
 /**

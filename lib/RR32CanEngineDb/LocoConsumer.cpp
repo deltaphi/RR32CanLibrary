@@ -60,7 +60,7 @@ void LocoConsumer::setStreamComplete() {
     return;
   }
 
-  currentEngine->availability_ = Locomotive::AvailabilityStatus::FULL_DETAILS;
+  currentEngine->setAvailability(Locomotive::AvailabilityStatus::FULL_DETAILS);
 
   printf("Downloaded Engine: ");
   currentEngine->print();
