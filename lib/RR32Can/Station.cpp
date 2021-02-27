@@ -167,7 +167,7 @@ void Station::RequestEngine(const LocomotiveShortInfo& engine, callback::ConfigD
   frame.data.reset();
   frame.data.dlc = 8;
   const char* engineName = engine.getName();
-  uint8_t engineNameLength = strlen(engineName);
+  const auto engineNameLength = strlen(engineName);
   strncpy(frame.data.dataAsString(), engineName, CanDataMaxLength);
 
   callbacks_.tx->SendPacket(frame);
@@ -191,14 +191,10 @@ void Station::RequestEngineDirection(const LocomotiveData& engine) {
 }
 
 void Station::SendEngineDirection(const LocomotiveData& engine, const EngineDirection direction) {
-  CanFrame frame{{Command::LOCO_DIRECTION, this->senderHash_}, {}};
-  frame.data.dlc = 5;
-  frame.data.setLocid(engine.getUid());
-
   if ((direction == EngineDirection::FORWARD) || (direction == EngineDirection::REVERSE) ||
       (direction == EngineDirection::CHANGE_DIRECTION)) {
-    frame.data.data[4] = static_cast<uint8_t>(direction);
-    callbacks_.tx->SendPacket(frame);
+    CanFrame frame{util::LocoDirection(false, engine.getUid(), direction)};
+    SendPacket(frame);
   }  // else: not implemented.
 }
 
@@ -213,7 +209,7 @@ void Station::RequestEngineVelocity(const LocomotiveData& engine) {
 void Station::SendEngineVelocity(const LocomotiveData& engine, const LocomotiveData::Velocity_t velocity) {
   CanFrame frame{util::LocoSpeed(false, engine.getUid(), velocity)};
 
-  callbacks_.tx->SendPacket(frame);
+  SendPacket(frame);
 }
 
 void Station::RequestEngineFunction(const LocomotiveData& engine, const uint8_t function) {
@@ -236,18 +232,8 @@ void Station::RequestEngineAllFunctions(const LocomotiveData& engine) {
 }
 
 void Station::SendEngineFunction(const LocomotiveData& engine, const uint8_t function, const bool value) {
-  CanFrame frame{{Command::LOCO_FUNCTION, this->senderHash_}, {}};
-  frame.data.dlc = 6;
-  frame.data.setLocid(engine.getUid());
-  frame.data.data[4] = function;
-
-  if (value) {
-    frame.data.data[5] = 1;
-  } else {
-    frame.data.data[5] = 0;
-  }
-
-  callbacks_.tx->SendPacket(frame);
+  CanFrame frame{util::LocoFunction(false, engine.getUid(), function, value)};
+  SendPacket(frame);
 }
 
 void Station::SendEmergencyStop() {

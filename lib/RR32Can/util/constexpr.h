@@ -174,7 +174,7 @@ constexpr RR32Can::CanFrame LocoSpeed(bool response, const RR32Can::Uid_t uid, c
   const auto limitedVelocity{(velocity > kMaxEngineVelocity) ? kMaxEngineVelocity : velocity};
 
   frame.data.data[4] = limitedVelocity >> 8;
-  frame.data.data[5] = limitedVelocity;
+  frame.data.data[5] = static_cast<uint8_t>(limitedVelocity);
 
   return frame;
 }
@@ -185,6 +185,35 @@ constexpr RR32Can::CanFrame LocoSpeed(bool response, const RR32Can::LocomotiveDa
 }
 */
 
+constexpr RR32Can::CanFrame LocoDirection(bool response, Uid_t uid, EngineDirection direction) {
+  RR32Can::CanFrame frame{{RR32Can::Command::LOCO_DIRECTION, 0}, {}};
+  frame.id.setResponse(response);
+  frame.data.dlc = 5;
+  frame.data.setLocid(uid);
+  frame.data.data[4] = static_cast<uint8_t>(direction);
+  return frame;
+}
+
+constexpr RR32Can::CanFrame LocoFunction(bool response, Uid_t uid, uint8_t function, bool onOff) {
+  CanFrame frame{{Command::LOCO_FUNCTION, 0}, {}};
+  frame.data.dlc = 6;
+  frame.data.setLocid(uid);
+  frame.data.data[4] = function;
+
+  if (onOff) {
+    frame.data.data[5] = 1;
+  } else {
+    frame.data.data[5] = 0;
+  }
+
+  return frame;
+}
+
+template <typename T>
+constexpr uint8_t limitToCANDataLength(T val) {
+  return val > RR32Can::CanDataMaxLength ? RR32Can::CanDataMaxLength : val;
+}
+
 // Untested so far. Kept around in case it should eventually be needed.
 // template<size_t length>
 // constexpr RR32Can::CanFrame Config_Data_Stream(const uint8_t data[length]) {
@@ -192,11 +221,6 @@ constexpr RR32Can::CanFrame LocoSpeed(bool response, const RR32Can::LocomotiveDa
 //   RR32Can::CanFrame frame{{RR32Can::Command::CONFIG_DATA_STREAM, 0}, {8, *data}};
 //   return frame;
 // }
-
-template <typename T>
-constexpr uint8_t limitToCANDataLength(T val) {
-  return val > RR32Can::CanDataMaxLength ? RR32Can::CanDataMaxLength : val;
-}
 
 constexpr RR32Can::CanFrame Config_Data_Stream(const uint32_t streamLength, const uint16_t crc) {
   RR32Can::CanFrame frame{{RR32Can::Command::CONFIG_DATA_STREAM, 0}, {6, {}}};
