@@ -196,6 +196,7 @@ constexpr RR32Can::CanFrame LocoDirection(bool response, Uid_t uid, EngineDirect
 
 constexpr RR32Can::CanFrame LocoFunction(bool response, Uid_t uid, uint8_t function, bool onOff) {
   CanFrame frame{{Command::LOCO_FUNCTION, 0}, {}};
+  frame.id.setResponse(response);
   frame.data.dlc = 6;
   frame.data.setLocid(uid);
   frame.data.data[4] = function;
