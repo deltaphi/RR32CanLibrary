@@ -14,7 +14,7 @@ EngineDirection switchDirection(EngineDirection);
 using Uid_t = uint32_t;
 using Velocity_t = uint16_t;
 using EngineAddress_t = uint32_t;
-using FunctionBits_t = uint16_t;
+using FunctionBits_t = uint32_t;
 
 /// Opaque Typedefs for Locomotive Addresses
 class LocomotiveAddressBase {
