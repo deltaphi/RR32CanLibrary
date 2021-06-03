@@ -269,8 +269,8 @@ void Station::SendAccessoryPacket(RR32Can::MachineTurnoutAddress turnoutAddress,
   payload.setPower(power);
 
 #if (LOG_CAN_OUT_MSG == STD_ON)
-  printf("Setting turnout %d to position %s %s\n", payload.locid & (~0x3000), payload.position == 0 ? "RED " : "GREEN",
-         payload.power ? "(ON) " : "(OFF)");
+  printf("Setting turnout %u to position %s %s\n", payload.getLocid().value() & (~0x3000),
+         payload.getDirection() == TurnoutDirection::RED ? "RED " : "GREEN", payload.getPower() ? "(ON) " : "(OFF)");
 #endif
 
   callbacks_.tx->SendPacket(frame);
@@ -283,7 +283,7 @@ void Station::SendPacket(RR32Can::CanFrame& canFrame) {
 
 void Station::HandlePacket(const RR32Can::CanFrame& canFrame) {
 #if LOG_CAN_RAW_MSG_IN == STD_ON
-  id.printAll();
+  canFrame.id.printAll();
   printf("\n");
 #endif
 
