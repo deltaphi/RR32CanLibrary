@@ -236,10 +236,12 @@ void Station::SendEngineFunction(const LocomotiveData& engine, const uint8_t fun
   SendPacket(frame);
 }
 
-void Station::SendEmergencyStop() {
+void Station::SendEmergencyStop(const LocomotiveData& engine) {
   CanFrame frame{{Command::SYSTEM_COMMAND, this->senderHash_}, {}};
-  frame.data.dlc = 5;
-  frame.data.data[4] = kSubcommandLocoEmergencyStop;
+  SystemMessage payload{frame.data};
+  payload.initData();
+  payload.setSubcommand(SystemSubcommand::LOCO_EMERGENCY_STOP);
+  payload.setLocid(engine.getUid());
   callbacks_.tx->SendPacket(frame);
 }
 

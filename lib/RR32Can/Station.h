@@ -83,7 +83,7 @@ class Station {
   void RequestEngineAllFunctions(const LocomotiveData& engine);
   void SendEngineFunction(const LocomotiveData& engine, const uint8_t function, const bool value);
 
-  void SendEmergencyStop();
+  void SendEmergencyStop(const LocomotiveData& engine);
   void SendSystemStop();
   void SendSystemGo();
 
