@@ -276,4 +276,27 @@ TEST_F(StationTestFixture, ReceiveConfigData_WithParser_data2) {
   }
 }
 
+TEST_F(StationTestFixture, ReceiveDebugText) {
+  RR32Can::Data data;  // 'Ende Sen'
+  data.dlc = 8;
+  data.data[0] = 0x45;
+  data.data[1] = 0x6E;
+  data.data[2] = 0x64;
+  data.data[3] = 0x65;
+  data.data[4] = 0x20;
+  data.data[5] = 0x53;
+  data.data[6] = 0x65;
+  data.data[7] = 0x6E;
+
+  RR32Can::Identifier id{0x00846B5B};
+
+  RR32Can::CanFrame frame{id, data};
+
+  testing::internal::CaptureStdout();
+  station.HandlePacket(frame);
+  std::string output = testing::internal::GetCapturedStdout();
+
+  EXPECT_STREQ("Debug Text: 'Ende Sen'\n", output.c_str());
+}
+
 }  // namespace integration

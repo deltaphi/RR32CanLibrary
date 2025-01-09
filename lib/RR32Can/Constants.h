@@ -42,6 +42,8 @@ constexpr CommandByte_t kRequestConfigData = 0x20;
 constexpr CommandByte_t kConfigDataStream = 0x21;
 constexpr CommandByte_t k60128DataStream = 0x22;
 
+constexpr CommandByte_t kDebugText = 0x42;
+
 enum class Command : CommandByte_t {
   SYSTEM_COMMAND = kSystemCommand,
   LOCO_DISCOVERY = klocoDiscovery,
@@ -65,7 +67,8 @@ enum class Command : CommandByte_t {
   STATUSDATA_CONFIG = kStatusdataConfig,
   REQUEST_CONFIG_DATA = kRequestConfigData,
   CONFIG_DATA_STREAM = kConfigDataStream,
-  CMD_60128_DATA_STREAM = k60128DataStream
+  CMD_60128_DATA_STREAM = k60128DataStream,
+  DEBUG_TEXT = kDebugText
 };
 
 // Subcommands for system commands

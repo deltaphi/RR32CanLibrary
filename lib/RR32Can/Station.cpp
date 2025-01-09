@@ -336,6 +336,12 @@ void Station::HandlePacket(const RR32Can::CanFrame& canFrame) {
       this->HandleConfigDataStream(canFrame.data);
       break;
 
+    case RR32Can::Command::DEBUG_TEXT:
+      printf("Debug Text: '");
+      canFrame.data.printAsText();
+      printf("'\n");
+      break;
+
     default:
       printf("Unknown or not implemented. Dump: %#02x\n", static_cast<CommandByte_t>(canFrame.id.getCommand()));
       canFrame.data.printAsHex();
