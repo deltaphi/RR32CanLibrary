@@ -33,4 +33,4 @@ jobs:
 
     # Actual testing happening
     - name: Run Unittest
-      run: ${{ runner.temp }}\build\Release\RR32CanTest.exe
+      run: ${{ github.workspace }}\build\Release\RR32CanTest.exe
