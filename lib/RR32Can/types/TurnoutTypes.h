@@ -65,6 +65,7 @@ class MachineTurnoutAddress : public TurnoutAddressBase {
   constexpr void operator|=(const MachineTurnoutAddress& other) { addr_ = addr_ | other.value(); };
 
   constexpr bool operator<=(const MachineTurnoutAddress& other) const { return value() <= other.value(); };
+  constexpr bool operator<(const MachineTurnoutAddress& other) const { return value() < other.value(); };
 
   /**
    * \brief Address without the protocol part.
