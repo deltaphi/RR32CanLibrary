@@ -24,7 +24,7 @@ struct Data {
   /// Data Length C... . actual value ist 4 bit only.
   uint8_t dlc = 0;
   /// Actual data. An extra byte is prepared to allow for the use of snprintf.
-  uint8_t data[kDataBufferLength] = {0, 0, 0, 0, 0, 0, 0, 0};
+  uint8_t data[kDataBufferLength] = {0, 0, 0, 0, 0, 0, 0, 0, 0};
 
   bool operator==(const Data& other) const {
     if (dlc != other.dlc) {
