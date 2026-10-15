@@ -74,6 +74,7 @@ class Station {
    */
   void RequestEngine(const LocomotiveShortInfo& engine, callback::ConfigDataCbk* configDataConsumer);
   void RequestEngineList(const uint8_t offset, callback::ConfigDataCbk* configDataConsumer);
+  void RequestLokListe(callback::ConfigDataCbk* configDataConsumer);
 
   void RequestEngineDirection(const LocomotiveData& engine);
   void SendEngineDirection(const LocomotiveData& engine, const EngineDirection direction);
