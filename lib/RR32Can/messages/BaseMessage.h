@@ -10,7 +10,7 @@ namespace RR32Can {
  */
 class BaseMessage {
  public:
-  constexpr BaseMessage(RR32Can::Data& data) : data_(data){};
+  constexpr BaseMessage(RR32Can::Data& data) : data_(data) {};
 
   constexpr uint8_t length() const { return data_.dlc; }
 
