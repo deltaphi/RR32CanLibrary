@@ -1,11 +1,11 @@
 #include <algorithm>
 #include <string>
 
-#include "gmock/gmock.h"
-#include "gtest/gtest.h"
 #include "RR32Can/Station.h"
 #include "RR32Can/util/constexpr.h"
 #include "RR32CanEngineDb/LokListeConsumer.h"
+#include "gmock/gmock.h"
+#include "gtest/gtest.h"
 #include "mocks/Mocks.h"
 
 namespace integration {
@@ -49,8 +49,9 @@ class LokListeTest : public ::testing::Test {
 TEST_F(LokListeTest, StoresByIndexWithGapsAndMetadata) {
   start();
   EXPECT_CALL(end, streamComplete(&consumer));
-  feed("[lokliste]\n .dv=0\n .idx=5\n .llindex=9\n .name=BR 140\n .crc=34783\n"
-       " .idx=0\n .name=BR 89\n .idx=2\n .name=\n .future=ignored\n");
+  feed(
+      "[lokliste]\n .dv=0\n .idx=5\n .llindex=9\n .name=BR 140\n .crc=34783\n"
+      " .idx=0\n .name=BR 89\n .idx=2\n .name=\n .future=ignored\n");
   EXPECT_TRUE(consumer.isStreamComplete());
   EXPECT_FALSE(consumer.hasOverflow());
   EXPECT_EQ(consumer.getStoredCount(), 2u);
