@@ -22,7 +22,7 @@ class LocomotiveAddressBase {
   using value_type = LocId_t;
   constexpr value_type value() const { return addr_; }
 
-  LocomotiveAddressBase() : addr_(0){};
+  LocomotiveAddressBase() : addr_(0) {};
   constexpr explicit LocomotiveAddressBase(value_type addr) : addr_(addr) {}
 
  protected:

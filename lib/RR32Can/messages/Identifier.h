@@ -24,8 +24,8 @@ class Identifier {
   constexpr static const value_type kCommandBitMask = (0xFF << 17);
   // constexpr static const value_type kPrioBitMask = (0x0F << 25);
 
-  constexpr Identifier() : identifier_(0){};
-  constexpr Identifier(value_type packetId) : identifier_(packetId){};
+  constexpr Identifier() : identifier_(0) {};
+  constexpr Identifier(value_type packetId) : identifier_(packetId) {};
   constexpr Identifier(Command command, uint16_t hash) : identifier_(0) {
     setCommand(command);
     setHash(hash);
