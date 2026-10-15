@@ -49,7 +49,6 @@ constexpr RR32Can::MachineTurnoutAddress DecoderBaseAddress(T addr) {
   return RR32Can::MachineTurnoutAddress{RR32Can::MachineTurnoutAddress{addr}.value() & ~0b11};
 }
 
-
 //
 // Constexpr create protocol-ful Engine addresses
 //
