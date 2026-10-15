@@ -16,6 +16,29 @@ This library has a template for a configuration header that must be copied to yo
 
 This library also has a nmber of callbacks that have to be implemented to achieve functionality.
 
+### Downloading locomotive lists
+
+For older MS2 firmware, use `LocoListConsumer` with `ConfigDataStreamParser`
+and `Station::RequestEngineList(offset, &parser)` to request `loknamen` pages.
+For firmware using `lokliste`, use the separate downloader:
+
+```cpp
+#include "RR32CanEngineDb/LokListeConsumer.h"
+
+RR32Can::LokListeConsumer::Entry entries[40];
+RR32Can::LokListeConsumer list(entries, 40);
+
+// Once Station has been initialized with a transmission callback:
+list.download(station);
+// Feed incoming CAN frames to station.HandlePacket(frame), as usual.
+```
+Entries are stored at their `.idx`: slot 5 is `entries[5]`, even when earlier slots are empty.
+Storage is cleared before each download.
+Capacity must cover the highest desired
+index plus one.
+Out-of-range entries are skipped.
+When they are encountered, `hasOverflow()` is set, and the rest of the stream is still received and CRC-checked.
+
 ### Unit Testing
 
 This project includes a CMake project.
