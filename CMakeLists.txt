@@ -102,7 +102,7 @@ setup_target_for_coverage_gcovr_html(
 )
 endif()
 
-# Standalone desktop application for experimenting with a TCP-connected CAN
+# Standalone desktop application for experimenting with a UDP-connected CAN
 # gateway.  The example has its own CMakeLists.txt and does not become part of
 # the unit-test executable.
-add_subdirectory(examples/tcp_station)
+add_subdirectory(examples/udp_station)

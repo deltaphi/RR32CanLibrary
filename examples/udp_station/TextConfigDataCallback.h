@@ -1,10 +1,10 @@
-#ifndef RR32CAN_TCP_STATION_TEXT_CONFIG_DATA_CALLBACK_H_
-#define RR32CAN_TCP_STATION_TEXT_CONFIG_DATA_CALLBACK_H_
+#ifndef RR32CAN_UDP_STATION_TEXT_CONFIG_DATA_CALLBACK_H_
+#define RR32CAN_UDP_STATION_TEXT_CONFIG_DATA_CALLBACK_H_
 
 #include "RR32Can/messages/Data.h"
 #include "RR32Can/callback/ConfigDataCbk.h"
 
-namespace tcp_station {
+namespace udp_station {
 
 class TextConfigDataCallback final : public RR32Can::callback::ConfigDataCbk {
  public:
@@ -13,6 +13,6 @@ class TextConfigDataCallback final : public RR32Can::callback::ConfigDataCbk {
   void reset() override;
 };
 
-}  // namespace tcp_station
+}  // namespace udp_station
 
-#endif  // RR32CAN_TCP_STATION_TEXT_CONFIG_DATA_CALLBACK_H_
+#endif  // RR32CAN_UDP_STATION_TEXT_CONFIG_DATA_CALLBACK_H_

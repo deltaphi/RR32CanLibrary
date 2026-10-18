@@ -1,4 +1,4 @@
-#include "TcpConnection.h"
+#include "UdpConnection.h"
 
 #include <cerrno>
 #include <cstring>
@@ -15,7 +15,7 @@
 #include <unistd.h>
 #endif
 
-namespace tcp_station {
+namespace udp_station {
 namespace {
 
 #ifdef _WIN32
@@ -93,7 +93,7 @@ bool waitForSocketOrStdin(int socket) {
 
 }  // namespace
 
-TcpConnection::TcpConnection(const char* host, const char* port) {
+UdpConnection::UdpConnection(const char* host, const char* port) {
   ensureSocketsInitialized();
 
   struct addrinfo hints{};
@@ -138,13 +138,13 @@ TcpConnection::TcpConnection(const char* host, const char* port) {
   }
 }
 
-TcpConnection::~TcpConnection() {
+UdpConnection::~UdpConnection() {
   if (!isInvalidSocket(socket_)) {
     closeSocket(socket_);
   }
 }
 
-bool TcpConnection::receivePacket(Packet& packet) {
+bool UdpConnection::receivePacket(Packet& packet) {
   // One extra byte lets us reject oversized datagrams even when recvfrom truncates them.
   std::array<uint8_t, kPacketSize + 1> datagram{};
   while (true) {
@@ -176,7 +176,7 @@ bool TcpConnection::receivePacket(Packet& packet) {
   }
 }
 
-void TcpConnection::sendPacket(const Packet& packet) {
+void UdpConnection::sendPacket(const Packet& packet) {
   while (true) {
 #ifdef _WIN32
     const int count = sendto(socket_, reinterpret_cast<const char*>(packet.data()), static_cast<int>(packet.size()), 0,
@@ -202,4 +202,4 @@ void TcpConnection::sendPacket(const Packet& packet) {
   }
 }
 
-}  // namespace tcp_station
+}  // namespace udp_station

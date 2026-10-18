@@ -1,5 +1,5 @@
-#ifndef RR32CAN_TCP_STATION_CONFIG_H_
-#define RR32CAN_TCP_STATION_CONFIG_H_
+#ifndef RR32CAN_UDP_STATION_CONFIG_H_
+#define RR32CAN_UDP_STATION_CONFIG_H_
 
 #include <cstdint>
 
@@ -27,4 +27,4 @@
 
 constexpr uint32_t RR32CanUUID = (RR32Can::enthusiastStationBaseUUID + 11);
 
-#endif  // RR32CAN_TCP_STATION_CONFIG_H_
+#endif  // RR32CAN_UDP_STATION_CONFIG_H_

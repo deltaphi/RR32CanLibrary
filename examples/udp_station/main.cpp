@@ -6,25 +6,25 @@
 #include <stdexcept>
 
 #include "RR32Can/Station.h"
-#include "TcpLogger.h"
-#include "TcpProtocol.h"
-#include "TcpStationConfig.h"
-#include "TcpTxCallback.h"
+#include "UdpLogger.h"
+#include "UdpProtocol.h"
+#include "UdpStationConfig.h"
+#include "UdpTxCallback.h"
 #include "TextConfigDataCallback.h"
 
 namespace {
 
 constexpr uint16_t kStationUuid = (RR32Can::enthusiastStationBaseUUID + 12);
 
-RR32Can::CanFrame decodePacket(const tcp_station::Packet& packet) {
+RR32Can::CanFrame decodePacket(const udp_station::Packet& packet) {
   RR32Can::CanFrame frame;
-  uint8_t identifier[tcp_station::kIdentifierSize] = {packet[0], packet[1], packet[2], packet[3]};
+  uint8_t identifier[udp_station::kIdentifierSize] = {packet[0], packet[1], packet[2], packet[3]};
   frame.id = RR32Can::Identifier::GetIdentifier(identifier);
   frame.data.dlc = packet[4];
-  if (frame.data.dlc > tcp_station::kPayloadSize) {
+  if (frame.data.dlc > udp_station::kPayloadSize) {
     throw std::runtime_error("Received CAN packet with DLC greater than 8");
   }
-  std::memcpy(frame.data.data, packet.data() + tcp_station::kIdentifierSize + 1, tcp_station::kPayloadSize);
+  std::memcpy(frame.data.data, packet.data() + udp_station::kIdentifierSize + 1, udp_station::kPayloadSize);
   return frame;
 }
 
@@ -32,7 +32,7 @@ RR32Can::CanFrame decodePacket(const tcp_station::Packet& packet) {
 // Experiments: edit this function and rebuild the example. There is no
 // runtime command-line or console input by design.
 // -----------------------------------------------------------------------------
-void runExperiments(RR32Can::Station& station, tcp_station::TextConfigDataCallback& configDataCallback) {
+void runExperiments(RR32Can::Station& station, udp_station::TextConfigDataCallback& configDataCallback) {
   // station.SendSystemGo();
   station.RequestLokListe(&configDataCallback);
   //station.RequestEngineList(0, &configDataCallback);
@@ -45,11 +45,11 @@ void runExperiments(RR32Can::Station& station, tcp_station::TextConfigDataCallba
 
 int main() {
   try {
-    std::cout << "Sending UDP to " << tcp_station_config::kServerHost << ':' << tcp_station_config::kServerPort
-              << "; listening for broadcasts on 0.0.0.0:" << tcp_station_config::kServerPort << "...\n";
-    tcp_station::TcpConnection connection(tcp_station_config::kServerHost, tcp_station_config::kServerPort);
-    tcp_station::TcpTxCallback txCallback(connection);
-    tcp_station::TextConfigDataCallback configDataCallback;
+    std::cout << "Sending UDP to " << udp_station_config::kServerHost << ':' << udp_station_config::kServerPort
+              << "; listening for broadcasts on 0.0.0.0:" << udp_station_config::kServerPort << "...\n";
+    udp_station::UdpConnection connection(udp_station_config::kServerHost, udp_station_config::kServerPort);
+    udp_station::UdpTxCallback txCallback(connection);
+    udp_station::TextConfigDataCallback configDataCallback;
 
     RR32Can::Station::CallbackStruct callbacks;
     callbacks.tx = &txCallback;
@@ -59,10 +59,10 @@ int main() {
 
     runExperiments(station, configDataCallback);
 
-    tcp_station::Packet packet{};
+    udp_station::Packet packet{};
     while (connection.receivePacket(packet)) {
       const RR32Can::CanFrame frame = decodePacket(packet);
-      tcp_station::logPacket("RX", packet, frame);
+      udp_station::logPacket("RX", packet, frame);
       station.HandlePacket(frame);
       station.loop();
     }
