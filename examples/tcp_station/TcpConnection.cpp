@@ -1,9 +1,7 @@
 #include "TcpConnection.h"
 
-#include <algorithm>
 #include <cerrno>
 #include <cstring>
-#include <limits>
 #include <stdexcept>
 #include <string>
 
@@ -134,9 +132,7 @@ void TcpConnection::sendAll(const uint8_t* data, std::size_t size) {
   std::size_t sent = 0;
   while (sent < size) {
 #ifdef _WIN32
-    const int count =
-        send(socket_, data + sent,
-             static_cast<int>(std::min(size - sent, static_cast<std::size_t>(std::numeric_limits<int>::max()))), 0);
+    const int count = send(socket_, data + sent, static_cast<int>(size - sent), 0);
 #else
     const ssize_t count = send(socket_, data + sent, size - sent, 0);
 #endif
