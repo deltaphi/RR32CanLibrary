@@ -106,8 +106,8 @@ bool TcpConnection::receivePacket(Packet& packet) {
   std::size_t received = 0;
   while (received < packet.size()) {
 #ifdef _WIN32
-    const int count = recv(socket_, reinterpret_cast<char*>(packet.data() + received),
-                           static_cast<int>(packet.size() - received), 0);
+    const int count =
+        recv(socket_, reinterpret_cast<char*>(packet.data() + received), static_cast<int>(packet.size() - received), 0);
 #else
     const ssize_t count = recv(socket_, packet.data() + received, packet.size() - received, 0);
 #endif
