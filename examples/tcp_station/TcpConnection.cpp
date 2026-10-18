@@ -8,7 +8,9 @@
 #ifdef _WIN32
 #include <ws2tcpip.h>
 #else
+#include <algorithm>
 #include <netdb.h>
+#include <sys/select.h>
 #include <sys/socket.h>
 #include <unistd.h>
 #endif
@@ -55,6 +57,38 @@ void closeSocket(int socket) { close(socket); }
 const char* addressError(int error) { return gai_strerror(error); }
 
 std::string socketError() { return std::strerror(errno); }
+
+bool waitForSocketOrStdin(int socket) {
+  while (true) {
+    fd_set readSet;
+    FD_ZERO(&readSet);
+    FD_SET(socket, &readSet);
+    FD_SET(STDIN_FILENO, &readSet);
+
+    const int result = select(std::max(socket, STDIN_FILENO) + 1, &readSet, nullptr, nullptr, nullptr);
+    if (result < 0) {
+      if (errno == EINTR) {
+        continue;
+      }
+      throw std::runtime_error(std::string("select: ") + socketError());
+    }
+
+    if (FD_ISSET(STDIN_FILENO, &readSet)) {
+      char input;
+      const ssize_t count = read(STDIN_FILENO, &input, sizeof(input));
+      if (count == 0) {
+        return false;
+      }
+      if (count < 0 && errno != EINTR) {
+        throw std::runtime_error(std::string("read stdin: ") + socketError());
+      }
+    }
+
+    if (FD_ISSET(socket, &readSet)) {
+      return true;
+    }
+  }
+}
 #endif
 
 }  // namespace
@@ -105,6 +139,11 @@ void TcpConnection::sendPacket(const Packet& packet) { sendAll(packet.data(), pa
 bool TcpConnection::receivePacket(Packet& packet) {
   std::size_t received = 0;
   while (received < packet.size()) {
+#ifndef _WIN32
+    if (!waitForSocketOrStdin(socket_)) {
+      return false;
+    }
+#endif
 #ifdef _WIN32
     const int count =
         recv(socket_, reinterpret_cast<char*>(packet.data() + received), static_cast<int>(packet.size() - received), 0);

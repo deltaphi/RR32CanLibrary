@@ -10,10 +10,11 @@
 #include "TcpProtocol.h"
 #include "TcpStationConfig.h"
 #include "TcpTxCallback.h"
+#include "TextConfigDataCallback.h"
 
 namespace {
 
-constexpr uint16_t kStationUuid = 0;
+constexpr uint16_t kStationUuid = (RR32Can::enthusiastStationBaseUUID + 12);
 
 RR32Can::CanFrame decodePacket(const tcp_station::Packet& packet) {
   RR32Can::CanFrame frame;
@@ -31,9 +32,10 @@ RR32Can::CanFrame decodePacket(const tcp_station::Packet& packet) {
 // Experiments: edit this function and rebuild the example. There is no
 // runtime command-line or console input by design.
 // -----------------------------------------------------------------------------
-void runExperiments(RR32Can::Station& station) {
+void runExperiments(RR32Can::Station& station, tcp_station::TextConfigDataCallback& configDataCallback) {
   // station.SendSystemGo();
-
+  station.RequestLokListe(&configDataCallback);
+  //station.RequestEngineList(0, &configDataCallback);
   // Add experimental library calls here, for example:
   // station.SendSystemStop();
   // station.SendAccessoryPacket(...);
@@ -47,6 +49,7 @@ int main() {
               << "...\n";
     tcp_station::TcpConnection connection(tcp_station_config::kServerHost, tcp_station_config::kServerPort);
     tcp_station::TcpTxCallback txCallback(connection);
+    tcp_station::TextConfigDataCallback configDataCallback;
 
     RR32Can::Station::CallbackStruct callbacks;
     callbacks.tx = &txCallback;
@@ -54,7 +57,7 @@ int main() {
     RR32Can::Station station;
     station.begin(kStationUuid, callbacks);
 
-    runExperiments(station);
+    runExperiments(station, configDataCallback);
 
     tcp_station::Packet packet{};
     while (connection.receivePacket(packet)) {

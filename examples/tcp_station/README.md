@@ -13,8 +13,9 @@ identifier and payload formatting and passes received packets through
 `RR32Can::Station` for protocol decoding.
 
 Edit `TcpStationConfig.h` to change the gateway, or edit `runExperiments()` in
-`main.cpp` to try library operations. The program does not accept runtime
-commands.
+`main.cpp` to try library operations. Press `CTRL-D` on an interactive terminal
+to request a graceful shutdown; the socket is then closed by the connection's
+destructor.
 
 Build from the repository root:
 

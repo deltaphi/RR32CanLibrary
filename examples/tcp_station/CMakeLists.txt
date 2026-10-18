@@ -5,6 +5,7 @@ add_executable(rr32can_tcp_station
     TcpConnection.cpp
     TcpLogger.cpp
     TcpTxCallback.cpp
+    TextConfigDataCallback.cpp
 
     ../../lib/RR32Can/Constants.cpp
     ../../lib/RR32Can/Locomotive.cpp
