@@ -8,11 +8,11 @@
 #ifdef _WIN32
 #include <ws2tcpip.h>
 #else
-#include <algorithm>
 #include <netdb.h>
 #include <sys/select.h>
 #include <sys/socket.h>
 #include <unistd.h>
+#include <algorithm>
 #endif
 
 namespace udp_station {
@@ -118,8 +118,8 @@ UdpConnection::UdpConnection(const char* host, const char* port, uint16_t receiv
     local.sin_addr.s_addr = htonl(INADDR_ANY);
     local.sin_port = htons(receivePort);
     const int broadcast = 1;
-    if (setsockopt(socket_, SOL_SOCKET, SO_BROADCAST, reinterpret_cast<const char*>(&broadcast),
-                   sizeof(broadcast)) == 0 &&
+    if (setsockopt(socket_, SOL_SOCKET, SO_BROADCAST, reinterpret_cast<const char*>(&broadcast), sizeof(broadcast)) ==
+            0 &&
         bind(socket_, reinterpret_cast<const sockaddr*>(&local), sizeof(local)) == 0) {
       destination_ = destination;
       break;
@@ -155,8 +155,8 @@ bool UdpConnection::receivePacket(Packet& packet) {
     }
 #endif
 #ifdef _WIN32
-    const int count =
-        recvfrom(socket_, reinterpret_cast<char*>(datagram.data()), static_cast<int>(datagram.size()), 0, nullptr, nullptr);
+    const int count = recvfrom(socket_, reinterpret_cast<char*>(datagram.data()), static_cast<int>(datagram.size()), 0,
+                               nullptr, nullptr);
 #else
     const ssize_t count = recvfrom(socket_, datagram.data(), datagram.size(), 0, nullptr, nullptr);
 #endif

@@ -1,8 +1,8 @@
 #ifndef RR32CAN_UDP_STATION_TEXT_CONFIG_DATA_CALLBACK_H_
 #define RR32CAN_UDP_STATION_TEXT_CONFIG_DATA_CALLBACK_H_
 
-#include "RR32Can/messages/Data.h"
 #include "RR32Can/callback/ConfigDataCbk.h"
+#include "RR32Can/messages/Data.h"
 
 namespace udp_station {
 
