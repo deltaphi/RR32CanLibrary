@@ -46,8 +46,9 @@ void runExperiments(RR32Can::Station& station, udp_station::TextConfigDataCallba
 int main() {
   try {
     std::cout << "Sending UDP to " << udp_station_config::kServerHost << ':' << udp_station_config::kServerPort
-              << "; listening for broadcasts on 0.0.0.0:" << udp_station_config::kServerPort << "...\n";
-    udp_station::UdpConnection connection(udp_station_config::kServerHost, udp_station_config::kServerPort);
+              << "; listening for broadcasts on 0.0.0.0:" << udp_station_config::kReceivePort << "...\n";
+    udp_station::UdpConnection connection(udp_station_config::kServerHost, udp_station_config::kServerPort,
+                                          udp_station_config::kReceivePort);
     udp_station::UdpTxCallback txCallback(connection);
     udp_station::TextConfigDataCallback configDataCallback;
 

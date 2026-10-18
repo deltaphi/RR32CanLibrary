@@ -1,8 +1,8 @@
 # UDP station example
 
 This desktop example sends CAN-over-UDP datagrams to the host and port
-configured in `UdpStationConfig.h` (port `15731`). It binds to `0.0.0.0` on the
-same port to receive broadcasts on all local IPv4 interfaces. Each UDP datagram
+configured in `UdpStationConfig.h` (port `15731`). It binds to `0.0.0.0:15730`
+to receive broadcasts on all local IPv4 interfaces (`kReceivePort` in the same config). Each UDP datagram
 contains exactly one 13-byte packet; datagrams of other sizes are ignored:
 
 ```text

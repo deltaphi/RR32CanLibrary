@@ -93,7 +93,7 @@ bool waitForSocketOrStdin(int socket) {
 
 }  // namespace
 
-UdpConnection::UdpConnection(const char* host, const char* port) {
+UdpConnection::UdpConnection(const char* host, const char* port, uint16_t receivePort) {
   ensureSocketsInitialized();
 
   struct addrinfo hints{};
@@ -116,7 +116,7 @@ UdpConnection::UdpConnection(const char* host, const char* port) {
     sockaddr_in local{};
     local.sin_family = AF_INET;
     local.sin_addr.s_addr = htonl(INADDR_ANY);
-    local.sin_port = destination.sin_port;
+    local.sin_port = htons(receivePort);
     const int broadcast = 1;
     if (setsockopt(socket_, SOL_SOCKET, SO_BROADCAST, reinterpret_cast<const char*>(&broadcast),
                    sizeof(broadcast)) == 0 &&
@@ -134,7 +134,8 @@ UdpConnection::UdpConnection(const char* host, const char* port) {
 
   freeaddrinfo(addresses);
   if (isInvalidSocket(socket_)) {
-    throw std::runtime_error(std::string("Unable to open UDP socket on port ") + port + ": " + socketError());
+    throw std::runtime_error(std::string("Unable to open UDP socket on port ") + std::to_string(receivePort) + ": " +
+                             socketError());
   }
 }
 

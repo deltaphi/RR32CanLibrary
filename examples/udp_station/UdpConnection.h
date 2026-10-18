@@ -13,7 +13,7 @@ namespace udp_station {
 
 class UdpConnection {
  public:
-  UdpConnection(const char* host, const char* port);
+  UdpConnection(const char* host, const char* port, uint16_t receivePort);
   ~UdpConnection();
 
   UdpConnection(const UdpConnection&) = delete;
