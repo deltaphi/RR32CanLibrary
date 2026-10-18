@@ -97,8 +97,9 @@ TcpConnection::TcpConnection(const char* host, const char* port) {
   ensureSocketsInitialized();
 
   struct addrinfo hints{};
-  hints.ai_family = AF_UNSPEC;
-  hints.ai_socktype = SOCK_STREAM;
+  hints.ai_family = AF_INET;
+  hints.ai_socktype = SOCK_DGRAM;
+  hints.ai_protocol = IPPROTO_UDP;
 
   struct addrinfo* addresses = nullptr;
   const int result = getaddrinfo(host, port, &hints, &addresses);
@@ -111,7 +112,16 @@ TcpConnection::TcpConnection(const char* host, const char* port) {
     if (isInvalidSocket(socket_)) {
       continue;
     }
-    if (connect(socket_, address->ai_addr, address->ai_addrlen) == 0) {
+    const auto destination = *reinterpret_cast<const sockaddr_in*>(address->ai_addr);
+    sockaddr_in local{};
+    local.sin_family = AF_INET;
+    local.sin_addr.s_addr = htonl(INADDR_ANY);
+    local.sin_port = destination.sin_port;
+    const int broadcast = 1;
+    if (setsockopt(socket_, SOL_SOCKET, SO_BROADCAST, reinterpret_cast<const char*>(&broadcast),
+                   sizeof(broadcast)) == 0 &&
+        bind(socket_, reinterpret_cast<const sockaddr*>(&local), sizeof(local)) == 0) {
+      destination_ = destination;
       break;
     }
     closeSocket(socket_);
@@ -124,7 +134,7 @@ TcpConnection::TcpConnection(const char* host, const char* port) {
 
   freeaddrinfo(addresses);
   if (isInvalidSocket(socket_)) {
-    throw std::runtime_error(std::string("Unable to connect to ") + host + ":" + port + ": " + socketError());
+    throw std::runtime_error(std::string("Unable to open UDP socket on port ") + port + ": " + socketError());
   }
 }
 
@@ -134,11 +144,10 @@ TcpConnection::~TcpConnection() {
   }
 }
 
-void TcpConnection::sendPacket(const Packet& packet) { sendAll(packet.data(), packet.size()); }
-
 bool TcpConnection::receivePacket(Packet& packet) {
-  std::size_t received = 0;
-  while (received < packet.size()) {
+  // One extra byte lets us reject oversized datagrams even when recvfrom truncates them.
+  std::array<uint8_t, kPacketSize + 1> datagram{};
+  while (true) {
 #ifndef _WIN32
     if (!waitForSocketOrStdin(socket_)) {
       return false;
@@ -146,35 +155,35 @@ bool TcpConnection::receivePacket(Packet& packet) {
 #endif
 #ifdef _WIN32
     const int count =
-        recv(socket_, reinterpret_cast<char*>(packet.data() + received), static_cast<int>(packet.size() - received), 0);
+        recvfrom(socket_, reinterpret_cast<char*>(datagram.data()), static_cast<int>(datagram.size()), 0, nullptr, nullptr);
 #else
-    const ssize_t count = recv(socket_, packet.data() + received, packet.size() - received, 0);
+    const ssize_t count = recvfrom(socket_, datagram.data(), datagram.size(), 0, nullptr, nullptr);
 #endif
-    if (count == 0) {
-      return false;
-    }
     if (count < 0) {
 #ifdef _WIN32
-      if (WSAGetLastError() == WSAEINTR) {
+      if (WSAGetLastError() == WSAEINTR || WSAGetLastError() == WSAEMSGSIZE) {
 #else
       if (errno == EINTR) {
 #endif
         continue;
       }
-      throw std::runtime_error(std::string("recv: ") + socketError());
+      throw std::runtime_error(std::string("recvfrom: ") + socketError());
     }
-    received += static_cast<std::size_t>(count);
+    if (static_cast<std::size_t>(count) == packet.size()) {
+      std::memcpy(packet.data(), datagram.data(), packet.size());
+      return true;
+    }
   }
-  return true;
 }
 
-void TcpConnection::sendAll(const uint8_t* data, std::size_t size) {
-  std::size_t sent = 0;
-  while (sent < size) {
+void TcpConnection::sendPacket(const Packet& packet) {
+  while (true) {
 #ifdef _WIN32
-    const int count = send(socket_, reinterpret_cast<const char*>(data + sent), static_cast<int>(size - sent), 0);
+    const int count = sendto(socket_, reinterpret_cast<const char*>(packet.data()), static_cast<int>(packet.size()), 0,
+                             reinterpret_cast<const sockaddr*>(&destination_), sizeof(destination_));
 #else
-    const ssize_t count = send(socket_, data + sent, size - sent, 0);
+    const ssize_t count = sendto(socket_, packet.data(), packet.size(), 0,
+                                 reinterpret_cast<const sockaddr*>(&destination_), sizeof(destination_));
 #endif
     if (count < 0) {
 #ifdef _WIN32
@@ -184,12 +193,12 @@ void TcpConnection::sendAll(const uint8_t* data, std::size_t size) {
 #endif
         continue;
       }
-      throw std::runtime_error(std::string("send: ") + socketError());
+      throw std::runtime_error(std::string("sendto: ") + socketError());
     }
-    if (count == 0) {
-      throw std::runtime_error("send returned zero bytes");
+    if (static_cast<std::size_t>(count) != packet.size()) {
+      throw std::runtime_error("sendto did not send a complete CAN datagram");
     }
-    sent += static_cast<std::size_t>(count);
+    return;
   }
 }
 

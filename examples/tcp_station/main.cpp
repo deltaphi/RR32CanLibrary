@@ -45,8 +45,8 @@ void runExperiments(RR32Can::Station& station, tcp_station::TextConfigDataCallba
 
 int main() {
   try {
-    std::cout << "Connecting to " << tcp_station_config::kServerHost << ':' << tcp_station_config::kServerPort
-              << "...\n";
+    std::cout << "Sending UDP to " << tcp_station_config::kServerHost << ':' << tcp_station_config::kServerPort
+              << "; listening for broadcasts on 0.0.0.0:" << tcp_station_config::kServerPort << "...\n";
     tcp_station::TcpConnection connection(tcp_station_config::kServerHost, tcp_station_config::kServerPort);
     tcp_station::TcpTxCallback txCallback(connection);
     tcp_station::TextConfigDataCallback configDataCallback;
@@ -67,7 +67,7 @@ int main() {
       station.loop();
     }
 
-    std::cout << "TCP connection closed by the server.\n";
+    std::cout << "UDP listener stopped.\n";
     return 0;
   } catch (const std::exception& error) {
     std::cerr << "Error: " << error.what() << '\n';

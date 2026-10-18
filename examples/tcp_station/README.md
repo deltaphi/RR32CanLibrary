@@ -1,8 +1,9 @@
-# TCP station example
+# UDP station example
 
-This desktop example connects to a CAN-over-TCP gateway, using the host and port
-configured in `TcpStationConfig.h` (defaults to `127.0.0.1:15731`). Each network
-packet is exactly 13 bytes:
+This desktop example sends CAN-over-UDP datagrams to the host and port
+configured in `TcpStationConfig.h` (port `15731`). It binds to `0.0.0.0` on the
+same port to receive broadcasts on all local IPv4 interfaces. Each UDP datagram
+contains exactly one 13-byte packet; datagrams of other sizes are ignored:
 
 ```text
 4-byte CAN identifier, 1-byte DLC, 8-byte payload
@@ -18,6 +19,8 @@ to request a graceful shutdown; the socket is then closed by the connection's
 destructor.
 
 Build from the repository root:
+
+The directory and executable retain their historical `tcp_station` names.
 
 ```sh
 cmake -S . -B build

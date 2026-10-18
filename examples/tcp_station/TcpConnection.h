@@ -3,6 +3,8 @@
 
 #ifdef _WIN32
 #include <winsock2.h>
+#else
+#include <netinet/in.h>
 #endif
 
 #include "TcpProtocol.h"
@@ -21,7 +23,7 @@ class TcpConnection {
   bool receivePacket(Packet& packet);
 
  private:
-  void sendAll(const uint8_t* data, std::size_t size);
+  sockaddr_in destination_{};
 
 #ifdef _WIN32
   SOCKET socket_ = INVALID_SOCKET;
