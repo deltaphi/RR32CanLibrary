@@ -31,3 +31,7 @@ set_target_properties(rr32can_tcp_station PROPERTIES
 if (NOT MSVC)
   target_compile_options(rr32can_tcp_station PRIVATE -Wall -Wextra -pedantic)
 endif()
+
+if (WIN32)
+  target_link_libraries(rr32can_tcp_station PRIVATE ws2_32)
+endif()
