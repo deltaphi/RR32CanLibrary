@@ -50,7 +50,8 @@ int main() {
     udp_station::UdpConnection connection(udp_station_config::kServerHost, udp_station_config::kServerPort,
                                           udp_station_config::kReceivePort);
     udp_station::UdpTxCallback txCallback(connection);
-    udp_station::TextConfigDataCallback configDataCallback;
+    udp_station::TextConfigDataCallback configDataCallback(
+        "lokliste-test.cs2", udp_station::TextConfigDataCallback::FileMode::OmitNullCharacters);
 
     RR32Can::Station::CallbackStruct callbacks;
     callbacks.tx = &txCallback;
@@ -68,6 +69,7 @@ int main() {
       station.loop();
     }
 
+    configDataCallback.closeFile();
     std::cout << "UDP listener stopped.\n";
     return 0;
   } catch (const std::exception& error) {
