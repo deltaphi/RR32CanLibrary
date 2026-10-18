@@ -2,6 +2,9 @@ cmake_minimum_required(VERSION 3.6)
 
 add_executable(rr32can_tcp_station
     main.cpp
+    TcpConnection.cpp
+    TcpLogger.cpp
+    TcpTxCallback.cpp
 
     ../../lib/RR32Can/Constants.cpp
     ../../lib/RR32Can/Locomotive.cpp
