@@ -141,7 +141,7 @@ void Station::RequestLokListe(callback::ConfigDataCbk* configDataConsumer) {
   }
   CanFrame frame{{Command::REQUEST_CONFIG_DATA, senderHash_}, {}};
   frame.data.dlc = 8;
-  memcpy(frame.data.dataAsString(), "lokliste", 8);
+  strncpy(frame.data.dataAsString(), "lokliste", Data::kDataBufferLength);
   callbacks_.tx->SendPacket(frame);
 }
 
