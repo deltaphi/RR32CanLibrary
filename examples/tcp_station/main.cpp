@@ -32,7 +32,7 @@ RR32Can::CanFrame decodePacket(const tcp_station::Packet& packet) {
 // runtime command-line or console input by design.
 // -----------------------------------------------------------------------------
 void runExperiments(RR32Can::Station& station) {
-  //station.SendSystemGo();
+  // station.SendSystemGo();
 
   // Add experimental library calls here, for example:
   // station.SendSystemStop();
@@ -43,7 +43,8 @@ void runExperiments(RR32Can::Station& station) {
 
 int main() {
   try {
-    std::cout << "Connecting to " << tcp_station_config::kServerHost << ':' << tcp_station_config::kServerPort << "...\n";
+    std::cout << "Connecting to " << tcp_station_config::kServerHost << ':' << tcp_station_config::kServerPort
+              << "...\n";
     tcp_station::TcpConnection connection(tcp_station_config::kServerHost, tcp_station_config::kServerPort);
     tcp_station::TcpTxCallback txCallback(connection);
 

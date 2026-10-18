@@ -1,12 +1,12 @@
 #include "TcpConnection.h"
 
-#include <cerrno>
-#include <cstring>
 #include <netdb.h>
-#include <stdexcept>
-#include <string>
 #include <sys/socket.h>
 #include <unistd.h>
+#include <cerrno>
+#include <cstring>
+#include <stdexcept>
+#include <string>
 
 namespace tcp_station {
 
@@ -45,9 +45,7 @@ TcpConnection::~TcpConnection() {
   }
 }
 
-void TcpConnection::sendPacket(const Packet& packet) {
-  sendAll(packet.data(), packet.size());
-}
+void TcpConnection::sendPacket(const Packet& packet) { sendAll(packet.data(), packet.size()); }
 
 bool TcpConnection::receivePacket(Packet& packet) {
   std::size_t received = 0;
