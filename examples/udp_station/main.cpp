@@ -6,7 +6,8 @@
 #include <stdexcept>
 
 #include "RR32Can/Station.h"
-#include "TextConfigDataCallback.h"
+#include "RR32CanEngineDb/util/ConfigDataStreamParser.h"
+#include "StructuredConfigDataCallback.h"
 #include "UdpLogger.h"
 #include "UdpProtocol.h"
 #include "UdpStationConfig.h"
@@ -32,9 +33,9 @@ RR32Can::CanFrame decodePacket(const udp_station::Packet& packet) {
 // Experiments: edit this function and rebuild the example. There is no
 // runtime command-line or console input by design.
 // -----------------------------------------------------------------------------
-void runExperiments(RR32Can::Station& station, udp_station::TextConfigDataCallback& configDataCallback) {
+void runExperiments(RR32Can::Station& station, RR32Can::ConfigDataStreamParser& parser) {
   // station.SendSystemGo();
-  station.RequestLokListe(&configDataCallback);
+  station.RequestLokListe(&parser);
   // station.RequestEngineList(0, &configDataCallback);
   //  Add experimental library calls here, for example:
   //  station.SendSystemStop();
@@ -50,8 +51,9 @@ int main() {
     udp_station::UdpConnection connection(udp_station_config::kServerHost, udp_station_config::kServerPort,
                                           udp_station_config::kReceivePort);
     udp_station::UdpTxCallback txCallback(connection);
-    udp_station::TextConfigDataCallback configDataCallback(
-        "lokliste-test.cs2", udp_station::TextConfigDataCallback::FileMode::OmitNullCharacters);
+    udp_station::StructuredConfigDataCallback configDataCallback("lokliste-test.toml");
+    RR32Can::ConfigDataStreamParser parser;
+    parser.startStream(&configDataCallback);
 
     RR32Can::Station::CallbackStruct callbacks;
     callbacks.tx = &txCallback;
@@ -59,7 +61,7 @@ int main() {
     RR32Can::Station station;
     station.begin(kStationUuid, callbacks);
 
-    runExperiments(station, configDataCallback);
+    runExperiments(station, parser);
 
     udp_station::Packet packet{};
     while (connection.receivePacket(packet)) {

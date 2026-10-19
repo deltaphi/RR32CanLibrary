@@ -5,7 +5,7 @@ add_executable(rr32can_udp_station
     UdpConnection.cpp
     UdpLogger.cpp
     UdpTxCallback.cpp
-    TextConfigDataCallback.cpp
+    StructuredConfigDataCallback.cpp
 
     ../../lib/RR32Can/Constants.cpp
     ../../lib/RR32Can/Locomotive.cpp
@@ -15,6 +15,10 @@ add_executable(rr32can_udp_station
     ../../lib/RR32Can/messages/Data.cpp
     ../../lib/RR32Can/messages/Identifier.cpp
     ../../lib/RR32Can/messages/TurnoutPacket.cpp
+    ../../lib/RR32CanEngineDb/util/BufferManager.cpp
+    ../../lib/RR32CanEngineDb/util/ConfigDataStreamParser.cpp
+    ../../lib/RR32CanEngineDb/util/Crc.cpp
+    ../../lib/RR32CanEngineDb/util/TextParser.cpp
 )
 
 target_include_directories(rr32can_udp_station
