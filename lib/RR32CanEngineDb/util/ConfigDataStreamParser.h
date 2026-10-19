@@ -26,7 +26,7 @@ class ConfigDataStreamParser : public RR32Can::callback::ConfigDataCbk {
 
   void startStream(ConfigDataConsumer* consumer) {
     this->consumer_ = consumer;
-    textParser_.setConsumer(consumer);
+    startStream();
   }
 
   void addMessage(const RR32Can::Data& data) override;
