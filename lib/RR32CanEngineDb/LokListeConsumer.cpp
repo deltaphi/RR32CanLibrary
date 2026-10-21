@@ -1,7 +1,5 @@
 #include "RR32CanEngineDb/LokListeConsumer.h"
 
-#include "RR32Can/Station.h"
-
 namespace RR32Can {
 namespace {
 bool equals(const BufferManager& text, const char* expected) {
@@ -20,63 +18,38 @@ bool readNumber(const BufferManager& text, uint32_t& result) {
 }
 }  // namespace
 
-LokListeConsumer::LokListeConsumer(Entry* storage, size_t capacity)
-    : storage_(storage), capacity_(storage == nullptr ? 0 : capacity) {
-  clear();
-}
-
 void LokListeConsumer::clear() {
-  for (size_t i = 0; i < capacity_; ++i) storage_[i] = Entry{};
-  pending_ = Entry{};
-  occupiedCount_ = 0;
-  haveIndex_ = complete_ = overflow_ = invalid_ = false;
-}
-
-void LokListeConsumer::download(Station& station) {
-  station.AbortCurrentConfigRequest();
-  parser_.reset();
-  clear();
-  parser_.startStream(this);
-  station.RequestLokListe(&parser_);
-}
-
-void LokListeConsumer::finishEntry() {
-  if (!haveIndex_) return;
-  if (pending_.locomotive.isNameKnown()) ++occupiedCount_;
-  if (index_ < capacity_) {
-    storage_[index_] = pending_;
-  } else {
-    overflow_ = true;
-  }
-  haveIndex_ = false;
+  currentInfo_ = nullptr;
+  complete_ = invalid_ = false;
 }
 
 void LokListeConsumer::consumeConfigData(BufferManager& section, BufferManager& key, BufferManager& value) {
   if (equals(section, "ERROR")) invalid_ = true;
   if (!equals(section, "lokliste")) return;
   if (equals(key, "idx")) {
-    finishEntry();
-    pending_ = Entry{};
-    haveIndex_ = readNumber(value, index_);
-    if (!haveIndex_) invalid_ = true;
-  } else if (haveIndex_) {
+    uint32_t index = 0;
+    if (!readNumber(value, index)) {
+      currentInfo_ = nullptr;
+      invalid_ = true;
+      return;
+    }
+    currentInfo_ = callback_.getLokInfoShort(index);
+    if (currentInfo_ != nullptr) {
+      currentInfo_->reset();
+    }
+  } else {
+    // These fields are not part of LocomotiveShortInfo, but malformed numeric
+    // values must still invalidate the stream when the record is accepted.
+    uint32_t ignored = 0;
+    if (equals(key, "llindex") || equals(key, "crc")) {
+      if (!readNumber(value, ignored)) invalid_ = true;
+    }
+    if (currentInfo_ == nullptr) return;
     if (equals(key, "name")) {
-      pending_.locomotive.reset();
-      if (!value.empty()) pending_.locomotive.setName(value.data());
-    } else if (equals(key, "llindex")) {
-      if (!readNumber(value, pending_.llindex)) invalid_ = true;
-    } else if (equals(key, "crc")) {
-      if (!readNumber(value, pending_.crc)) invalid_ = true;
+      currentInfo_->reset();
+      if (!value.empty()) currentInfo_->setName(value.data());
     }
   }
-}
-
-size_t LokListeConsumer::getStoredCount() const {
-  size_t count = 0;
-  for (size_t i = 0; i < capacity_; ++i) {
-    if (storage_[i].locomotive.isNameKnown()) ++count;
-  }
-  return count;
 }
 
 void LokListeConsumer::setStreamComplete() {
@@ -84,7 +57,6 @@ void LokListeConsumer::setStreamComplete() {
     setStreamAborted();
     return;
   }
-  finishEntry();
   complete_ = true;
   if (streamEndCallback_ != nullptr) streamEndCallback_->streamComplete(this);
 }

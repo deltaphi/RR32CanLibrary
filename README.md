@@ -25,19 +25,19 @@ For firmware using `lokliste`, use the separate downloader:
 ```cpp
 #include "RR32CanEngineDb/LokListeConsumer.h"
 
-RR32Can::LokListeConsumer::Entry entries[40];
-RR32Can::LokListeConsumer list(entries, 40);
+class MyLokListeCallback : public RR32Can::LokListeConsumerCallback {
+  RR32Can::LocomotiveShortInfo* getLokInfoShort(uint32_t index) override;
+};
+MyLokListeCallback callback;
+RR32Can::LokListeConsumer list(callback);
 
-// Once Station has been initialized with a transmission callback:
-list.download(station);
+RR32Can::ConfigDataStreamParser parser;
+parser.startStream(&list);
+station.RequestLokListe(&parser);
 // Feed incoming CAN frames to station.HandlePacket(frame), as usual.
 ```
-Entries are stored at their `.idx`: slot 5 is `entries[5]`, even when earlier slots are empty.
-Storage is cleared before each download.
-Capacity must cover the highest desired
-index plus one.
-Out-of-range entries are skipped.
-When they are encountered, `hasOverflow()` is set, and the rest of the stream is still received and CRC-checked.
+The callback supplies the destination `LocomotiveShortInfo` for each `.idx`. Returning
+`nullptr` skips that engine's fields while the rest of the stream is still received and CRC-checked.
 
 ### Unit Testing
 
