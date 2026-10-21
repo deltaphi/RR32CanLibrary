@@ -1,13 +1,15 @@
 #include "RR32Can_config.h"
 
+#include <array>
 #include <cstdint>
 #include <cstring>
 #include <iostream>
 #include <stdexcept>
 
 #include "RR32Can/Station.h"
+#include "RR32CanEngineDb/LokListeConsumer.h"
+#include "RR32CanEngineDb/util/ConfigDataEndStreamCallback.h"
 #include "RR32CanEngineDb/util/ConfigDataStreamParser.h"
-#include "StructuredConfigDataCallback.h"
 #include "UdpLogger.h"
 #include "UdpProtocol.h"
 #include "UdpStationConfig.h"
@@ -16,6 +18,39 @@
 namespace {
 
 constexpr uint16_t kStationUuid = (RR32Can::enthusiastStationBaseUUID + 12);
+constexpr size_t kNumEngines = 40;
+
+class LokListeCallback : public RR32Can::LokListeConsumerCallback {
+ public:
+  using EngineArray = std::array<RR32Can::Locomotive, kNumEngines>;
+
+  explicit LokListeCallback(EngineArray& engines) : engines_(engines) {}
+
+  RR32Can::LocomotiveShortInfo* getLokInfoShort(uint32_t index) override {
+    return index < engines_.size() ? &engines_[index] : nullptr;
+  }
+
+ private:
+  EngineArray& engines_;
+};
+
+class LokListeEndCallback : public RR32Can::ConfigDataEndStreamCallback {
+ public:
+  using EngineArray = std::array<RR32Can::Locomotive, kNumEngines>;
+
+  explicit LokListeEndCallback(EngineArray& engines) : engines_(engines) {}
+
+  void streamComplete(RR32Can::ConfigDataConsumer*) override {
+    for (size_t index = 0; index < engines_.size(); ++index) {
+      std::cout << index << ": " << (engines_[index].isFree() ? "<empty>" : engines_[index].getName()) << '\n';
+    }
+  }
+
+  void streamAborted(RR32Can::ConfigDataConsumer*) override { std::cout << "Lokliste download aborted.\n"; }
+
+ private:
+  EngineArray& engines_;
+};
 
 RR32Can::CanFrame decodePacket(const udp_station::Packet& packet) {
   RR32Can::CanFrame frame;
@@ -51,9 +86,13 @@ int main() {
     udp_station::UdpConnection connection(udp_station_config::kServerHost, udp_station_config::kServerPort,
                                           udp_station_config::kReceivePort);
     udp_station::UdpTxCallback txCallback(connection);
-    udp_station::StructuredConfigDataCallback configDataCallback("lokliste-test.toml");
+    std::array<RR32Can::Locomotive, kNumEngines> engines;
+    LokListeCallback lokListeCallback(engines);
+    LokListeEndCallback lokListeEndCallback(engines);
+    RR32Can::LokListeConsumer lokListeConsumer(lokListeCallback);
+    lokListeConsumer.setStreamEndCallback(&lokListeEndCallback);
     RR32Can::ConfigDataStreamParser parser;
-    parser.startStream(&configDataCallback);
+    parser.startStream(&lokListeConsumer);
 
     RR32Can::Station::CallbackStruct callbacks;
     callbacks.tx = &txCallback;
@@ -71,7 +110,6 @@ int main() {
       station.loop();
     }
 
-    configDataCallback.closeFile();
     std::cout << "UDP listener stopped.\n";
     return 0;
   } catch (const std::exception& error) {
