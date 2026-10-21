@@ -18,7 +18,7 @@ class ConfigDataConsumer : public TextParserConsumer {
   void setStreamEndCallback(ConfigDataEndStreamCallback* callback) { streamEndCallback_ = callback; }
 
  protected:
-  ConfigDataEndStreamCallback* streamEndCallback_;
+  ConfigDataEndStreamCallback* streamEndCallback_ = nullptr;
 };
 
 }  // namespace RR32Can
