@@ -1,6 +1,8 @@
 #ifndef __RR32CAN__CALLBACK__CONFIGDATACBK_H__
 #define __RR32CAN__CALLBACK__CONFIGDATACBK_H__
 
+#include "RR32Can/messages/Data.h"
+
 namespace RR32Can {
 namespace callback {
 
