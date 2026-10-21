@@ -45,7 +45,7 @@ StructuredConfigDataCallback::StructuredConfigDataCallback(const std::string& fi
 }
 
 void StructuredConfigDataCallback::consumeConfigData(RR32Can::BufferManager& section, RR32Can::BufferManager& key,
-                                                       RR32Can::BufferManager& value) {
+                                                     RR32Can::BufferManager& value) {
   writeText("[[entries]]\nsection = " + quoteToml(section) + "\nkey = " + quoteToml(key) +
             "\nvalue = " + quoteToml(value) + "\n\n");
 }
