@@ -20,10 +20,10 @@ class BufferManager {
 
   constexpr BufferManager() : BufferManager(nullptr, 0, 0) {}
 
-  constexpr BufferManager(value_type* buffer, size_type bufferLength) : BufferManager(buffer, bufferLength, 0) {}
+  constexpr BufferManager(value_type* buffer, size_type bufferCapacity) : BufferManager(buffer, bufferCapacity, 0) {}
 
-  constexpr BufferManager(value_type* buffer, size_type bufferLength, size_type currentBufferLength)
-      : buffer_(buffer), currentBufferLength_(currentBufferLength), maxBufferLength_(bufferLength) {}
+  constexpr BufferManager(value_type* buffer, size_type bufferCapacity, size_type currentContentLength)
+      : buffer_(buffer), bufferCapacity_(bufferCapacity), currentContentLength_(currentContentLength) {}
 
   BufferManager(const BufferManager&) = delete;
   BufferManager& operator=(const BufferManager&) = delete;
@@ -33,12 +33,12 @@ class BufferManager {
   ~BufferManager() = default;
 
   size_type limitIndex(size_type index) const {
-    return index >= currentBufferLength_ ? currentBufferLength_ - 1 : index;
+    return index >= currentContentLength_ ? currentContentLength_ - 1 : index;
   }
 
   value_type operator[](size_type index) const { return buffer_[limitIndex(index)]; }
 
-  bool strncmp(const char* other) { return 0 == (::strncmp(buffer_, other, currentBufferLength_)); }
+  bool strncmp(const char* other) { return 0 == (::strncmp(buffer_, other, currentContentLength_)); }
 
   /*
    * \brief Get a reference to the character at the index.
@@ -59,15 +59,15 @@ class BufferManager {
    */
   void pop_front(size_type num_elements);
 
-  constexpr size_type capacity() const { return maxBufferLength_; }
+  constexpr size_type capacity() const { return bufferCapacity_; }
 
-  constexpr size_type capacity_remaining() const { return maxBufferLength_ - currentBufferLength_; }
+  constexpr size_type capacity_remaining() const { return bufferCapacity_ - currentContentLength_; }
 
   constexpr bool full() const { return capacity_remaining() == 0; }
 
   constexpr bool empty() const { return length() == 0; }
 
-  constexpr size_type length() const { return currentBufferLength_; }
+  constexpr size_type length() const { return currentContentLength_; }
 
   constexpr value_type* data() const { return buffer_; }
 
@@ -91,9 +91,9 @@ class BufferManager {
    * \return The number of characters added to the buffer.
    */
   size_type push_back(const char c) {
-    if (currentBufferLength_ < maxBufferLength_) {
-      buffer_[currentBufferLength_] = c;
-      ++currentBufferLength_;
+    if (currentContentLength_ < bufferCapacity_) {
+      buffer_[currentContentLength_] = c;
+      ++currentContentLength_;
       return 1;
     } else {
       return 0;
@@ -121,8 +121,8 @@ class BufferManager {
 
  private:
   value_type* buffer_;
-  size_type currentBufferLength_;
-  size_type maxBufferLength_;
+  size_type bufferCapacity_;
+  size_type currentContentLength_;
 };
 
 } /* namespace RR32Can */

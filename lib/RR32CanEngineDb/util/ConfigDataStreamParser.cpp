@@ -71,12 +71,13 @@ void ConfigDataStreamParser::addMessage(const Data& data) {
         data.printAsText();
 #endif
 
-        remainingBytes_ -= data.dlc;
-        for (int i = 0; i < data.dlc; ++i) {
+        const uint8_t length = remainingBytes_ < data.dlc ? remainingBytes_ : data.dlc;
+        remainingBytes_ -= length;
+        for (int i = 0; i < length; ++i) {
           crc_.updateCrc(data.data[i]);
         }
 
-        const BufferManager input(const_cast<char*>(data.dataAsString()), data.dlc, CanDataMaxLength);
+        const BufferManager input(const_cast<char*>(data.dataAsString()), CanDataMaxLength, length);
         textParser_.addText(input);
 
         if (remainingBytes_ == 0) {
