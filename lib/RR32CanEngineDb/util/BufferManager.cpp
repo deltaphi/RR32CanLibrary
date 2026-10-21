@@ -11,10 +11,10 @@ namespace RR32Can {
 const BufferManager::size_type BufferManager::npos;
 
 BufferManager::size_type BufferManager::findFirstOf(value_type character, size_type offset) const {
-  if (offset >= currentBufferLength_) {
+  if (offset >= currentContentLength_) {
     return npos;
   }
-  for (size_type i = offset; i < currentBufferLength_; ++i) {
+  for (size_type i = offset; i < currentContentLength_; ++i) {
     if (buffer_[i] == character) {
       return i;
     }
@@ -23,13 +23,13 @@ BufferManager::size_type BufferManager::findFirstOf(value_type character, size_t
 }
 
 BufferManager::size_type BufferManager::findFirstOf(const value_type* chars, size_type offset) const {
-  if (offset >= currentBufferLength_) {
+  if (offset >= currentContentLength_) {
     return npos;
   }
 
   size_type numChars = static_cast<size_type>(strlen(chars));
 
-  for (size_type i = offset; i < currentBufferLength_; ++i) {
+  for (size_type i = offset; i < currentContentLength_; ++i) {
     for (size_type j = 0; j < numChars; ++j) {
       if (buffer_[i] == chars[j]) {
         return i;
@@ -40,8 +40,8 @@ BufferManager::size_type BufferManager::findFirstOf(const value_type* chars, siz
 }
 
 void BufferManager::erase() {
-  memset(buffer_, '\0', maxBufferLength_);
-  currentBufferLength_ = 0;
+  memset(buffer_, '\0', bufferCapacity_);
+  currentContentLength_ = 0;
 }
 
 /**
@@ -49,27 +49,27 @@ void BufferManager::erase() {
  * buffer to the front
  */
 void BufferManager::pop_front(size_type num_elements) {
-  if (num_elements >= currentBufferLength_) {
+  if (num_elements >= currentContentLength_) {
     erase();
   } else {
-    currentBufferLength_ -= num_elements;
-    memmove(buffer_, buffer_ + num_elements, currentBufferLength_);
-    memset(buffer_ + currentBufferLength_, '\0', capacity_remaining());
+    currentContentLength_ -= num_elements;
+    memmove(buffer_, buffer_ + num_elements, currentContentLength_);
+    memset(buffer_ + currentContentLength_, '\0', capacity_remaining());
   }
 }
 
 BufferManager::size_type BufferManager::push_back(const BufferManager& otherBuffer) {
   size_type bytesToCopy =
       this->capacity_remaining() < otherBuffer.length() ? this->capacity_remaining() : otherBuffer.length();
-  memcpy(buffer_ + currentBufferLength_, otherBuffer.data(), bytesToCopy);
-  currentBufferLength_ += bytesToCopy;
+  memcpy(buffer_ + currentContentLength_, otherBuffer.data(), bytesToCopy);
+  currentContentLength_ += bytesToCopy;
   return bytesToCopy;
 }
 
 void BufferManager::set(const char* str) {
   erase();
-  strncpy(buffer_, str, maxBufferLength_ - 1);  // ensure a 0-byte
-  currentBufferLength_ = static_cast<size_type>(strlen(buffer_));
+  strncpy(buffer_, str, bufferCapacity_ - 1);  // ensure a 0-byte
+  currentContentLength_ = static_cast<size_type>(strlen(buffer_));
 }
 
 BufferManager::size_type BufferManager::move_back(BufferManager& otherBuffer) {
@@ -83,19 +83,19 @@ BufferManager BufferManager::subBufferManager(size_type start_offset) const {
 }
 
 BufferManager BufferManager::subBufferManager(size_type start_offset, size_type end_offset) const {
-  if (start_offset > maxBufferLength_) {
-    start_offset = maxBufferLength_;
+  if (start_offset > bufferCapacity_) {
+    start_offset = bufferCapacity_;
   }
 
-  if (end_offset > maxBufferLength_) {
-    end_offset = maxBufferLength_;
+  if (end_offset > bufferCapacity_) {
+    end_offset = bufferCapacity_;
   }
 
   if (end_offset < start_offset) {
     end_offset = start_offset;
   }
 
-  BufferManager mgr(buffer_ + start_offset, maxBufferLength_ - start_offset, end_offset - start_offset);
+  BufferManager mgr(buffer_ + start_offset, bufferCapacity_ - start_offset, end_offset - start_offset);
 
   return mgr;
 }
