@@ -107,15 +107,15 @@ adjacent and has the same value:
 .llindex=N
 ```
 
-There is an initial `.idx=0` and no trailing `.idx=8`. This suggests that
-`.idx` qualifies the following record, rather than belonging to the preceding
-record.
+There is an initial `.idx=0` and no trailing `.idx=8`. `.idx` belongs to the
+following record; it does not belong to the preceding record. The first
+`.idx` therefore qualifies the first `.llindex` record.
 
 Recommended parsing behavior:
 
 1. Store `.dv` as section metadata.
-2. Store `.idx` as pending metadata for the next record.
-3. Start a record at `.llindex`.
+2. Store `.idx` as metadata pending for the next record.
+3. Start a record at `.llindex` and attach the pending `.idx` to it.
 4. Associate subsequent `.name`, `.crc`, `.uid`, and `.mfxuid` fields with that
    record.
 5. Finalize the previous record when another `.llindex` is encountered.
@@ -123,7 +123,8 @@ Recommended parsing behavior:
 
 Keep `.idx` and `.llindex` as separate properties. Their equality in this
 sample does not prove that they are interchangeable, always contiguous, or
-stable when the list changes.
+stable when the list changes. Their ownership is nevertheless unambiguous:
+both values describe the same following record.
 
 ## Sample decoded records
 
@@ -188,7 +189,7 @@ transport/request implementation, not by this text format alone.
 
 Further captures or documentation are required to determine:
 
-- the exact meanings and scopes of `.dv` and `.idx`;
+- the exact meanings of `.dv` and `.idx`;
 - whether `.idx` and `.llindex` can differ;
 - the `.crc` algorithm and the bytes it covers;
 - mandatory fields and permitted field ordering;
