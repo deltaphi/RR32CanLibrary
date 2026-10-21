@@ -24,7 +24,7 @@ class LokListeConsumer : public ConfigDataConsumer {
  private:
   void clear();
   LokListeConsumerCallback& callback_;
-  LocomotiveShortInfo* currentInfo_ = nullptr;
+  LocomotiveShortInfo* currentLocomotive_ = nullptr;
   bool complete_ = false;
   bool invalid_ = false;
 };

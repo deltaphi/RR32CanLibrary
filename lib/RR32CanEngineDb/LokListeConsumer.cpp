@@ -23,7 +23,7 @@ bool readNumber(const BufferManager& text,
 }  // namespace
 
 void LokListeConsumer::clear() {
-  currentInfo_ = nullptr;
+  currentLocomotive_ = nullptr;
   complete_ = false;
   invalid_ = false;
 }
@@ -34,13 +34,13 @@ void LokListeConsumer::consumeConfigData(BufferManager& section, BufferManager& 
   if (equals(key, "idx")) {
     uint32_t index = 0;
     if (!readNumber(value, index)) {
-      currentInfo_ = nullptr;
+      currentLocomotive_ = nullptr;
       invalid_ = true;
       return;
     }
-    currentInfo_ = callback_.getLokInfoShort(index);
-    if (currentInfo_ != nullptr) {
-      currentInfo_->reset();
+    currentLocomotive_ = callback_.getLokInfoShort(index);
+    if (currentLocomotive_ != nullptr) {
+      currentLocomotive_->reset();
     }
   } else {
     // These fields are not part of LocomotiveShortInfo, but malformed numeric
@@ -51,12 +51,12 @@ void LokListeConsumer::consumeConfigData(BufferManager& section, BufferManager& 
         invalid_ = true;
       }
     }
-    if (currentInfo_ == nullptr) {
+    if (currentLocomotive_ == nullptr) {
       return;
     }
     if (equals(key, "name")) {
       if (!value.empty()) {
-        currentInfo_->setName(value.data());
+        currentLocomotive_->setName(value.data());
       }
     }
   }
