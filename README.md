@@ -18,26 +18,8 @@ This library also has a nmber of callbacks that have to be implemented to achiev
 
 ### Downloading locomotive lists
 
-For older MS2 firmware, use `LocoListConsumer` with `ConfigDataStreamParser`
-and `Station::RequestEngineList(offset, &parser)` to request `loknamen` pages.
-For firmware using `lokliste`, use the separate downloader:
-
-```cpp
-#include "RR32CanEngineDb/LokListeConsumer.h"
-
-class MyLokListeCallback : public RR32Can::LokListeConsumerCallback {
-  RR32Can::LocomotiveShortInfo* getLokInfoShort(uint32_t index) override;
-};
-MyLokListeCallback callback;
-RR32Can::LokListeConsumer list(callback);
-
-RR32Can::ConfigDataStreamParser parser;
-parser.startStream(&list);
-station.RequestLokListe(&parser);
-// Feed incoming CAN frames to station.HandlePacket(frame), as usual.
-```
-The callback supplies the destination `LocomotiveShortInfo` for each `.idx`. Returning
-`nullptr` skips that engine's fields while the rest of the stream is still received and CRC-checked.
+For MS2 firmware < 3.55, use `LocoListConsumer` and `Station::RequestEngineList(offset, &parser)` to request `loknamen` pages.
+For newer firmwares using `lokliste`, use `LoklisteConsumer`and `Station::RequestLokliste(&parser)`.
 
 ### Unit Testing
 
