@@ -64,7 +64,7 @@ add_executable(RR32CanTest
     "lib/RR32Can/Locomotive.cpp"
     "lib/RR32CanEngineDb/LocoConsumer.cpp"
     "lib/RR32CanEngineDb/LocoListConsumer.cpp"
-    "lib/RR32CanEngineDb/LokListeConsumer.cpp"
+    "lib/RR32CanEngineDb/LoklisteConsumer.cpp"
     "lib/RR32Can/types/TurnoutTypes.cpp"
     "lib/RR32Can/types/LocomotiveTypes.cpp"
     "lib/RR32Can/messages/Data.cpp"
@@ -81,7 +81,7 @@ add_executable(RR32CanTest
 
     "test/integration/StationTest.cpp"
     "test/integration/EngineLibraryTest.cpp"
-    "test/integration/LokListeTest.cpp"
+    "test/integration/LoklisteTest.cpp"
     "test/data/ConfigData.cpp"
     "test/RR32Can/MessagesTest.cpp"
     "test/RR32Can/BufferManagerTest.cpp"

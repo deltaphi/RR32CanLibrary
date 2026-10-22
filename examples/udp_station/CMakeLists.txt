@@ -15,7 +15,7 @@ add_executable(rr32can_udp_station
     ../../lib/RR32Can/messages/Data.cpp
     ../../lib/RR32Can/messages/Identifier.cpp
     ../../lib/RR32Can/messages/TurnoutPacket.cpp
-    ../../lib/RR32CanEngineDb/LokListeConsumer.cpp
+    ../../lib/RR32CanEngineDb/LoklisteConsumer.cpp
     ../../lib/RR32CanEngineDb/util/BufferManager.cpp
     ../../lib/RR32CanEngineDb/util/ConfigDataStreamParser.cpp
     ../../lib/RR32CanEngineDb/util/Crc.cpp
