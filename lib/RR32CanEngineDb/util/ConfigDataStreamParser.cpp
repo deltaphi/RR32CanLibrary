@@ -35,8 +35,9 @@ void ConfigDataStreamParser::addMessage(const Data& data) {
             remainingBytes_, crc_.getReference(), this->crc_.getCrc());
 
         if (data.dlc == 7) {
-          // Initial compressed
-          printf("Compressed Data!\n");
+          // Old firmware: compressed data
+          // Newer firmware lokliste/lokinfo also use DLC=7 for uncompressed text.
+          printf("Extended stream header.\n");
         }
 #endif
 

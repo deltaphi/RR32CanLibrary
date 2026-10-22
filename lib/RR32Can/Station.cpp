@@ -133,6 +133,18 @@ void Station::RequestEngineList(const uint8_t offset, callback::ConfigDataCbk* c
   }
 }
 
+void Station::RequestLokliste(callback::ConfigDataCbk* configDataConsumer) {
+  AbortCurrentConfigRequest();
+  callbacks_.configData = configDataConsumer;
+  if (callbacks_.configData != nullptr) {
+    callbacks_.configData->startStream();
+  }
+  CanFrame frame{{Command::REQUEST_CONFIG_DATA, senderHash_}, {}};
+  frame.data.dlc = 8;
+  strncpy(frame.data.dataAsString(), "lokliste", Data::kDataBufferLength);
+  callbacks_.tx->SendPacket(frame);
+}
+
 void Station::RequestEngine(const LocomotiveShortInfo& engine, callback::ConfigDataCbk* configDataConsumer) {
   if (!engine.isNameKnown()) {
 #if LOG_CAN_OUT_MSG == STD_ON

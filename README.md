@@ -16,6 +16,11 @@ This library has a template for a configuration header that must be copied to yo
 
 This library also has a nmber of callbacks that have to be implemented to achieve functionality.
 
+### Downloading locomotive lists
+
+For MS2 firmware < 3.55, use `LocoListConsumer` and `Station::RequestEngineList(offset, &parser)` to request `loknamen` pages.
+For newer firmwares using `lokliste`, use `LoklisteConsumer`and `Station::RequestLokliste(&parser)`.
+
 ### Unit Testing
 
 This project includes a CMake project.

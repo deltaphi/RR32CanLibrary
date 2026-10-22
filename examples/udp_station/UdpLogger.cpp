@@ -1,11 +1,11 @@
-#include "TcpLogger.h"
+#include "UdpLogger.h"
 
 #include <cstdio>
 #include <iostream>
 
 #include "RR32Can/messages/CanFrame.h"
 
-namespace tcp_station {
+namespace udp_station {
 namespace {
 
 void printHex(const Packet& packet) {
@@ -17,7 +17,7 @@ void printHex(const Packet& packet) {
 }  // namespace
 
 void logPacket(const char* direction, const Packet& packet, const RR32Can::CanFrame& frame) {
-  std::cout << direction << " TCP packet:";
+  std::cout << direction << " UDP packet:";
   printHex(packet);
   std::cout << "\n  ";
   frame.id.printAll();
@@ -26,4 +26,4 @@ void logPacket(const char* direction, const Packet& packet, const RR32Can::CanFr
   std::cout << '\n';
 }
 
-}  // namespace tcp_station
+}  // namespace udp_station

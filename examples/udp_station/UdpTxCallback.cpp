@@ -1,15 +1,15 @@
-#include "TcpTxCallback.h"
+#include "UdpTxCallback.h"
 
 #include <cstring>
 #include <stdexcept>
 
-#include "TcpLogger.h"
+#include "UdpLogger.h"
 
-namespace tcp_station {
+namespace udp_station {
 
-TcpTxCallback::TcpTxCallback(TcpConnection& connection) : connection_(connection) {}
+UdpTxCallback::UdpTxCallback(UdpConnection& connection) : connection_(connection) {}
 
-void TcpTxCallback::SendPacket(const RR32Can::CanFrame& frame) {
+void UdpTxCallback::SendPacket(const RR32Can::CanFrame& frame) {
   if (frame.data.dlc > kPayloadSize) {
     throw std::runtime_error("Attempted to send CAN packet with DLC greater than 8");
   }
@@ -27,4 +27,4 @@ void TcpTxCallback::SendPacket(const RR32Can::CanFrame& frame) {
   connection_.sendPacket(packet);
 }
 
-}  // namespace tcp_station
+}  // namespace udp_station

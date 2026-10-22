@@ -17,13 +17,16 @@ namespace RR32Can {
 class ConfigDataStreamParser : public RR32Can::callback::ConfigDataCbk {
  public:
   void startStream() override {
+    textParser_.reset();
+    textParser_.setConsumer(consumer_);
+    remainingBytes_ = 0;
     streamState = StreamState::WAITING_FIRST_PACKET;
     crc_.reset();
   }
 
   void startStream(ConfigDataConsumer* consumer) {
     this->consumer_ = consumer;
-    textParser_.setConsumer(consumer);
+    startStream();
   }
 
   void addMessage(const RR32Can::Data& data) override;
