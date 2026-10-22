@@ -3,7 +3,7 @@
 
 #include "RR32Can/Station.h"
 #include "RR32Can/util/constexpr.h"
-#include "RR32CanEngineDb/LokListeConsumer.h"
+#include "RR32CanEngineDb/LoklisteConsumer.h"
 #include "RR32CanEngineDb/util/ConfigDataStreamParser.h"
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
@@ -54,7 +54,7 @@ class LokListeTest : public ::testing::Test {
   ::testing::StrictMock<mocks::ConfigDataEndStreamMock> end;
   RR32Can::Station station;
   RR32Can::ConfigDataStreamParser parser;
-  RR32Can::LokListeConsumer consumer{callback};
+  RR32Can::LoklisteConsumer consumer{callback};
 };
 
 TEST_F(LokListeTest, StoresByIndexWithGapsAndMetadata) {

@@ -6,7 +6,7 @@
 namespace RR32Can {
 
   /**
-   * This callback supplies storage for LocomotiveInfoShort to the LokListeConsumer.
+   * This callback supplies storage for LocomotiveInfoShort to the LoklisteConsumer.
    * The intention is to have an ordered storage. Index then denotes the element in the storage at the given index.
    *
    * No actual requirements are placed on the storage, other than it must outlive the ongoing download by LoklisteConsumer.

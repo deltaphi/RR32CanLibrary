@@ -7,7 +7,7 @@
 #include <stdexcept>
 
 #include "RR32Can/Station.h"
-#include "RR32CanEngineDb/LokListeConsumer.h"
+#include "RR32CanEngineDb/LoklisteConsumer.h"
 #include "RR32CanEngineDb/util/ConfigDataEndStreamCallback.h"
 #include "RR32CanEngineDb/util/ConfigDataStreamParser.h"
 #include "UdpLogger.h"
@@ -89,7 +89,7 @@ int main() {
     std::array<RR32Can::Locomotive, kNumEngines> engines;
     LokListeCallback lokListeCallback(engines);
     LokListeEndCallback lokListeEndCallback(engines);
-    RR32Can::LokListeConsumer lokListeConsumer(lokListeCallback);
+    RR32Can::LoklisteConsumer lokListeConsumer(lokListeCallback);
     lokListeConsumer.setStreamEndCallback(&lokListeEndCallback);
     RR32Can::ConfigDataStreamParser parser;
     parser.startStream(&lokListeConsumer);

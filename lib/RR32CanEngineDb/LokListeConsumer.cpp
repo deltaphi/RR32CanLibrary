@@ -1,4 +1,4 @@
-#include "RR32CanEngineDb/LokListeConsumer.h"
+#include "RR32CanEngineDb/LoklisteConsumer.h"
 
 namespace RR32Can {
 namespace {
@@ -22,13 +22,13 @@ bool readNumber(const BufferManager& text,
 }
 }  // namespace
 
-void LokListeConsumer::clear() {
+void LoklisteConsumer::clear() {
   currentLocomotive_ = nullptr;
   complete_ = false;
   invalid_ = false;
 }
 
-void LokListeConsumer::consumeConfigData(BufferManager& section, BufferManager& key, BufferManager& value) {
+void LoklisteConsumer::consumeConfigData(BufferManager& section, BufferManager& key, BufferManager& value) {
   if (equals(section, "ERROR")) invalid_ = true;
   if (!equals(section, "lokliste")) return;
   if (equals(key, "idx")) {
@@ -62,7 +62,7 @@ void LokListeConsumer::consumeConfigData(BufferManager& section, BufferManager& 
   }
 }
 
-void LokListeConsumer::setStreamComplete() {
+void LoklisteConsumer::setStreamComplete() {
   if (invalid_) {
     setStreamAborted();
   } else {
@@ -73,7 +73,7 @@ void LokListeConsumer::setStreamComplete() {
   }
 }
 
-void LokListeConsumer::setStreamAborted() {
+void LoklisteConsumer::setStreamAborted() {
   clear();
   if (streamEndCallback_ != nullptr) {
     streamEndCallback_->streamAborted(this);
