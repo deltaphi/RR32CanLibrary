@@ -70,7 +70,7 @@ RR32Can::CanFrame decodePacket(const udp_station::Packet& packet) {
 // -----------------------------------------------------------------------------
 void runExperiments(RR32Can::Station& station, RR32Can::ConfigDataStreamParser& parser) {
   // station.SendSystemGo();
-  station.RequestLokListe(&parser);
+  station.RequestLokliste(&parser);
   // station.RequestEngineList(0, &configDataCallback);
   //  Add experimental library calls here, for example:
   //  station.SendSystemStop();

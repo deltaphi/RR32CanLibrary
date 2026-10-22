@@ -30,7 +30,7 @@ class LokListeTest : public ::testing::Test {
 
   void start() {
     EXPECT_CALL(tx, SendPacket(RR32Can::util::Request_Config_Data("lokliste", 8)));
-    station.RequestLokListe(&parser);
+    station.RequestLokliste(&parser);
     parser.startStream(&consumer);
   }
 

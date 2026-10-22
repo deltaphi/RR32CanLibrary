@@ -133,7 +133,7 @@ void Station::RequestEngineList(const uint8_t offset, callback::ConfigDataCbk* c
   }
 }
 
-void Station::RequestLokListe(callback::ConfigDataCbk* configDataConsumer) {
+void Station::RequestLokliste(callback::ConfigDataCbk* configDataConsumer) {
   AbortCurrentConfigRequest();
   callbacks_.configData = configDataConsumer;
   if (callbacks_.configData != nullptr) {
