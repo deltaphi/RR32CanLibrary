@@ -88,6 +88,11 @@ class Station {
   void SendSystemStop();
   void SendSystemGo();
 
+  /**
+   * \brief Send an empty ping request with CAN identifier 0x00300300 (PING-MS2-Spec.md).
+   */
+  void SendPing();
+
   void SendPacket(RR32Can::CanFrame& canFrame);
 
   void HandleLocoDirection(const RR32Can::Data& data);

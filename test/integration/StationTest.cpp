@@ -150,6 +150,18 @@ TEST_F(StationTestFixture, SendStop) {
   station.SendSystemStop();
 }
 
+TEST_F(StationTestFixture, SendPing) {
+  RR32Can::Station::CallbackStruct callbacks;
+  callbacks.tx = &txCbk;
+  station.begin(0x1234, callbacks);
+
+  // The specification requires this fixed identifier, independent of the station UUID.
+  const RR32Can::CanFrame expectedFrame{RR32Can::Identifier{0x00300300}, {}};
+  EXPECT_CALL(txCbk, SendPacket(expectedFrame)).Times(1);
+
+  station.SendPing();
+}
+
 TEST_F(StationTestFixture, SendAccessory_MFX) {
   RR32Can::CanFrame frame;
 

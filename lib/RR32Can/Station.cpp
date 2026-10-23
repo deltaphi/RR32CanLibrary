@@ -271,6 +271,12 @@ void Station::SendSystemGo() {
   callbacks_.tx->SendPacket(frame);
 }
 
+void Station::SendPing() {
+  CanFrame frame{{Command::PING, 0x0300}, {}};
+  // Preserve the specification's fixed hash rather than replacing it with senderHash_.
+  callbacks_.tx->SendPacket(frame);
+}
+
 void Station::SendAccessoryPacket(RR32Can::MachineTurnoutAddress turnoutAddress, const RailProtocol protocol,
                                   const TurnoutDirection direction, const uint8_t power) {
   CanFrame frame{{Command::ACCESSORY_SWITCH, this->senderHash_}, {}};
