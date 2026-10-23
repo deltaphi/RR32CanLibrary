@@ -316,9 +316,12 @@ void Station::HandlePacket(const RR32Can::CanFrame& canFrame) {
     case RR32Can::Command::PING:
 #if (LOG_PING == STD_ON)
       printf("Ping. Payload: 0x");
-      data.printAsHex();
+      canFrame.data.printAsHex();
       printf("\n");
 #endif
+      if (canFrame.id.isResponse() && canFrame.data.dlc == 8 && callbacks_.system != nullptr) {
+        callbacks_.system->HandlePingResponse(canFrame);
+      }
       break;
 
     case RR32Can::Command::ACCESSORY_SWITCH:

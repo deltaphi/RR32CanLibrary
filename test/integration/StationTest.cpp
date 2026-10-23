@@ -162,6 +162,44 @@ TEST_F(StationTestFixture, SendPing) {
   station.SendPing();
 }
 
+TEST_F(StationTestFixture, ReceivePingResponse) {
+  const RR32Can::CanFrame frame{RR32Can::Identifier{0x00311234},
+                              {8, {0x12, 0x34, 0x56, 0x78, 0x03, 0x79, 0x00, 0x32}}};
+  EXPECT_CALL(systemCbk, HandlePingResponse(frame)).Times(1);
+
+  station.HandlePacket(frame);
+}
+
+TEST_F(StationTestFixture, IgnorePingRequests) {
+  RR32Can::CanFrame frame{RR32Can::Identifier{0x00300300}, {}};
+  EXPECT_CALL(systemCbk, HandlePingResponse(::testing::_)).Times(0);
+
+  station.HandlePacket(frame);
+  frame.data.dlc = 8;
+  station.HandlePacket(frame);
+}
+
+TEST_F(StationTestFixture, IgnorePingResponseWithInvalidLength) {
+  RR32Can::CanFrame frame{RR32Can::Identifier{0x00311234}, {}};
+  EXPECT_CALL(systemCbk, HandlePingResponse(::testing::_)).Times(0);
+
+  for (uint8_t length = 0; length <= 9; ++length) {
+    if (length != 8) {
+      frame.data.dlc = length;
+      station.HandlePacket(frame);
+    }
+  }
+}
+
+TEST_F(StationTestFixture, ReceivePingResponseWithoutCallback) {
+  RR32Can::Station::CallbackStruct callbacks;
+  station.begin(0, callbacks);
+  const RR32Can::CanFrame frame{RR32Can::Identifier{0x00311234},
+                              {8, {0x12, 0x34, 0x56, 0x78, 0x03, 0x79, 0x00, 0x32}}};
+
+  station.HandlePacket(frame);
+}
+
 TEST_F(StationTestFixture, SendAccessory_MFX) {
   RR32Can::CanFrame frame;
 
