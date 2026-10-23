@@ -26,6 +26,13 @@ class SystemCbk {
    * byte 7 is in the range 0x30–0x3F. The default implementation ignores responses.
    */
   virtual void HandlePingResponse(const CanFrame&) {}
+
+  /**
+   * \brief Handle an empty ping request so the application can send a response.
+   *
+   * The default implementation ignores requests.
+   */
+  virtual void HandlePing(const CanFrame&) {}
 };
 
 }  // namespace callback

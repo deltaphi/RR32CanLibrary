@@ -170,12 +170,30 @@ TEST_F(StationTestFixture, ReceivePingResponse) {
   station.HandlePacket(frame);
 }
 
-TEST_F(StationTestFixture, IgnorePingRequests) {
-  RR32Can::CanFrame frame{RR32Can::Identifier{0x00300300}, {}};
+TEST_F(StationTestFixture, ReceivePingRequest) {
+  const RR32Can::CanFrame frame{RR32Can::Identifier{0x00300300}, {}};
+  EXPECT_CALL(systemCbk, HandlePing(frame)).Times(1);
   EXPECT_CALL(systemCbk, HandlePingResponse(::testing::_)).Times(0);
 
   station.HandlePacket(frame);
-  frame.data.dlc = 8;
+}
+
+TEST_F(StationTestFixture, IgnorePingRequestWithInvalidLength) {
+  RR32Can::CanFrame frame{RR32Can::Identifier{0x00300300}, {}};
+  EXPECT_CALL(systemCbk, HandlePing(::testing::_)).Times(0);
+  EXPECT_CALL(systemCbk, HandlePingResponse(::testing::_)).Times(0);
+
+  for (uint8_t length = 1; length <= 9; ++length) {
+    frame.data.dlc = length;
+    station.HandlePacket(frame);
+  }
+}
+
+TEST_F(StationTestFixture, ReceivePingRequestWithoutCallback) {
+  RR32Can::Station::CallbackStruct callbacks;
+  station.begin(0, callbacks);
+  const RR32Can::CanFrame frame{RR32Can::Identifier{0x00300300}, {}};
+
   station.HandlePacket(frame);
 }
 
