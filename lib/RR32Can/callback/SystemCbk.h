@@ -16,7 +16,6 @@ class SystemCbk {
    * \param response Whether the packet was a response (true) or a request (false).
    */
   virtual void setSystemState(bool onOff, bool response) = 0;
-
 };
 
 }  // namespace callback
