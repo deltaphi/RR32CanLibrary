@@ -318,14 +318,10 @@ void Station::HandlePacket(const RR32Can::CanFrame& canFrame) {
       canFrame.data.printAsHex();
       printf("\n");
 #endif
-      if (canFrame.id.isResponse() && canFrame.data.dlc == 8 && callbacks_.system != nullptr) {
-        const LocId_t locid = canFrame.data.getLocid();
-        const uint8_t swVersionMajor = canFrame.data.data[4];
-        const uint8_t swVersionMinor = canFrame.data.data[5];
-        const uint16_t deviceInformation = (static_cast<uint16_t>(canFrame.data.data[6]) << 8) | canFrame.data.data[7];
-        callbacks_.system->HandlePingResponse(locid, swVersionMajor, swVersionMinor, deviceInformation);
-      } else if (!canFrame.id.isResponse() && canFrame.data.dlc == 0 && callbacks_.system != nullptr) {
+      if (!canFrame.id.isResponse()) {
         callbacks_.system->HandlePing(canFrame);
+      } else {
+        this->HandlePingResponse(canFrame.data);
       }
       break;
 
@@ -414,6 +410,16 @@ void Station::HandleLocoFunction(const RR32Can::Data& data) {
   if (data.dlc == 6) {
     const Locomotive::Uid_t uid = data.getLocid();
     callbacks_.engine->setLocoFunction(uid, data.data[4], data.data[5]);
+  }
+}
+
+void Station::HandlePingResponse(const RR32Can::Data& data) {
+  if (callbacks_.system != nullptr && data.dlc == 8) {
+    const LocId_t locid = data.getLocid();
+    const uint8_t swVersionMajor = data.data[4];
+    const uint8_t swVersionMinor = data.data[5];
+    const uint16_t deviceInformation = (static_cast<uint16_t>(data.data[6]) << 8) | data.data[7];
+    callbacks_.system->HandlePingResponse(locid, swVersionMajor, swVersionMinor, deviceInformation);
   }
 }
 

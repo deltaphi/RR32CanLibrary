@@ -54,6 +54,8 @@ class Station {
 
   void HandleSystemCommand(const RR32Can::Identifier& id, const RR32Can::SystemMessage& data);
 
+  void HandlePingResponse(const RR32Can::Data& data);
+
   /**
    * \brief Construct a Accessory command packet and send via CAN
    */
