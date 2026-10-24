@@ -88,9 +88,6 @@ class Station {
   void SendSystemStop();
   void SendSystemGo();
 
-  /**
-   * \brief Send an empty ping request using this station's sender hash.
-   */
   void SendPing();
 
   void SendPacket(RR32Can::CanFrame& canFrame);
