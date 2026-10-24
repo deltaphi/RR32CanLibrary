@@ -11,6 +11,7 @@
 #include "RR32Can/Constants.h"
 #include "RR32Can/messages/CanFrame.h"
 #include "RR32Can/messages/TurnoutPacket.h"
+#include "RR32Can/messages/PingResponsePacket.h"
 #include "RR32Can/util/constexpr.h"
 #include "RR32Can/util/utils.h"
 
@@ -417,11 +418,8 @@ void Station::HandleLocoFunction(const RR32Can::Data& data) {
 
 void Station::HandlePingResponse(const RR32Can::Data& data) {
   if (callbacks_.system != nullptr && data.dlc == 8) {
-    const LocId_t locid = data.getLocid();
-    const uint8_t swVersionMajor = data.data[4];
-    const uint8_t swVersionMinor = data.data[5];
-    const uint16_t deviceInformation = (static_cast<uint16_t>(data.data[6]) << 8) | data.data[7];
-    callbacks_.system->HandlePingResponse(locid, swVersionMajor, swVersionMinor, deviceInformation);
+    const RR32Can::PingResponsePacket packet(const_cast<RR32Can::Data&>(data));
+    callbacks_.system->HandlePingResponse(packet);
   }
 }
 

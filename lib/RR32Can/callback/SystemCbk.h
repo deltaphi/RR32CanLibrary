@@ -2,6 +2,7 @@
 #define __RR32CAN__CALLBACK__SYSTEMCBK_H__
 
 #include "RR32Can/messages/CanFrame.h"
+#include "RR32Can/messages/PingResponsePacket.h"
 
 namespace RR32Can {
 namespace callback {
@@ -22,8 +23,7 @@ class SystemCbk {
   /**
    * \brief Handle a ping response.
    */
-  virtual void HandlePingResponse(LocId_t deviceId, uint8_t swVersionMajor, uint8_t swVersionMinor,
-                                  uint16_t deviceInformation) = 0;
+  virtual void HandlePingResponse(const PingResponsePacket& packet) = 0;
 
   /**
    * \brief Handle a ping request, so the application can send a response.
