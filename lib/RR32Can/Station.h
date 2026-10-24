@@ -89,7 +89,7 @@ class Station {
   void SendSystemGo();
 
   /**
-   * \brief Send an empty ping request with CAN identifier 0x00300300 (PING-MS2-Spec.md).
+   * \brief Send an empty ping request using this station's sender hash.
    */
   void SendPing();
 

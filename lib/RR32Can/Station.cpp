@@ -272,8 +272,7 @@ void Station::SendSystemGo() {
 }
 
 void Station::SendPing() {
-  CanFrame frame{{Command::PING, 0x0300}, {}};
-  // Preserve the specification's fixed hash rather than replacing it with senderHash_.
+  CanFrame frame{{Command::PING, this->senderHash_}, {}};
   callbacks_.tx->SendPacket(frame);
 }
 

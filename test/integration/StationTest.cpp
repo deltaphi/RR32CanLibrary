@@ -155,8 +155,7 @@ TEST_F(StationTestFixture, SendPing) {
   callbacks.tx = &txCbk;
   station.begin(0x1234, callbacks);
 
-  // The specification requires this fixed identifier, independent of the station UUID.
-  const RR32Can::CanFrame expectedFrame{RR32Can::Identifier{0x00300300}, {}};
+  const RR32Can::CanFrame expectedFrame{RR32Can::Identifier{RR32Can::Command::PING, 0x0234}, {}};
   EXPECT_CALL(txCbk, SendPacket(expectedFrame)).Times(1);
 
   station.SendPing();
