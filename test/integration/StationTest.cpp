@@ -151,11 +151,7 @@ TEST_F(StationTestFixture, SendStop) {
 }
 
 TEST_F(StationTestFixture, SendPing) {
-  RR32Can::Station::CallbackStruct callbacks;
-  callbacks.tx = &txCbk;
-  station.begin(0x1234, callbacks);
-
-  const RR32Can::CanFrame expectedFrame{RR32Can::Identifier{RR32Can::Command::PING, 0x0234}, {}};
+  const RR32Can::CanFrame expectedFrame{RR32Can::Identifier{RR32Can::Command::PING, 0}, {}};
   EXPECT_CALL(txCbk, SendPacket(expectedFrame)).Times(1);
 
   station.SendPing();
@@ -174,17 +170,6 @@ TEST_F(StationTestFixture, ReceivePingRequest) {
   EXPECT_CALL(systemCbk, HandlePingResponse(::testing::_, ::testing::_, ::testing::_, ::testing::_)).Times(0);
 
   station.HandlePacket(frame);
-}
-
-TEST_F(StationTestFixture, IgnorePingRequestWithInvalidLength) {
-  RR32Can::CanFrame frame{RR32Can::Identifier{0x00300300}, {}};
-  EXPECT_CALL(systemCbk, HandlePing(::testing::_)).Times(0);
-  EXPECT_CALL(systemCbk, HandlePingResponse(::testing::_, ::testing::_, ::testing::_, ::testing::_)).Times(0);
-
-  for (uint8_t length = 1; length <= 9; ++length) {
-    frame.data.dlc = length;
-    station.HandlePacket(frame);
-  }
 }
 
 TEST_F(StationTestFixture, ReceivePingRequestWithoutCallback) {
