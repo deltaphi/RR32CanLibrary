@@ -3,6 +3,7 @@
 
 #include "RR32Can/Constants.h"
 #include "RR32Can/messages/Identifier.h"
+#include "RR32Can/messages/PingResponsePacket.h"
 #include "RR32Can/messages/TurnoutPacket.h"
 
 TEST(Messages, Identifier_Accessory_Request) {
@@ -98,6 +99,23 @@ TEST(Messages, TurnoutPacket) {
     EXPECT_EQ(packet.getDirection(), RR32Can::TurnoutDirection::YELLOW);
     EXPECT_FALSE(packet.getPower());
   }
+}
+
+TEST(Messages, PingResponsePacket) {
+  RR32Can::Data data;
+  RR32Can::PingResponsePacket packet(data);
+  packet.initData();
+  packet.setLocid(0x12345678);
+  packet.setSoftwareVersionMajor(0x03);
+  packet.setSoftwareVersionMinor(0x79);
+  packet.setDeviceInformation(0x0032);
+
+  EXPECT_EQ(data.dlc, 8);
+  EXPECT_THAT(data.data, ::testing::ElementsAre(0x12, 0x34, 0x56, 0x78, 0x03, 0x79, 0x00, 0x32, 0));
+  EXPECT_EQ(packet.getLocid(), 0x12345678);
+  EXPECT_EQ(packet.getSoftwareVersionMajor(), 0x03);
+  EXPECT_EQ(packet.getSoftwareVersionMinor(), 0x79);
+  EXPECT_EQ(packet.getDeviceInformation(), 0x0032);
 }
 
 TEST(Messages, TurnoutPacket_AddrProto) {

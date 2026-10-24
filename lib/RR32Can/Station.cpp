@@ -10,6 +10,7 @@
 
 #include "RR32Can/Constants.h"
 #include "RR32Can/messages/CanFrame.h"
+#include "RR32Can/messages/PingResponsePacket.h"
 #include "RR32Can/messages/TurnoutPacket.h"
 #include "RR32Can/util/constexpr.h"
 #include "RR32Can/util/utils.h"
@@ -271,6 +272,11 @@ void Station::SendSystemGo() {
   callbacks_.tx->SendPacket(frame);
 }
 
+void Station::SendPing() {
+  CanFrame frame{{Command::PING, this->senderHash_}, {}};
+  callbacks_.tx->SendPacket(frame);
+}
+
 void Station::SendAccessoryPacket(RR32Can::MachineTurnoutAddress turnoutAddress, const RailProtocol protocol,
                                   const TurnoutDirection direction, const uint8_t power) {
   CanFrame frame{{Command::ACCESSORY_SWITCH, this->senderHash_}, {}};
@@ -310,9 +316,16 @@ void Station::HandlePacket(const RR32Can::CanFrame& canFrame) {
     case RR32Can::Command::PING:
 #if (LOG_PING == STD_ON)
       printf("Ping. Payload: 0x");
-      data.printAsHex();
+      canFrame.data.printAsHex();
       printf("\n");
 #endif
+      if (!canFrame.id.isResponse()) {
+        if (callbacks_.system != nullptr) {
+          callbacks_.system->HandlePing(canFrame);
+        }
+      } else {
+        this->HandlePingResponse(canFrame.data);
+      }
       break;
 
     case RR32Can::Command::ACCESSORY_SWITCH:
@@ -400,6 +413,13 @@ void Station::HandleLocoFunction(const RR32Can::Data& data) {
   if (data.dlc == 6) {
     const Locomotive::Uid_t uid = data.getLocid();
     callbacks_.engine->setLocoFunction(uid, data.data[4], data.data[5]);
+  }
+}
+
+void Station::HandlePingResponse(const RR32Can::Data& data) {
+  if (callbacks_.system != nullptr && data.dlc == 8) {
+    const RR32Can::PingResponsePacket packet(const_cast<RR32Can::Data&>(data));
+    callbacks_.system->HandlePingResponse(packet);
   }
 }
 
