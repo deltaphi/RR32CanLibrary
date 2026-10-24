@@ -322,8 +322,7 @@ void Station::HandlePacket(const RR32Can::CanFrame& canFrame) {
         const LocId_t locid = canFrame.data.getLocid();
         const uint8_t swVersionMajor = canFrame.data.data[4];
         const uint8_t swVersionMinor = canFrame.data.data[5];
-        const uint16_t deviceInformation =
-            (static_cast<uint16_t>(canFrame.data.data[6]) << 8) | canFrame.data.data[7];
+        const uint16_t deviceInformation = (static_cast<uint16_t>(canFrame.data.data[6]) << 8) | canFrame.data.data[7];
         callbacks_.system->HandlePingResponse(locid, swVersionMajor, swVersionMinor, deviceInformation);
       } else if (!canFrame.id.isResponse() && canFrame.data.dlc == 0 && callbacks_.system != nullptr) {
         callbacks_.system->HandlePing(canFrame);
