@@ -18,6 +18,7 @@ class StationTestFixture : public ::testing::Test {
 
     callbacks.accessory = &accessoryCbk;
     callbacks.system = &systemCbk;
+    callbacks.ping = &pingCbk;
     callbacks.engine = &engineCbk;
     // callbacks.configData = &configDataCbk;
 
@@ -41,6 +42,7 @@ class StationTestFixture : public ::testing::Test {
   }
 
   ::testing::StrictMock<mocks::SystemCbkMock> systemCbk;
+  ::testing::StrictMock<mocks::PingCbkMock> pingCbk;
   ::testing::StrictMock<mocks::EngineCbkMock> engineCbk;
   ::testing::StrictMock<mocks::AccessoryCbkMock> accessoryCbk;
   ::testing::StrictMock<mocks::ConfigDataCbkMock> configDataCbk;
@@ -159,7 +161,7 @@ TEST_F(StationTestFixture, SendPing) {
 
 TEST_F(StationTestFixture, ReceivePingResponse) {
   const RR32Can::CanFrame frame{RR32Can::Identifier{0x00311234}, {8, {0x12, 0x34, 0x56, 0x78, 0x03, 0x79, 0x00, 0x32}}};
-  EXPECT_CALL(systemCbk, HandlePingResponse(::testing::_)).WillOnce([](const RR32Can::PingResponsePacket& packet) {
+  EXPECT_CALL(pingCbk, HandlePingResponse(::testing::_)).WillOnce([](const RR32Can::PingResponsePacket& packet) {
     EXPECT_EQ(packet.getLocid(), 0x12345678);
     EXPECT_EQ(packet.getSoftwareVersionMajor(), 0x03);
     EXPECT_EQ(packet.getSoftwareVersionMinor(), 0x79);
@@ -171,8 +173,8 @@ TEST_F(StationTestFixture, ReceivePingResponse) {
 
 TEST_F(StationTestFixture, ReceivePingRequest) {
   const RR32Can::CanFrame frame{RR32Can::Identifier{0x00300300}, {}};
-  EXPECT_CALL(systemCbk, HandlePing(frame)).Times(1);
-  EXPECT_CALL(systemCbk, HandlePingResponse(::testing::_)).Times(0);
+  EXPECT_CALL(pingCbk, HandlePing(frame)).Times(1);
+  EXPECT_CALL(pingCbk, HandlePingResponse(::testing::_)).Times(0);
 
   station.HandlePacket(frame);
 }
@@ -187,7 +189,7 @@ TEST_F(StationTestFixture, ReceivePingRequestWithoutCallback) {
 
 TEST_F(StationTestFixture, IgnorePingResponseWithInvalidLength) {
   RR32Can::CanFrame frame{RR32Can::Identifier{0x00311234}, {}};
-  EXPECT_CALL(systemCbk, HandlePingResponse(::testing::_)).Times(0);
+  EXPECT_CALL(pingCbk, HandlePingResponse(::testing::_)).Times(0);
 
   for (uint8_t length = 0; length <= 9; ++length) {
     if (length != 8) {

@@ -7,6 +7,7 @@
 #include "RR32Can/callback/AccessoryCbk.h"
 #include "RR32Can/callback/ConfigDataCbk.h"
 #include "RR32Can/callback/EngineCbk.h"
+#include "RR32Can/callback/PingCbk.h"
 #include "RR32Can/callback/SystemCbk.h"
 #include "RR32Can/callback/TxCbk.h"
 
@@ -18,6 +19,10 @@ namespace mocks {
 class SystemCbkMock : public RR32Can::callback::SystemCbk {
  public:
   MOCK_METHOD(void, setSystemState, (bool, bool), (override));
+};
+
+class PingCbkMock : public RR32Can::callback::PingCbk {
+ public:
   MOCK_METHOD(void, HandlePingResponse, (const RR32Can::PingResponsePacket &), (override));
   MOCK_METHOD(void, HandlePing, (const RR32Can::CanFrame &), (override));
 };
