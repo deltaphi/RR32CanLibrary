@@ -320,8 +320,8 @@ void Station::HandlePacket(const RR32Can::CanFrame& canFrame) {
       printf("\n");
 #endif
       if (!canFrame.id.isResponse()) {
-        if (callbacks_.system != nullptr) {
-          callbacks_.system->HandlePing(canFrame);
+        if (callbacks_.ping != nullptr) {
+          callbacks_.ping->HandlePing(canFrame);
         }
       } else {
         this->HandlePingResponse(canFrame.data);
@@ -417,9 +417,9 @@ void Station::HandleLocoFunction(const RR32Can::Data& data) {
 }
 
 void Station::HandlePingResponse(const RR32Can::Data& data) {
-  if (callbacks_.system != nullptr && data.dlc == 8) {
+  if (callbacks_.ping != nullptr && data.dlc == 8) {
     const RR32Can::PingResponsePacket packet(const_cast<RR32Can::Data&>(data));
-    callbacks_.system->HandlePingResponse(packet);
+    callbacks_.ping->HandlePingResponse(packet);
   }
 }
 

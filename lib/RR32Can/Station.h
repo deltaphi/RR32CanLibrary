@@ -13,6 +13,7 @@
 #include "RR32Can/callback/AccessoryCbk.h"
 #include "RR32Can/callback/ConfigDataCbk.h"
 #include "RR32Can/callback/EngineCbk.h"
+#include "RR32Can/callback/PingCbk.h"
 #include "RR32Can/callback/SystemCbk.h"
 #include "RR32Can/callback/TxCbk.h"
 #include "RR32Can/messages/CanFrame.h"
@@ -29,6 +30,7 @@ class Station {
   struct CallbackStruct {
     callback::TxCbk* tx = nullptr;
     callback::SystemCbk* system = nullptr;
+    callback::PingCbk* ping = nullptr;
     callback::EngineCbk* engine = nullptr;
     callback::AccessoryCbk* accessory = nullptr;
     callback::ConfigDataCbk* configData = nullptr;
