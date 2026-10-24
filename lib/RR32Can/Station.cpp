@@ -319,7 +319,9 @@ void Station::HandlePacket(const RR32Can::CanFrame& canFrame) {
       printf("\n");
 #endif
       if (!canFrame.id.isResponse()) {
-        callbacks_.system->HandlePing(canFrame);
+        if (callbacks_.system != nullptr) {
+          callbacks_.system->HandlePing(canFrame);
+        }
       } else {
         this->HandlePingResponse(canFrame.data);
       }
