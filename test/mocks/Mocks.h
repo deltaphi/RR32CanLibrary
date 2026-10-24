@@ -18,7 +18,7 @@ namespace mocks {
 class SystemCbkMock : public RR32Can::callback::SystemCbk {
  public:
   MOCK_METHOD(void, setSystemState, (bool, bool), (override));
-   MOCK_METHOD(void, HandlePingResponse, (const RR32Can::PingResponsePacket &), (override));
+  MOCK_METHOD(void, HandlePingResponse, (const RR32Can::PingResponsePacket &), (override));
   MOCK_METHOD(void, HandlePing, (const RR32Can::CanFrame &), (override));
 };
 

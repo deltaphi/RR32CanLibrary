@@ -10,8 +10,8 @@
 
 #include "RR32Can/Constants.h"
 #include "RR32Can/messages/CanFrame.h"
-#include "RR32Can/messages/TurnoutPacket.h"
 #include "RR32Can/messages/PingResponsePacket.h"
+#include "RR32Can/messages/TurnoutPacket.h"
 #include "RR32Can/util/constexpr.h"
 #include "RR32Can/util/utils.h"
 

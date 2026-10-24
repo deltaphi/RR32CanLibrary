@@ -159,13 +159,12 @@ TEST_F(StationTestFixture, SendPing) {
 
 TEST_F(StationTestFixture, ReceivePingResponse) {
   const RR32Can::CanFrame frame{RR32Can::Identifier{0x00311234}, {8, {0x12, 0x34, 0x56, 0x78, 0x03, 0x79, 0x00, 0x32}}};
-  EXPECT_CALL(systemCbk, HandlePingResponse(::testing::_))
-      .WillOnce([](const RR32Can::PingResponsePacket& packet) {
-        EXPECT_EQ(packet.getLocid(), 0x12345678);
-        EXPECT_EQ(packet.getSoftwareVersionMajor(), 0x03);
-        EXPECT_EQ(packet.getSoftwareVersionMinor(), 0x79);
-        EXPECT_EQ(packet.getDeviceInformation(), 0x0032);
-      });
+  EXPECT_CALL(systemCbk, HandlePingResponse(::testing::_)).WillOnce([](const RR32Can::PingResponsePacket& packet) {
+    EXPECT_EQ(packet.getLocid(), 0x12345678);
+    EXPECT_EQ(packet.getSoftwareVersionMajor(), 0x03);
+    EXPECT_EQ(packet.getSoftwareVersionMinor(), 0x79);
+    EXPECT_EQ(packet.getDeviceInformation(), 0x0032);
+  });
 
   station.HandlePacket(frame);
 }
